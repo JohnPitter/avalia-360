@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ResultCard } from './ResultCard';
+import { TeamComparisonChart } from '@/components/shared';
 import type { Evaluation, TeamMember, ConsolidatedResult } from '@/types';
 import { consolidateAllResults } from '@/services/firebase/response.service';
 
@@ -188,6 +189,17 @@ ${index + 1}. ${result.member.name}
               {lowestScore.toFixed(2)}
             </div>
           </div>
+        </div>
+
+        {/* Team Comparison Chart */}
+        <div className="card mt-6">
+          <TeamComparisonChart
+            data={sortedResults.map((r) => ({
+              name: r.member.name,
+              average: r.averages.overall,
+              responses: r.totalResponses,
+            }))}
+          />
         </div>
 
         {/* Controles */}

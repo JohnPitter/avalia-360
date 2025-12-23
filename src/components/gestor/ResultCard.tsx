@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PerformanceRadarChart } from '@/components/shared';
 import type { ConsolidatedResult } from '@/types';
 
 /**
@@ -148,6 +149,19 @@ export function ResultCard({ result, rank }: ResultCardProps) {
             />
           </div>
         </div>
+      </div>
+
+      {/* Radar Chart */}
+      <div className="my-6 p-4 bg-gray-50 rounded-lg">
+        <PerformanceRadarChart
+          data={{
+            question_1: averages.question_1,
+            question_2: averages.question_2,
+            question_3: averages.question_3,
+            question_4: averages.question_4,
+          }}
+          memberName={member.name}
+        />
       </div>
 
       {/* Botão Ver Comentários */}
