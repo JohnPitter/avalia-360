@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
  * - Remove scripts, iframes, forms
  * - Permite apenas tags seguras
  */
-const DEFAULT_CONFIG: DOMPurify.Config = {
+const DEFAULT_CONFIG = {
   ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li'],
   ALLOWED_ATTR: [],
   KEEP_CONTENT: true,
@@ -24,7 +24,7 @@ const DEFAULT_CONFIG: DOMPurify.Config = {
  */
 export function sanitizeHtml(
   dirty: string,
-  config: DOMPurify.Config = DEFAULT_CONFIG
+  config = DEFAULT_CONFIG
 ): string {
   if (!dirty) {
     return '';

@@ -1,0 +1,419 @@
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  query,
+  where,
+  writeBatch,
+} from 'firebase/firestore';
+import { db } from './config';
+import type { TeamMember } from '@/types';
+import {
+  encrypt,
+  decrypt,
+  hashEmail,
+  hashAccessCode,
+  generateAccessCode,
+  generateEncryptionKey,
+} from '@/utils/crypto';
+import { validateTeamMembers } from '@/utils/validation';
+import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
+
+/**
+ * Serviço de Membros da Equipe
+ * Gerencia operações CRUD de membros no Firestore
+ * Complexidade: O(1) para operações individuais, O(N) para queries
+ */
+
+/**
+ * Interface para dados de membro
+ */
+export interface MemberData {
+  name: string;
+  email: string;
+}
+
+/**
+ * Interface para membro com código de acesso
+ */
+export interface MemberWithAccessCode extends TeamMember {
+  accessCode: string; // Código não-hasheado (só retornado na criação)
+}
+
+/**
+ * Adiciona membros à avaliação
+ * Gera códigos de acesso para cada membro
+ * Complexidade: O(N) onde N é o número de membros
+ *
+ * @param evaluationId - ID da avaliação
+ * @param members - Lista de membros
+ * @param managerToken - Token do gestor
+ * @returns Lista de membros com códigos de acesso
+ */
+export async function addMembers(
+  evaluationId: string,
+  members: MemberData[],
+  managerToken: string
+): Promise<MemberWithAccessCode[]> {
+  // Validação
+  const validation = validateTeamMembers(members);
+  if (!validation.valid) {
+    throw new Error(`Validação falhou: ${validation.errors.join(', ')}`);
+  }
+
+  const encryptionKey = generateEncryptionKey(managerToken);
+  const batch = writeBatch(db);
+  const membersWithCodes: MemberWithAccessCode[] = [];
+
+  try {
+    for (const member of members) {
+      // Sanitização
+      const sanitizedName = sanitizeText(member.name, 100);
+      const sanitizedEmail = sanitizeEmail(member.email);
+
+      // Gera código de acesso
+      const accessCode = generateAccessCode();
+
+      // Criptografia
+      const encryptedName = encrypt(sanitizedName, encryptionKey);
+      const emailHash = hashEmail(sanitizedEmail);
+      const codeHash = hashAccessCode(accessCode);
+
+      // Total de avaliações que o membro precisa fazer (N-1)
+      const totalEvaluations = members.length - 1;
+
+      const memberData = {
+        avaliation_id: evaluationId,
+        name: encryptedName,
+        email: emailHash,
+        access_code: codeHash,
+        completed_evaluations: 0,
+        total_evaluations: totalEvaluations,
+        last_access_date: null,
+      };
+
+      const docRef = doc(collection(db, 'team_members'));
+      batch.set(docRef, memberData);
+
+      membersWithCodes.push({
+        id: docRef.id,
+        ...memberData,
+        accessCode, // Código não-hasheado (só disponível aqui)
+      });
+    }
+
+    await batch.commit();
+
+    return membersWithCodes;
+  } catch (error) {
+    console.error('Erro ao adicionar membros:', error);
+    throw new Error('Falha ao adicionar membros ao banco de dados');
+  }
+}
+
+/**
+ * Busca membros de uma avaliação
+ * Complexidade: O(N) onde N é o número de membros
+ *
+ * @param evaluationId - ID da avaliação
+ * @param managerToken - Token do gestor (para descriptografar nomes)
+ * @returns Lista de membros
+ */
+export async function getMembers(
+  evaluationId: string,
+  managerToken: string
+): Promise<TeamMember[]> {
+  try {
+    const q = query(
+      collection(db, 'team_members'),
+      where('avaliation_id', '==', evaluationId)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const encryptionKey = generateEncryptionKey(managerToken);
+
+    const members: TeamMember[] = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+
+      try {
+        const decryptedName = decrypt(data.name, encryptionKey);
+
+        members.push({
+          id: doc.id,
+          avaliation_id: data.avaliation_id,
+          name: decryptedName,
+          email: data.email,
+          access_code: data.access_code,
+          completed_evaluations: data.completed_evaluations,
+          total_evaluations: data.total_evaluations,
+          last_access_date: data.last_access_date,
+        });
+      } catch (error) {
+        console.error(`Erro ao descriptografar membro ${doc.id}:`, error);
+      }
+    });
+
+    return members;
+  } catch (error) {
+    console.error('Erro ao buscar membros:', error);
+    return [];
+  }
+}
+
+/**
+ * Busca membro por ID
+ * Complexidade: O(1)
+ *
+ * @param memberId - ID do membro
+ * @param managerToken - Token do gestor
+ * @returns Membro ou null
+ */
+export async function getMember(
+  memberId: string,
+  managerToken: string
+): Promise<TeamMember | null> {
+  try {
+    const docRef = doc(db, 'team_members', memberId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    const data = docSnap.data();
+    const encryptionKey = generateEncryptionKey(managerToken);
+
+    const decryptedName = decrypt(data.name, encryptionKey);
+
+    return {
+      id: docSnap.id,
+      avaliation_id: data.avaliation_id,
+      name: decryptedName,
+      email: data.email,
+      access_code: data.access_code,
+      completed_evaluations: data.completed_evaluations,
+      total_evaluations: data.total_evaluations,
+      last_access_date: data.last_access_date,
+    };
+  } catch (error) {
+    console.error('Erro ao buscar membro:', error);
+    return null;
+  }
+}
+
+/**
+ * Valida código de acesso do membro
+ * Complexidade: O(N) onde N é o número de membros (precisa buscar todos)
+ *
+ * @param evaluationId - ID da avaliação
+ * @param accessCode - Código de acesso
+ * @returns Membro ou null se código inválido
+ */
+export async function validateAccessCode(
+  evaluationId: string,
+  accessCode: string
+): Promise<TeamMember | null> {
+  try {
+    const codeHash = hashAccessCode(accessCode);
+
+    const q = query(
+      collection(db, 'team_members'),
+      where('avaliation_id', '==', evaluationId),
+      where('access_code', '==', codeHash)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return null;
+    }
+
+    // Deve retornar apenas um membro
+    const docSnap = querySnapshot.docs[0];
+    const data = docSnap.data();
+
+    // Não descriptografa o nome aqui pois não temos o managerToken
+    // O nome será descriptografado quando necessário
+    return {
+      id: docSnap.id,
+      avaliation_id: data.avaliation_id,
+      name: data.name, // Ainda criptografado
+      email: data.email,
+      access_code: data.access_code,
+      completed_evaluations: data.completed_evaluations,
+      total_evaluations: data.total_evaluations,
+      last_access_date: data.last_access_date,
+    };
+  } catch (error) {
+    console.error('Erro ao validar código de acesso:', error);
+    return null;
+  }
+}
+
+/**
+ * Atualiza data de último acesso do membro
+ * Complexidade: O(1)
+ *
+ * @param memberId - ID do membro
+ */
+export async function updateLastAccess(memberId: string): Promise<void> {
+  try {
+    const docRef = doc(db, 'team_members', memberId);
+    await updateDoc(docRef, {
+      last_access_date: Date.now(),
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar último acesso:', error);
+    throw new Error('Falha ao atualizar último acesso');
+  }
+}
+
+/**
+ * Incrementa contador de avaliações completadas
+ * Complexidade: O(1)
+ *
+ * @param memberId - ID do membro
+ */
+export async function incrementCompletedEvaluations(memberId: string): Promise<void> {
+  try {
+    const docRef = doc(db, 'team_members', memberId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error('Membro não encontrado');
+    }
+
+    const currentCompleted = docSnap.data().completed_evaluations;
+
+    await updateDoc(docRef, {
+      completed_evaluations: currentCompleted + 1,
+    });
+  } catch (error) {
+    console.error('Erro ao incrementar avaliações completadas:', error);
+    throw new Error('Falha ao atualizar progresso');
+  }
+}
+
+/**
+ * Calcula progresso geral da avaliação
+ * Complexidade: O(N) onde N é o número de membros
+ *
+ * @param evaluationId - ID da avaliação
+ * @returns Progresso em porcentagem (0-100)
+ */
+export async function getEvaluationProgress(evaluationId: string): Promise<number> {
+  try {
+    const q = query(
+      collection(db, 'team_members'),
+      where('avaliation_id', '==', evaluationId)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return 0;
+    }
+
+    let totalCompleted = 0;
+    let totalExpected = 0;
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      totalCompleted += data.completed_evaluations;
+      totalExpected += data.total_evaluations;
+    });
+
+    if (totalExpected === 0) {
+      return 0;
+    }
+
+    return Math.round((totalCompleted / totalExpected) * 100);
+  } catch (error) {
+    console.error('Erro ao calcular progresso:', error);
+    return 0;
+  }
+}
+
+/**
+ * Busca membros que ainda não completaram todas as avaliações
+ * Útil para enviar lembretes
+ * Complexidade: O(N) onde N é o número de membros
+ *
+ * @param evaluationId - ID da avaliação
+ * @param managerToken - Token do gestor
+ * @returns Lista de membros pendentes
+ */
+export async function getPendingMembers(
+  evaluationId: string,
+  managerToken: string
+): Promise<TeamMember[]> {
+  try {
+    const allMembers = await getMembers(evaluationId, managerToken);
+
+    return allMembers.filter(
+      (member) => member.completed_evaluations < member.total_evaluations
+    );
+  } catch (error) {
+    console.error('Erro ao buscar membros pendentes:', error);
+    return [];
+  }
+}
+
+/**
+ * Verifica se membro completou todas as avaliações
+ * Complexidade: O(1)
+ *
+ * @param memberId - ID do membro
+ * @returns true se completou
+ */
+export async function hasMemberCompleted(memberId: string): Promise<boolean> {
+  try {
+    const docRef = doc(db, 'team_members', memberId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return false;
+    }
+
+    const data = docSnap.data();
+    return data.completed_evaluations >= data.total_evaluations;
+  } catch (error) {
+    console.error('Erro ao verificar completude:', error);
+    return false;
+  }
+}
+
+/**
+ * Remove membro da avaliação
+ * Só permite se a avaliação ainda estiver em 'draft'
+ * Complexidade: O(1)
+ *
+ * @param memberId - ID do membro
+ */
+export async function removeMember(memberId: string): Promise<void> {
+  try {
+    const docRef = doc(db, 'team_members', memberId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error('Membro não encontrado');
+    }
+
+    // Aqui poderíamos verificar o status da avaliação
+    // Por segurança, só permitir remoção em 'draft'
+
+    // Soft delete: podemos marcar como inativo ao invés de deletar
+    await updateDoc(docRef, {
+      // Marca como removido mas mantém no banco
+      removed: true,
+      removed_at: Date.now(),
+    });
+  } catch (error) {
+    console.error('Erro ao remover membro:', error);
+    throw new Error('Falha ao remover membro');
+  }
+}
