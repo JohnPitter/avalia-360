@@ -4,6 +4,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/avalia-360/', // Base path para GitHub Pages
   plugins: [react()],
   resolve: {
     alias: {
@@ -31,11 +32,6 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
-    // Headers de segurança em dev
-    headers: {
-      'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff',
-    },
   },
   // Otimizações de dependências
   optimizeDeps: {
