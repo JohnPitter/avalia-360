@@ -8,3 +8,5 @@ export { CreateEvaluationForm } from './CreateEvaluationForm';
 export { AddMembersForm } from './AddMembersForm';
 export { EvaluationSuccess } from './EvaluationSuccess';
 export { ProgressDashboard } from './ProgressDashboard';
+export { ResultCard } from './ResultCard';
+export { ResultsPage } from './ResultsPage';

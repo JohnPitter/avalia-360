@@ -11,7 +11,10 @@
       "Bash(npm install:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Fase 1.2 - Autenticação e Segurança Básica\n\nValidação e Sanitização:\n- ✅ Utilitários de validação completos (validation.ts)\n  - Email, nome, código de acesso, rating\n  - Validação de membros de equipe (O(N))\n  - Validação de formulários\n  - UUID, URL, rate limiting\n  - 48 testes unitários passando\n\n- ✅ Utilitários de sanitização (sanitization.ts)\n  - DOMPurify para prevenção de XSS\n  - Sanitização de HTML, texto, URLs\n  - Proteção contra NoSQL injection (Firestore)\n  - Prevenção de path traversal\n  - Proteção contra prototype pollution\n  - 70 testes unitários passando\n\nGerenciamento de Sessão:\n- ✅ Sistema de sessão (session.ts)\n  - Sessões de gestor (UUID token)\n  - Sessões de colaborador (código 6 dígitos)\n  - Expiração automática (7 dias)\n  - Timeout por inatividade (2 horas)\n  - Renovação de sessão\n  - Tracking de atividade\n  - 34 testes unitários passando\n\nSegurança:\n- ✅ Validação de entrada OWASP Top 10\n- ✅ Sanitização contra XSS\n- ✅ Proteção contra injection attacks\n- ✅ Rate limiting em memória\n- ✅ Timing-safe comparisons\n- ✅ Content Security Policy (CSP)\n\nTestes:\n- ✅ 174 testes unitários passando\n  - crypto: 22 testes\n  - validation: 48 testes\n  - sanitization: 70 testes\n  - session: 34 testes\n- ✅ 100% de cobertura das funções críticas\n\nPróximos passos: Fase 1.3 - Criação de Avaliação (Gestor)\n\n🤖 Generated with Claude Code\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit:*)",
-      "Bash(pkill -f \"npm test\")"
+      "Bash(pkill -f \"npm test\")",
+      "Bash(git push:*)",
+      "Bash(cat:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

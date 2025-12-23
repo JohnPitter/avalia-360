@@ -5,6 +5,7 @@ import {
   AddMembersForm,
   EvaluationSuccess,
   ProgressDashboard,
+  ResultsPage,
 } from '@/components/gestor';
 import {
   createEvaluation,
@@ -33,7 +34,8 @@ type Step =
   | 'create-evaluation'
   | 'add-members'
   | 'success'
-  | 'dashboard';
+  | 'dashboard'
+  | 'results';
 
 export function ManagerPage() {
   const [step, setStep] = useState<Step>('login');
@@ -199,8 +201,7 @@ export function ManagerPage() {
   };
 
   const handleViewResults = () => {
-    // TODO: Implementar visualização de resultados
-    alert('Visualização de resultados será implementada em breve!');
+    setStep('results');
   };
 
   const handleLogout = () => {
@@ -279,6 +280,15 @@ export function ManagerPage() {
           expectedResponses={members.length * (members.length - 1)}
           onViewResults={handleViewResults}
           onLogout={handleLogout}
+        />
+      )}
+
+      {step === 'results' && evaluation && (
+        <ResultsPage
+          evaluation={evaluation}
+          members={members}
+          managerToken={managerToken}
+          onBack={() => setStep('dashboard')}
         />
       )}
     </div>
