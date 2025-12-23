@@ -4,7 +4,8 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/avalia-360/', // Base path para GitHub Pages
+  // Base path: '/' para Firebase, '/avalia-360/' para GitHub Pages
+  base: process.env.VITE_BASE_PATH || '/avalia-360/',
   plugins: [react()],
   resolve: {
     alias: {

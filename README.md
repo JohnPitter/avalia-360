@@ -331,6 +331,69 @@ O deploy é automático via GitHub Actions. Sempre que você fizer push na branc
 
 Seu site estará disponível em: `https://seu-usuario.github.io/avalia-360`
 
+## Deploy no Firebase Hosting (Alternativa)
+
+Se você preferir usar Firebase Hosting ao invés do GitHub Pages, siga os passos abaixo:
+
+### 1. Criar Projeto no Firebase
+
+1. Acesse [Firebase Console](https://console.firebase.google.com/)
+2. Clique em "Adicionar projeto"
+3. Digite o nome do projeto (ex: "avalia-360")
+4. Siga os passos até concluir a criação
+
+### 2. Configurar Projeto Local
+
+1. Copie o arquivo de configuração:
+```bash
+cp .firebaserc.example .firebaserc
+```
+
+2. Edite `.firebaserc` e substitua `seu-projeto-firebase-aqui` pelo ID do seu projeto Firebase
+
+### 3. Configurar GitHub Actions
+
+1. Instale Firebase CLI localmente:
+```bash
+npm install -g firebase-tools
+```
+
+2. Faça login no Firebase:
+```bash
+firebase login
+```
+
+3. Crie uma Service Account:
+   - Acesse [Firebase Console](https://console.firebase.google.com/)
+   - Vá em **Project Settings > Service Accounts**
+   - Clique em **Generate New Private Key**
+   - Salve o arquivo JSON
+
+4. Adicione Secrets no GitHub:
+   - Vá em `Settings > Secrets and variables > Actions`
+   - Clique em **New repository secret**
+   - Adicione os seguintes secrets:
+     - `FIREBASE_SERVICE_ACCOUNT`: Cole todo o conteúdo do arquivo JSON da service account
+     - `FIREBASE_PROJECT_ID`: ID do seu projeto Firebase
+
+### 4. Deploy Automático
+
+Após configurar os secrets, o deploy será automático:
+- Sempre que fizer push na branch `main`, o workflow `.github/workflows/firebase-deploy.yml` será executado
+- O build será criado com `base: '/'` (sem subdiretório)
+- O projeto será publicado no Firebase Hosting
+
+Seu site estará disponível em: `https://seu-projeto-firebase.web.app`
+
+### Vantagens do Firebase Hosting
+
+- MIME types corretos para módulos JavaScript
+- HTTPS automático com certificado SSL
+- CDN global com baixa latência
+- Headers de segurança configuráveis
+- Deploy preview automático para PRs
+- Rollback fácil para versões anteriores
+
 ## Estrutura do Projeto
 
 ```
