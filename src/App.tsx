@@ -1,4 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { ManagerPage } from './pages/ManagerPage';
+import { MemberPage } from './pages/MemberPage';
+// Force Firebase initialization on app load
+import './services/firebase/config';
 
 function App() {
   return (
@@ -24,6 +28,8 @@ function App() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/gestor" element={<ManagerPage />} />
+            <Route path="/colaborador" element={<MemberPage />} />
           </Routes>
         </main>
 
@@ -42,6 +48,8 @@ function App() {
 
 // Home Page Component
 function HomePage() {
+  const navigate = useNavigate();
+
   return (
     <div className="animate-fade-in">
       <div className="card p-8 max-w-2xl mx-auto">
@@ -100,10 +108,16 @@ function HomePage() {
             </div>
 
             <div className="pt-6 flex gap-4 justify-center">
-              <button className="btn-primary">
+              <button
+                className="btn-primary"
+                onClick={() => navigate('/gestor')}
+              >
                 Criar Nova Avaliação
               </button>
-              <button className="btn-outline">
+              <button
+                className="btn-outline"
+                onClick={() => navigate('/colaborador')}
+              >
                 Acessar com Código
               </button>
             </div>
