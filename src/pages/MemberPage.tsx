@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { PageLayout } from '@/components/layout';
 import {
   MemberLogin,
   MembersList,
@@ -216,100 +217,102 @@ export function MemberPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-        <div className="container mx-auto px-4 py-16">
+      <PageLayout variant="member" showHeader={false}>
+        <div className="container mx-auto px-4 py-20">
           <div className="max-w-md mx-auto">
-            <div className="card p-12 text-center animate-fade-in">
-              <div className="relative w-20 h-20 mx-auto mb-6">
-                <div className="absolute inset-0 animate-spin border-4 border-green-600 border-t-transparent rounded-full" />
-                <div className="absolute inset-3 animate-spin border-4 border-green-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
+            <div className="bg-white rounded-3xl p-12 text-center shadow-2xl border border-gray-100 animate-fade-in">
+              <div className="relative w-24 h-24 mx-auto mb-6">
+                <div className="absolute inset-0 animate-spin border-4 border-emerald-600 border-t-transparent rounded-full" />
+                <div className="absolute inset-3 animate-spin border-4 border-emerald-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
               </div>
-              <p className="text-lg font-medium text-gray-700">Carregando...</p>
-              <p className="text-sm text-gray-500 mt-2">Preparando suas avaliações</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Carregando</h3>
+              <p className="text-gray-600">Preparando suas avaliações...</p>
             </div>
           </div>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
   const selectedMember = allMembers.find((m) => m.id === selectedMemberId);
 
+  const getStepTitle = () => {
+    if (step === 'member-list') return 'Minhas Avaliações';
+    if (step === 'evaluation' && selectedMember) return `Avaliar ${selectedMember.name}`;
+    return 'Portal do Colaborador';
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
+    <PageLayout variant="member" showBackButton={step === 'evaluation'}>
+      <div className="container mx-auto px-4 py-8">
+        {/* Page Header */}
+        {step !== 'login' && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-3xl font-bold">Portal do Colaborador</h1>
-                <p className="text-green-100 mt-1">Avalie seus colegas de equipe</p>
+                <h2 className="text-3xl font-bold text-gray-900">{getStepTitle()}</h2>
+                <p className="text-gray-600 mt-1">
+                  {step === 'member-list' && 'Selecione um colega para avaliar'}
+                  {step === 'evaluation' && 'Preencha a avaliação com honestidade e construtividade'}
+                </p>
               </div>
-            </div>
-            {currentMember && (
-              <div className="hidden md:flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                  </svg>
+              {currentMember && (
+                <div className="hidden lg:flex items-center space-x-3 bg-white rounded-2xl px-4 py-3 shadow-lg border border-gray-100">
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Colaborador</p>
+                    <p className="text-sm font-semibold text-gray-900">{currentMember.name}</p>
+                  </div>
                 </div>
-                <span className="text-sm font-medium">{currentMember.name}</span>
+              )}
+            </div>
+
+            {/* Progress Indicator */}
+            {step === 'member-list' && allMembers.length > 0 && (
+              <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Seu Progresso</span>
+                  <span className="text-sm font-bold text-emerald-600">
+                    {evaluatedMemberIds.length}/{allMembers.filter(m => m.id !== currentMember?.id).length}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-gradient-to-r from-emerald-600 to-teal-600 h-2.5 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${(evaluatedMemberIds.length / Math.max(allMembers.filter(m => m.id !== currentMember?.id).length, 1)) * 100}%`
+                    }}
+                  />
+                </div>
               </div>
             )}
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Breadcrumb */}
-      {step !== 'login' && (
-        <div className="bg-white border-b border-gray-200">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center space-x-2 text-sm">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-              </svg>
-              <span className="text-gray-500">/</span>
-              <span className="text-gray-700 font-medium">
-                {step === 'member-list' && 'Minhas Avaliações'}
-                {step === 'evaluation' && 'Avaliar Colega'}
-              </span>
-              {step === 'evaluation' && selectedMember && (
-                <>
-                  <span className="text-gray-500">/</span>
-                  <span className="text-gray-600">{selectedMember.name}</span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
         {/* Error Alert */}
         {error && (
-          <div className="max-w-4xl mx-auto mb-6 animate-slide-up">
-            <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 shadow-medium">
+          <div className="max-w-4xl mx-auto mb-8 animate-slide-up">
+            <div className="bg-red-50 border-l-4 border-red-500 rounded-2xl p-6 shadow-lg">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <svg className="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
+                  <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                    <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
                 <div className="ml-4 flex-1">
-                  <h3 className="text-lg font-semibold text-red-800">Erro</h3>
+                  <h3 className="text-lg font-bold text-red-900">Ops! Algo deu errado</h3>
                   <p className="text-red-700 mt-1">{error}</p>
                   <button
                     onClick={() => setError(null)}
-                    className="mt-3 btn-secondary btn-sm"
+                    className="mt-4 px-4 py-2 bg-white text-red-600 font-medium rounded-xl hover:bg-red-50 transition-colors shadow-sm border border-red-200"
                   >
-                    Fechar
+                    Entendi
                   </button>
                 </div>
               </div>
@@ -343,6 +346,6 @@ export function MemberPage() {
           )}
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
