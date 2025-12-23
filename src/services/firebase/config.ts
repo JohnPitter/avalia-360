@@ -11,6 +11,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Debug: Log das variáveis de ambiente
+console.log('🔍 Verificando variáveis de ambiente do Firebase...');
+console.log('VITE_FIREBASE_API_KEY:', import.meta.env.VITE_FIREBASE_API_KEY ? '✅ Configurado' : '❌ Ausente');
+console.log('VITE_FIREBASE_PROJECT_ID:', import.meta.env.VITE_FIREBASE_PROJECT_ID || '❌ Ausente');
+
 // Validação das variáveis de ambiente
 const requiredEnvVars = [
   'VITE_FIREBASE_API_KEY',
@@ -21,11 +26,18 @@ const requiredEnvVars = [
   'VITE_FIREBASE_APP_ID',
 ] as const;
 
+const missingVars: string[] = [];
 for (const envVar of requiredEnvVars) {
   if (!import.meta.env[envVar]) {
     console.error(`❌ Missing environment variable: ${envVar}`);
-    throw new Error(`Firebase configuration incomplete: ${envVar} is missing`);
+    missingVars.push(envVar);
   }
+}
+
+if (missingVars.length > 0) {
+  const errorMsg = `Firebase configuration incomplete. Missing: ${missingVars.join(', ')}`;
+  console.error('❌', errorMsg);
+  throw new Error(errorMsg);
 }
 
 // Inicializa o Firebase
