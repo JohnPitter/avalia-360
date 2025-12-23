@@ -1,6 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { validateTeamMembers } from '@/utils/validation';
 import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
+import {
+  downloadExcelTemplate,
+  parseExcelFile,
+  isValidExcelFile,
+  isValidFileSize,
+  type ExcelError,
+} from '@/utils/excel';
 import type { MemberData } from '@/services/firebase';
 
 /**
@@ -29,6 +36,9 @@ export function AddMembersForm({
     { name: '', email: '' },
   ]);
   const [errors, setErrors] = useState<string[]>([]);
+  const [excelErrors, setExcelErrors] = useState<ExcelError[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addMember = () => {
     setMembers([...members, { name: '', email: '' }]);
@@ -72,9 +82,71 @@ export function AddMembersForm({
     onSubmit(sanitizedMembers);
   };
 
-  const handleImportExcel = () => {
-    // TODO: Implementar import de Excel
-    alert('Funcionalidade de import Excel será implementada em breve!');
+  const handleDownloadTemplate = () => {
+    downloadExcelTemplate('template-avaliacao-360.xlsx');
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Limpar erros anteriores
+    setErrors([]);
+    setExcelErrors([]);
+
+    // Validar extensão
+    if (!isValidExcelFile(file)) {
+      setErrors(['Formato inválido. Use arquivos .xlsx ou .xls']);
+      return;
+    }
+
+    // Validar tamanho
+    if (!isValidFileSize(file)) {
+      setErrors(['Arquivo muito grande. Tamanho máximo: 5MB']);
+      return;
+    }
+
+    // Fazer parse
+    setIsUploading(true);
+    try {
+      const result = await parseExcelFile(file);
+
+      if (!result.success) {
+        setExcelErrors(result.errors);
+        return;
+      }
+
+      if (result.members.length === 0) {
+        setErrors(['Nenhum membro válido encontrado na planilha']);
+        return;
+      }
+
+      // Substituir membros existentes pelos importados
+      setMembers(
+        result.members.map((m) => ({
+          name: m.name,
+          email: m.email,
+        }))
+      );
+
+      // Feedback de sucesso
+      setErrors([]);
+      setExcelErrors([]);
+    } catch (error) {
+      setErrors([
+        `Erro ao processar arquivo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+      ]);
+    } finally {
+      setIsUploading(false);
+      // Limpar input para permitir re-upload do mesmo arquivo
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   return (
@@ -88,17 +160,63 @@ export function AddMembersForm({
         </p>
       </div>
 
-      {/* Botão de Import Excel */}
+      {/* Botões de Excel */}
       <div className="mb-6">
-        <button
-          type="button"
-          onClick={handleImportExcel}
-          className="btn btn-secondary w-full sm:w-auto"
-        >
-          📊 Importar do Excel
-        </button>
-        <p className="text-sm text-gray-600 mt-2">
-          Ou adicione os membros manualmente abaixo
+        <div className="flex flex-col sm:flex-row gap-3">
+          {/* Download Template */}
+          <button
+            type="button"
+            onClick={handleDownloadTemplate}
+            className="btn btn-secondary flex items-center justify-center gap-2"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Baixar Template Excel
+          </button>
+
+          {/* Upload Excel */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={handleImportClick}
+            disabled={isUploading}
+            className="btn btn-primary flex items-center justify-center gap-2"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+            {isUploading ? 'Processando...' : 'Importar do Excel'}
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mt-3">
+          💡 Baixe o template, preencha e importe. Ou adicione os membros manualmente abaixo.
         </p>
       </div>
 
@@ -199,15 +317,52 @@ export function AddMembersForm({
           adicionado{members.length === 1 ? '' : 's'} (mínimo: 2)
         </div>
 
-        {/* Erros */}
+        {/* Erros de Validação */}
         {errors.length > 0 && (
           <div className="alert-error">
-            <p className="font-semibold mb-2">Erros encontrados:</p>
+            <p className="font-semibold mb-2">❌ Erros encontrados:</p>
             <ul className="list-disc list-inside">
               {errors.map((error, index) => (
                 <li key={index}>{error}</li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {/* Erros de Excel */}
+        {excelErrors.length > 0 && (
+          <div className="alert-error">
+            <p className="font-semibold mb-2">❌ Erros no arquivo Excel:</p>
+            <div className="max-h-60 overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-red-100 sticky top-0">
+                  <tr>
+                    <th className="px-2 py-1 text-left">Linha</th>
+                    <th className="px-2 py-1 text-left">Campo</th>
+                    <th className="px-2 py-1 text-left">Erro</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {excelErrors.map((error, index) => (
+                    <tr key={index} className="border-t border-red-200">
+                      <td className="px-2 py-1">{error.row}</td>
+                      <td className="px-2 py-1 capitalize">{error.field}</td>
+                      <td className="px-2 py-1">
+                        {error.message}
+                        {error.value && (
+                          <span className="text-red-600 font-mono ml-1">
+                            ({error.value})
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-sm mt-2">
+              Corrija os erros no arquivo Excel e importe novamente.
+            </p>
           </div>
         )}
 
