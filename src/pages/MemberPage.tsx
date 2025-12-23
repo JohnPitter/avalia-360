@@ -255,8 +255,10 @@ export function MemberPage() {
         />
       )}
 
-      {step === 'evaluation' && selectedMember && (
+      {step === 'evaluation' && selectedMember && currentMember && (
         <EvaluationFormComponent
+          evaluationId={evaluationId}
+          evaluatorId={currentMember.id}
           evaluatedMember={selectedMember}
           onSubmit={handleSubmitEvaluation}
           onCancel={handleCancelEvaluation}
