@@ -216,10 +216,18 @@ export function MemberPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="card text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-gray-600">Carregando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-md mx-auto">
+            <div className="card p-12 text-center animate-fade-in">
+              <div className="relative w-20 h-20 mx-auto mb-6">
+                <div className="absolute inset-0 animate-spin border-4 border-green-600 border-t-transparent rounded-full" />
+                <div className="absolute inset-3 animate-spin border-4 border-green-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
+              </div>
+              <p className="text-lg font-medium text-gray-700">Carregando...</p>
+              <p className="text-sm text-gray-500 mt-2">Preparando suas avaliações</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -228,42 +236,113 @@ export function MemberPage() {
   const selectedMember = allMembers.find((m) => m.id === selectedMemberId);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {error && (
-        <div className="alert-error mb-6 max-w-4xl mx-auto">
-          <p className="font-semibold">Erro:</p>
-          <p>{error}</p>
-          <button
-            onClick={() => setError(null)}
-            className="mt-2 btn btn-secondary btn-sm"
-          >
-            Fechar
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Portal do Colaborador</h1>
+                <p className="text-green-100 mt-1">Avalie seus colegas de equipe</p>
+              </div>
+            </div>
+            {currentMember && (
+              <div className="hidden md:flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">{currentMember.name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Breadcrumb */}
+      {step !== 'login' && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center space-x-2 text-sm">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+              <span className="text-gray-500">/</span>
+              <span className="text-gray-700 font-medium">
+                {step === 'member-list' && 'Minhas Avaliações'}
+                {step === 'evaluation' && 'Avaliar Colega'}
+              </span>
+              {step === 'evaluation' && selectedMember && (
+                <>
+                  <span className="text-gray-500">/</span>
+                  <span className="text-gray-600">{selectedMember.name}</span>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
-      {step === 'login' && <MemberLogin onLogin={handleLogin} />}
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Error Alert */}
+        {error && (
+          <div className="max-w-4xl mx-auto mb-6 animate-slide-up">
+            <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 shadow-medium">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <svg className="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-lg font-semibold text-red-800">Erro</h3>
+                  <p className="text-red-700 mt-1">{error}</p>
+                  <button
+                    onClick={() => setError(null)}
+                    className="mt-3 btn-secondary btn-sm"
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-      {step === 'member-list' && currentMember && (
-        <MembersList
-          evaluationTitle={evaluation?.title || 'Avaliação 360°'}
-          currentMember={currentMember}
-          allMembers={allMembers}
-          evaluatedMemberIds={evaluatedMemberIds}
-          onSelectMember={handleSelectMember}
-          onLogout={handleLogout}
-        />
-      )}
+        {/* Step Content */}
+        <div className="animate-fade-in">
+          {step === 'login' && <MemberLogin onLogin={handleLogin} />}
 
-      {step === 'evaluation' && selectedMember && currentMember && (
-        <EvaluationFormComponent
-          evaluationId={evaluationId}
-          evaluatorId={currentMember.id}
-          evaluatedMember={selectedMember}
-          onSubmit={handleSubmitEvaluation}
-          onCancel={handleCancelEvaluation}
-        />
-      )}
+          {step === 'member-list' && currentMember && (
+            <MembersList
+              evaluationTitle={evaluation?.title || 'Avaliação 360°'}
+              currentMember={currentMember}
+              allMembers={allMembers}
+              evaluatedMemberIds={evaluatedMemberIds}
+              onSelectMember={handleSelectMember}
+              onLogout={handleLogout}
+            />
+          )}
+
+          {step === 'evaluation' && selectedMember && currentMember && (
+            <EvaluationFormComponent
+              evaluationId={evaluationId}
+              evaluatorId={currentMember.id}
+              evaluatedMember={selectedMember}
+              onSubmit={handleSubmitEvaluation}
+              onCancel={handleCancelEvaluation}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
