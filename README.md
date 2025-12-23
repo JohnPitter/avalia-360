@@ -57,7 +57,7 @@ Total: 20 avaliações no sistema
 - **Ícones:** Lucide React
 - **Gráficos:** Recharts
 - **Animações:** Framer Motion
-- **Deploy:** GitHub Pages + GitHub Actions
+- **Deploy:** Firebase Hosting + GitHub Actions
 
 ## Design Empresarial Moderno
 
@@ -181,7 +181,7 @@ VITE_EMAILJS_PUBLIC_KEY=sua_public_key
 
 #### Deploy (GitHub Secrets)
 
-Para deploy no GitHub Pages, adicione as variáveis como **GitHub Secrets**:
+Para deploy no Firebase Hosting, adicione as variáveis como **GitHub Secrets**:
 
 1. Acesse `Settings > Secrets and variables > Actions`
 2. Adicione cada variável como um novo secret:
@@ -314,26 +314,7 @@ O arquivo Excel deve ter a seguinte estrutura:
 - Você pode combinar: adicionar alguns membros manualmente e outros via Excel
 - Limite recomendado: 50 membros por avaliação
 
-## Deploy no GitHub Pages
-
-O deploy é automático via GitHub Actions. Sempre que você fizer push na branch `main`, o workflow será executado:
-
-1. Instala as dependências
-2. Injeta as variáveis de ambiente dos GitHub Secrets
-3. Faz o build do projeto
-4. Publica no GitHub Pages
-
-### Configurar GitHub Pages
-
-1. Vá em `Settings > Pages`
-2. Em **Source**, selecione `gh-pages` branch
-3. Clique em **Save**
-
-Seu site estará disponível em: `https://seu-usuario.github.io/avalia-360`
-
-## Deploy no Firebase Hosting (Alternativa)
-
-Se você preferir usar Firebase Hosting ao invés do GitHub Pages, siga os passos abaixo:
+## Deploy no Firebase Hosting
 
 ### 1. Criar Projeto no Firebase
 
@@ -385,14 +366,13 @@ Após configurar os secrets, o deploy será automático:
 
 Seu site estará disponível em: `https://seu-projeto-firebase.web.app`
 
-### Vantagens do Firebase Hosting
-
-- MIME types corretos para módulos JavaScript
-- HTTPS automático com certificado SSL
-- CDN global com baixa latência
-- Headers de segurança configuráveis
-- Deploy preview automático para PRs
-- Rollback fácil para versões anteriores
+**Vantagens do Firebase Hosting:**
+- ✅ MIME types corretos para módulos JavaScript
+- ✅ HTTPS automático com certificado SSL
+- ✅ CDN global com baixa latência
+- ✅ Headers de segurança configuráveis
+- ✅ Deploy automático via GitHub Actions
+- ✅ Rollback fácil para versões anteriores
 
 ## Estrutura do Projeto
 
@@ -400,7 +380,7 @@ Seu site estará disponível em: `https://seu-projeto-firebase.web.app`
 avalia-360/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml          # GitHub Actions workflow
+│       └── firebase-deploy.yml # GitHub Actions workflow para Firebase
 ├── src/
 │   ├── components/             # Componentes React
 │   │   ├── gestor/            # Componentes do gestor
