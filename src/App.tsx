@@ -1,7 +1,10 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { PageLayout } from './components/layout';
 import { ErrorBoundary } from './components/shared';
+import { initPerformanceMonitoring } from './services/observability/webVitals';
+import { initGlobalErrorHandlers } from './services/observability/errorHandlers';
+import { logger } from './services/observability/logger';
 // Force Firebase initialization on app load
 import './services/firebase/config';
 
@@ -22,6 +25,21 @@ function PageLoader() {
 }
 
 function App() {
+  useEffect(() => {
+    // Inicializar observabilidade e monitoramento
+    logger.info('Application starting', {
+      component: 'App',
+      env: import.meta.env.MODE,
+    });
+
+    initGlobalErrorHandlers();
+    initPerformanceMonitoring();
+
+    logger.info('Application initialized successfully', {
+      component: 'App',
+    });
+  }, []);
+
   return (
     <ErrorBoundary>
       <Router>

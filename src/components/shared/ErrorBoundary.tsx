@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Loga erro com stack trace completo
     logger.critical('React Error Boundary caught error', error, {
-      component: errorInfo.componentStack,
+      component: errorInfo.componentStack || undefined,
       errorBoundary: 'ErrorBoundary',
     });
 
