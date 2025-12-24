@@ -15,6 +15,7 @@ import {
   getMembers,
   activateEvaluation,
   countResponses,
+  getManagerEvaluationByToken,
   type MemberData,
   type MemberWithAccessCode,
 } from '@/services/firebase';
@@ -120,16 +121,28 @@ export function ManagerPage() {
       } else {
         // Modo acesso: carrega avaliação existente
         if (!token) {
-          throw new Error('Token é obrigatório');
+          throw new Error('Token é obrigatório para acessar avaliação existente');
         }
 
         setManagerToken(token);
 
-        // TODO: Buscar avaliações do criador e permitir selecionar
-        // Por enquanto, vamos assumir que o token é de uma avaliação específica
-        // Precisaríamos do evaluationId aqui
+        // Buscar avaliação usando email + token
+        const evaluation = await getManagerEvaluationByToken(email, token);
 
-        setError('Implementar busca de avaliações por email + token');
+        if (!evaluation) {
+          throw new Error(
+            'Nenhuma avaliação encontrada com este email e token. Verifique se os dados estão corretos.'
+          );
+        }
+
+        // Avaliação encontrada! Carregar dashboard
+        setEvaluationId(evaluation.id);
+
+        // Criar sessão
+        createManagerSession(evaluation.id, 'manager-id', token);
+
+        // Carregar dashboard
+        await loadDashboard(evaluation.id, token);
       }
     } catch (err) {
       setError(

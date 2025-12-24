@@ -51,3 +51,13 @@ export {
 } from './response.service';
 
 export type { CreateResponseData } from './response.service';
+
+// Manager Service
+export {
+  searchManagerEvaluations,
+  getManagerEvaluationByToken,
+  listManagerEvaluations,
+  validateManagerAccess,
+} from './manager.service';
+
+export type { ManagerEvaluationResult } from './manager.service';
