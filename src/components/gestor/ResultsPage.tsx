@@ -3,6 +3,12 @@ import { ResultCard } from './ResultCard';
 import { TeamComparisonChart } from '@/components/shared';
 import type { Evaluation, TeamMember, ConsolidatedResult } from '@/types';
 import { consolidateAllResults } from '@/services/firebase/response.service';
+import {
+  exportToText,
+  exportToExcel,
+  exportToCSV,
+  exportAll,
+} from '@/utils/resultExport';
 
 /**
  * Página de Resultados Consolidados
@@ -28,6 +34,7 @@ export function ResultsPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('overall');
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   useEffect(() => {
     loadResults();
@@ -75,45 +82,20 @@ export function ResultsPage({
   const highestScore = Math.max(...results.map((r) => r.averages.overall), 0);
   const lowestScore = Math.min(...results.map((r) => r.averages.overall), 5);
 
-  const handleExport = () => {
-    const content = `Resultados - ${evaluation.title}
-Data: ${new Date().toLocaleDateString('pt-BR')}
+  const handleExportText = () => {
+    exportToText(evaluation, results);
+  };
 
-ESTATÍSTICAS GERAIS:
-- Total de Membros Avaliados: ${totalMembers}
-- Média Geral da Equipe: ${overallAverage.toFixed(2)}
-- Maior Pontuação: ${highestScore.toFixed(2)}
-- Menor Pontuação: ${lowestScore.toFixed(2)}
+  const handleExportExcel = () => {
+    exportToExcel(evaluation, results);
+  };
 
-RESULTADOS INDIVIDUAIS:
-${sortedResults
-  .map(
-    (result, index) => `
-${index + 1}. ${result.member.name}
-   Média Geral: ${result.averages.overall.toFixed(2)}
-   - Satisfação: ${result.averages.question_1.toFixed(2)}
-   - Proatividade: ${result.averages.question_2.toFixed(2)}
-   - Qualidade: ${result.averages.question_3.toFixed(2)}
-   - Trabalho em Equipe: ${result.averages.question_4.toFixed(2)}
-   Avaliações Recebidas: ${result.totalResponses}
+  const handleExportCSV = () => {
+    exportToCSV(evaluation, results);
+  };
 
-   PONTOS POSITIVOS:
-   ${result.comments.positive.map((c, i) => `   ${i + 1}. ${c}`).join('\n   ')}
-
-   PONTOS DE MELHORIA:
-   ${result.comments.improvement.map((c, i) => `   ${i + 1}. ${c}`).join('\n   ')}
-`
-  )
-  .join('\n' + '='.repeat(80) + '\n')}
-`;
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `resultados-${evaluation.id}-${Date.now()}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleExportAll = () => {
+    exportAll(evaluation, results);
   };
 
   if (loading) {
@@ -244,18 +226,78 @@ ${index + 1}. ${result.member.name}
               <option value="responses">Avaliações Recebidas</option>
             </select>
           </div>
-          <div className="flex-1 flex flex-col justify-end">
+          <div className="flex-1 flex flex-col justify-end relative">
             <button
-              onClick={handleExport}
+              onClick={() => setExportMenuOpen(!exportMenuOpen)}
               className="py-3 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Exportar Resultados (.txt)
+                Exportar Resultados
+                <svg className={`w-4 h-4 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </span>
             </button>
+
+            {/* Export Menu Dropdown */}
+            {exportMenuOpen && (
+              <div className="absolute top-full mt-2 right-0 bg-white rounded-xl shadow-2xl border-2 border-gray-200 overflow-hidden z-10 min-w-[280px]">
+                <button
+                  onClick={() => { handleExportText(); setExportMenuOpen(false); }}
+                  className="w-full px-5 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 border-b border-gray-100"
+                >
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <div>
+                    <div className="font-semibold text-gray-900">Texto (.txt)</div>
+                    <div className="text-xs text-gray-600">Relatório formatado</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => { handleExportExcel(); setExportMenuOpen(false); }}
+                  className="w-full px-5 py-3 text-left hover:bg-green-50 transition-colors flex items-center gap-3 border-b border-gray-100"
+                >
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <div>
+                    <div className="font-semibold text-gray-900">Excel (.xlsx)</div>
+                    <div className="text-xs text-gray-600">Planilha com gráficos</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => { handleExportCSV(); setExportMenuOpen(false); }}
+                  className="w-full px-5 py-3 text-left hover:bg-purple-50 transition-colors flex items-center gap-3 border-b border-gray-100"
+                >
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  <div>
+                    <div className="font-semibold text-gray-900">CSV (.csv)</div>
+                    <div className="text-xs text-gray-600">Dados tabulares</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => { handleExportAll(); setExportMenuOpen(false); }}
+                  className="w-full px-5 py-3 text-left hover:bg-indigo-50 transition-colors flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-blue-50"
+                >
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  <div>
+                    <div className="font-bold text-indigo-900">Todos os Formatos</div>
+                    <div className="text-xs text-indigo-700">TXT + Excel + CSV</div>
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
