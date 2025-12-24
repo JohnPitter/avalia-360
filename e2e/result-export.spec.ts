@@ -9,7 +9,7 @@
  * 5. Validar conteúdo dos arquivos exportados
  */
 
-import { test, expect } from './fixtures';
+import { test, expect } from '@playwright/test';
 import {
   TEST_DATA,
   fillManagerLogin,

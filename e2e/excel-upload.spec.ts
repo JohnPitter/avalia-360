@@ -8,7 +8,7 @@
  * 4. Importação de membros em massa
  */
 
-import { test, expect } from './fixtures';
+import { test, expect } from '@playwright/test';
 import {
   TEST_DATA,
   fillManagerLogin,
