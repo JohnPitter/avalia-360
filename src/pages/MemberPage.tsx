@@ -17,7 +17,6 @@ import {
   getSession,
   clearSession,
 } from '@/utils/session';
-import { getDisplayName, prepareMembersForDisplay } from '@/utils/memberDisplay';
 import type { TeamMember, Evaluation, EvaluationFormData } from '@/types';
 
 /**
@@ -137,7 +136,7 @@ export function MemberPage() {
         throw new Error('Sessão inválida');
       }
 
-      const membersList = await getMembersByAccessCode(session.accessCode);
+      const membersList = await getMembersByAccessCode(session.token);
 
       // Substitui nomes criptografados por emails (fallback)
       const membersWithDisplayNames = membersList.map((member) => ({

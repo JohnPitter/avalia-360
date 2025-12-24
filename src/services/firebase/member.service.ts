@@ -453,21 +453,15 @@ export async function getMembersByAccessCode(
     const memberData = memberSnapshot.docs[0].data();
     const evaluationId = memberData.avaliation_id;
 
-    // 2. Buscar a avaliação para obter o manager_token
+    // 2. Verificar se a avaliação existe
     const evalDoc = await getDoc(doc(db, 'evaluations', evaluationId));
 
     if (!evalDoc.exists()) {
       throw new Error('Avaliação não encontrada');
     }
 
-    const evalData = evalDoc.data();
-
-    // 3. O creator_token está criptografado, precisamos do token original
-    // Por segurança, vamos armazenar uma versão do token acessível
-    // Alternativamente, podemos usar o próprio accessCode como chave parcial
-
-    // SOLUÇÃO TEMPORÁRIA: buscar todos os membros e retornar com nomes criptografados
-    // O frontend vai precisar descriptografar localmente
+    // 3. Buscar todos os membros
+    // Nota: Nomes virão criptografados - serão convertidos para emails no frontend
     const membersQuery = query(
       collection(db, 'team_members'),
       where('avaliation_id', '==', evaluationId)
