@@ -27,6 +27,7 @@ export {
   addMembers,
   getMembers,
   getMember,
+  getMembersByAccessCode,
   validateAccessCode,
   updateLastAccess,
   incrementCompletedEvaluations,

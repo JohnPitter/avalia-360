@@ -8,6 +8,7 @@ import {
 import {
   updateLastAccess,
   incrementCompletedEvaluations,
+  getMembersByAccessCode,
 } from '@/services/firebase';
 import { createResponse, getPendingEvaluations } from '@/services/firebase/response.service';
 import { searchEvaluationByAccessCode } from '@/services/firebase/search.service';
@@ -16,6 +17,7 @@ import {
   getSession,
   clearSession,
 } from '@/utils/session';
+import { getDisplayName, prepareMembersForDisplay } from '@/utils/memberDisplay';
 import type { TeamMember, Evaluation, EvaluationFormData } from '@/types';
 
 /**
@@ -97,7 +99,15 @@ export function MemberPage() {
       // Extrai dados do resultado da busca
       const { evaluationId: foundEvalId, member } = searchResult;
 
-      setCurrentMember(member);
+      // Se o nome está criptografado, usa email como fallback
+      const displayMember = {
+        ...member,
+        name: member.name.startsWith('U2FsdGVk')
+          ? member.email.split('@')[0]
+          : member.name,
+      };
+
+      setCurrentMember(displayMember);
       setEvaluationId(foundEvalId);
 
       // Atualiza último acesso
@@ -121,22 +131,33 @@ export function MemberPage() {
 
   const loadEvaluationData = async (evalId: string, memberId: string) => {
     try {
-      // Carrega todos os membros
-      // Note: Isso requer o manager token para descriptografar nomes
-      // Precisamos de uma solução para isso
+      // Carrega todos os membros usando código de acesso
+      const session = getSession();
+      if (!session || session.type !== 'member') {
+        throw new Error('Sessão inválida');
+      }
 
-      const membersList: TeamMember[] = []; // TODO: Implementar
-      setAllMembers(membersList);
+      const membersList = await getMembersByAccessCode(session.accessCode);
+
+      // Substitui nomes criptografados por emails (fallback)
+      const membersWithDisplayNames = membersList.map((member) => ({
+        ...member,
+        name: member.name.startsWith('U2FsdGVk') // Se começa com base64 (criptografado)
+          ? member.email.split('@')[0] // Usa primeira parte do email
+          : member.name, // Ou nome descriptografado
+      }));
+
+      setAllMembers(membersWithDisplayNames);
 
       // Carrega avaliações já feitas
       const pending = await getPendingEvaluations(
         evalId,
         memberId,
-        membersList
+        membersWithDisplayNames
       );
 
       // Calcula quais já foram avaliados
-      const allMemberIds = membersList
+      const allMemberIds = membersWithDisplayNames
         .filter((m) => m.id !== memberId)
         .map((m) => m.id);
       const evaluated = allMemberIds.filter((id) => !pending.includes(id));
@@ -144,6 +165,11 @@ export function MemberPage() {
       setEvaluatedMemberIds(evaluated);
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erro ao carregar membros da equipe'
+      );
     }
   };
 
