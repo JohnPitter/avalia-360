@@ -50,8 +50,9 @@ Total: 20 avaliações no sistema
 ![Deploy](https://github.com/joaop/avalia-360/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)
 [![codecov](https://codecov.io/gh/joaop/avalia-360/branch/main/graph/badge.svg)](https://codecov.io/gh/joaop/avalia-360)
 
-- ✅ **Fase 1-4 Completas** (MVP + Features + Segurança + Resiliência)
-- ✅ **263 testes** unitários passando
+- ✅ **Fase 1-5 Completas** (MVP + Features + Segurança + Resiliência + Testes E2E)
+- ✅ **263 testes unitários** passando
+- ✅ **Testes E2E** com Playwright (Manager + Member + Full Cycle)
 - ✅ **CI/CD** automatizado com GitHub Actions
 - ✅ **Production-ready** com monitoramento completo
 
@@ -69,6 +70,7 @@ Total: 20 avaliações no sistema
 - **Ícones:** Lucide React
 - **Gráficos:** Recharts
 - **Animações:** Framer Motion
+- **Testes:** Vitest + Playwright E2E
 - **Deploy:** Firebase Hosting + GitHub Actions
 
 ## ✨ Design Moderno e Profissional (Redesign 2025)
@@ -326,6 +328,87 @@ npm run build
 ```bash
 npm run preview
 ```
+
+### Testes
+
+#### Testes Unitários
+
+Executar todos os testes unitários (263 testes):
+
+```bash
+npm test
+```
+
+Executar testes com UI interativa:
+
+```bash
+npm run test:ui
+```
+
+Executar testes uma vez (sem watch mode):
+
+```bash
+npm run test:run
+```
+
+Executar com cobertura de código:
+
+```bash
+npm run test:coverage
+```
+
+#### Testes E2E (End-to-End)
+
+Os testes E2E com Playwright validam os fluxos completos de usuário:
+
+**Fluxos Testados:**
+- ✅ **Manager Flow:** Login → Criar avaliação → Adicionar membros → Enviar convites
+- ✅ **Member Flow:** Login com código → Ver lista → Avaliar membros → Completar
+- ✅ **Full Cycle:** Gestor cria → Membros avaliam → Gestor vê resultados
+
+**Executar testes E2E:**
+
+```bash
+# Modo headless (padrão)
+npm run test:e2e
+
+# Modo headed (ver browser)
+npm run test:e2e:headed
+
+# UI interativa do Playwright
+npm run test:e2e:ui
+
+# Debug mode (passo a passo)
+npm run test:e2e:debug
+
+# Ver relatório HTML
+npm run test:e2e:report
+```
+
+**Executar todos os testes (unitários + E2E):**
+
+```bash
+npm run test:all
+```
+
+**Estrutura dos Testes E2E:**
+
+```
+e2e/
+├── fixtures/           # Fixtures customizados do Playwright
+├── utils/              # Helpers e utilitários de teste
+├── manager-flow.spec.ts    # Testes do fluxo do gestor
+├── member-flow.spec.ts     # Testes do fluxo do colaborador
+└── full-cycle.spec.ts      # Teste de integração completa
+```
+
+**Requisitos:**
+- Node.js 18+
+- Playwright instalado (`npx playwright install chromium`)
+- Dev server rodando (`npm run dev`) ou CI=true
+
+**CI/CD:**
+Os testes E2E rodam automaticamente no GitHub Actions após o build, garantindo que todo commit mantém os fluxos funcionais.
 
 ## Template Excel para Importação de Membros
 

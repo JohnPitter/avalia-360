@@ -35,6 +35,12 @@ dist-ssr
 coverage
 .nyc_output
 
+# E2E Testing
+e2e-results/
+playwright-report/
+test-results/
+playwright/.cache/
+
 # Build
 build
 
