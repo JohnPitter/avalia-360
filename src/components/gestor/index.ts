@@ -6,6 +6,7 @@
 export { ManagerLogin } from './ManagerLogin';
 export { CreateEvaluationForm } from './CreateEvaluationForm';
 export { AddMembersForm } from './AddMembersForm';
+export { ExcelUpload } from './ExcelUpload';
 export { EvaluationSuccess } from './EvaluationSuccess';
 export { ProgressDashboard } from './ProgressDashboard';
 export { ResultCard } from './ResultCard';

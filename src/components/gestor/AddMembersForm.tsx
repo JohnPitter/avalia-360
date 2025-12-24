@@ -1,13 +1,8 @@
 import { useState, useRef } from 'react';
 import { validateTeamMembers } from '@/utils/validation';
 import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
-import {
-  downloadExcelTemplate,
-  parseExcelFile,
-  isValidExcelFile,
-  isValidFileSize,
-  type ExcelError,
-} from '@/utils/excel';
+import { downloadExcelTemplate } from '@/utils/excelTemplate';
+import { parseExcelFile, type ExcelParseResult } from '@/utils/excelParser';
 import type { MemberData } from '@/services/firebase';
 
 /**
@@ -36,7 +31,7 @@ export function AddMembersForm({
     { name: '', email: '' },
   ]);
   const [errors, setErrors] = useState<string[]>([]);
-  const [excelErrors, setExcelErrors] = useState<ExcelError[]>([]);
+  const [parseResult, setParseResult] = useState<ExcelParseResult | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -83,7 +78,7 @@ export function AddMembersForm({
   };
 
   const handleDownloadTemplate = () => {
-    downloadExcelTemplate('template-avaliacao-360.xlsx');
+    downloadExcelTemplate();
   };
 
   const handleImportClick = () => {
@@ -96,27 +91,21 @@ export function AddMembersForm({
 
     // Limpar erros anteriores
     setErrors([]);
-    setExcelErrors([]);
-
-    // Validar extensão
-    if (!isValidExcelFile(file)) {
-      setErrors(['Formato inválido. Use arquivos .xlsx ou .xls']);
-      return;
-    }
-
-    // Validar tamanho
-    if (!isValidFileSize(file)) {
-      setErrors(['Arquivo muito grande. Tamanho máximo: 5MB']);
-      return;
-    }
+    setParseResult(null);
 
     // Fazer parse
     setIsUploading(true);
     try {
-      const result = await parseExcelFile(file);
+      const result = await parseExcelFile(file, {
+        maxMembers: 100,
+        allowDuplicateEmails: false,
+        strictValidation: true,
+      });
+
+      setParseResult(result);
 
       if (!result.success) {
-        setExcelErrors(result.errors);
+        setErrors(result.errors);
         return;
       }
 
@@ -135,7 +124,6 @@ export function AddMembersForm({
 
       // Feedback de sucesso
       setErrors([]);
-      setExcelErrors([]);
     } catch (error) {
       setErrors([
         `Erro ao processar arquivo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
@@ -361,47 +349,45 @@ export function AddMembersForm({
             </div>
           )}
 
-          {/* Excel Errors */}
-          {excelErrors.length > 0 && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 animate-slide-up">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          {/* Excel Parse Result - Warnings */}
+          {parseResult && parseResult.warnings.length > 0 && (
+            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 animate-slide-up">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <p className="font-semibold text-red-900">Erros no arquivo Excel:</p>
-              </div>
-              <div className="max-h-60 overflow-y-auto rounded-xl border border-red-200">
-                <table className="w-full text-sm">
-                  <thead className="bg-red-100 sticky top-0">
-                    <tr>
-                      <th className="px-3 py-2 text-left font-semibold">Linha</th>
-                      <th className="px-3 py-2 text-left font-semibold">Campo</th>
-                      <th className="px-3 py-2 text-left font-semibold">Erro</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {excelErrors.map((error, index) => (
-                      <tr key={index} className="border-t border-red-200 bg-white">
-                        <td className="px-3 py-2">{error.row}</td>
-                        <td className="px-3 py-2 capitalize">{error.field}</td>
-                        <td className="px-3 py-2">
-                          {error.message}
-                          {error.value && (
-                            <span className="text-red-600 font-mono ml-1">
-                              ({error.value})
-                            </span>
-                          )}
-                        </td>
-                      </tr>
+                <div className="flex-1">
+                  <p className="font-semibold text-yellow-900 mb-2">⚠️ Avisos do arquivo Excel:</p>
+                  <ul className="space-y-1 text-sm text-yellow-700">
+                    {parseResult.warnings.map((warning, index) => (
+                      <li key={index}>• {warning}</li>
                     ))}
-                  </tbody>
-                </table>
+                  </ul>
+                </div>
               </div>
-              <p className="text-sm text-red-700 mt-3">
-                💡 Corrija os erros no arquivo Excel e importe novamente.
-              </p>
+            </div>
+          )}
+
+          {/* Excel Parse Result - Success Summary */}
+          {parseResult && parseResult.success && (
+            <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 animate-slide-up">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-green-900">
+                    ✅ {parseResult.validRows} membro(s) importado(s) com sucesso!
+                  </p>
+                  <p className="text-sm text-green-700 mt-1">
+                    Total de linhas: {parseResult.totalRows} | Válidas: {parseResult.validRows}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
