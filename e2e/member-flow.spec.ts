@@ -9,7 +9,7 @@
  * 5. Completar todas as avaliações
  */
 
-import { test, expect } from './fixtures';
+import { test, expect } from '@playwright/test';
 import {
   TEST_DATA,
   fillRatings,

@@ -9,7 +9,7 @@
  * Este é o teste mais importante - valida toda a jornada do usuário
  */
 
-import { test, expect } from './fixtures';
+import { test, expect } from '@playwright/test';
 import {
   TEST_DATA,
   fillManagerLogin,

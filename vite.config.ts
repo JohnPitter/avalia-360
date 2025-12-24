@@ -4,8 +4,9 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // Base path para Firebase Hosting
-  base: '/',
+  // Base path: '/' para Firebase, '/avalia-360/' para GitHub Pages
+  // GitHub Actions define VITE_BASE_PATH no ambiente
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [react()],
   resolve: {
     alias: {
