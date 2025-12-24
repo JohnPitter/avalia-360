@@ -6,11 +6,11 @@ import {
   EvaluationFormComponent,
 } from '@/components/colaborador';
 import {
-  validateAccessCode,
   updateLastAccess,
   incrementCompletedEvaluations,
 } from '@/services/firebase';
 import { createResponse, getPendingEvaluations } from '@/services/firebase/response.service';
+import { searchEvaluationByAccessCode } from '@/services/firebase/search.service';
 import {
   createMemberSession,
   getSession,
@@ -85,32 +85,27 @@ export function MemberPage() {
     setError(null);
 
     try {
-      // Valida código de acesso
-      // Precisamos buscar em todas as avaliações ativas
-      // Por simplicidade, vamos assumir que temos um evaluationId
+      // Busca avaliação usando apenas o código de acesso
+      const searchResult = await searchEvaluationByAccessCode(accessCode);
 
-      // TODO: Implementar busca de avaliação por código de acesso
-      // Por enquanto, vamos usar um ID fixo para desenvolvimento
-
-      const tempEvaluationId = 'temp-eval-id';
-
-      const member = await validateAccessCode(tempEvaluationId, accessCode);
-
-      if (!member) {
-        throw new Error('Código de acesso inválido');
+      if (!searchResult) {
+        throw new Error('Código de acesso inválido ou não encontrado');
       }
 
+      // Extrai dados do resultado da busca
+      const { evaluationId: foundEvalId, member } = searchResult;
+
       setCurrentMember(member);
-      setEvaluationId(tempEvaluationId);
+      setEvaluationId(foundEvalId);
 
       // Atualiza último acesso
       await updateLastAccess(member.id);
 
       // Cria sessão
-      createMemberSession(tempEvaluationId, member.id, accessCode);
+      createMemberSession(foundEvalId, member.id, accessCode);
 
       // Carrega membros e avaliação
-      await loadEvaluationData(tempEvaluationId, member.id);
+      await loadEvaluationData(foundEvalId, member.id);
 
       setStep('member-list');
     } catch (err) {
@@ -322,7 +317,7 @@ export function MemberPage() {
 
         {/* Step Content */}
         <div className="animate-fade-in">
-          {step === 'login' && <MemberLogin onLogin={handleLogin} />}
+          {step === 'login' && <MemberLogin onLogin={handleLogin} error={error} loading={loading} />}
 
           {step === 'member-list' && currentMember && (
             <MembersList

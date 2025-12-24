@@ -9,9 +9,11 @@ import { sanitizeNumeric } from '@/utils/sanitization';
 
 interface MemberLoginProps {
   onLogin: (accessCode: string) => void;
+  error?: string | null;
+  loading?: boolean;
 }
 
-export function MemberLogin({ onLogin }: MemberLoginProps) {
+export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
   const [accessCode, setAccessCode] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -101,7 +103,7 @@ export function MemberLogin({ onLogin }: MemberLoginProps) {
           </div>
 
           {/* Erros */}
-          {errors.length > 0 && (
+          {(errors.length > 0 || error) && (
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 animate-slide-up">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -110,8 +112,9 @@ export function MemberLogin({ onLogin }: MemberLoginProps) {
                   </svg>
                 </div>
                 <ul className="space-y-1 text-sm text-red-700 flex-1">
-                  {errors.map((error, index) => (
-                    <li key={index}>• {error}</li>
+                  {error && <li>• {error}</li>}
+                  {errors.map((err, index) => (
+                    <li key={index}>• {err}</li>
                   ))}
                 </ul>
               </div>
@@ -122,13 +125,25 @@ export function MemberLogin({ onLogin }: MemberLoginProps) {
           <button
             type="submit"
             className={`w-full py-4 font-semibold rounded-xl shadow-lg transition-all duration-200 ${
-              accessCode.length === 6
+              accessCode.length === 6 && !loading
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
-            disabled={accessCode.length !== 6}
+            disabled={accessCode.length !== 6 || loading}
           >
-            {accessCode.length === 6 ? '🚀 Acessar Avaliação' : `Digite os 6 dígitos (${accessCode.length}/6)`}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Verificando...
+              </span>
+            ) : accessCode.length === 6 ? (
+              '🚀 Acessar Avaliação'
+            ) : (
+              `Digite os 6 dígitos (${accessCode.length}/6)`
+            )}
           </button>
         </form>
       </div>
