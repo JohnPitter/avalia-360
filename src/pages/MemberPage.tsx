@@ -89,7 +89,9 @@ export function MemberPage() {
       const searchResult = await searchEvaluationByAccessCode(accessCode);
 
       if (!searchResult) {
-        throw new Error('Código de acesso inválido ou não encontrado');
+        throw new Error(
+          'Código de acesso inválido ou não encontrado. Verifique se você digitou corretamente o código de 6 dígitos que recebeu por email.'
+        );
       }
 
       // Extrai dados do resultado da busca
