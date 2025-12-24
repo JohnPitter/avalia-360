@@ -44,8 +44,20 @@ Total: 20 avaliações no sistema
 - 🎭 **Anonimato Garantido** - Gestor não vê quem avaliou quem, apenas resultados consolidados
 - 💾 **Salvamento Parcial** - Colaboradores podem completar avaliações em múltiplas sessões
 
+## 🚀 Status do Projeto
+
+![CI](https://github.com/joaop/avalia-360/workflows/CI%20-%20Tests%20and%20Build/badge.svg)
+![Deploy](https://github.com/joaop/avalia-360/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)
+[![codecov](https://codecov.io/gh/joaop/avalia-360/branch/main/graph/badge.svg)](https://codecov.io/gh/joaop/avalia-360)
+
+- ✅ **Fase 1-4 Completas** (MVP + Features + Segurança + Resiliência)
+- ✅ **263 testes** unitários passando
+- ✅ **CI/CD** automatizado com GitHub Actions
+- ✅ **Production-ready** com monitoramento completo
+
 ## Tecnologias Utilizadas
 
+### Core
 - **Frontend:** React 18 + TypeScript + Vite
 - **Roteamento:** React Router v6
 - **UI:** Tailwind CSS + shadcn/ui
@@ -1033,6 +1045,82 @@ Para detalhes técnicos completos sobre implementação de observabilidade, cons
 - **EmailJS:** ~200 emails/mês no plano gratuito
 - **Firebase Firestore:** 50k leituras/dia no plano gratuito
 - **Tokens:** Expiram após 90 dias
+
+## 🚀 CI/CD e Deployment
+
+### GitHub Actions
+
+O projeto possui **3 workflows automatizados**:
+
+#### 1. **CI - Tests and Build** (`ci.yml`)
+
+Executa em todo push e PR para `main` e `develop`:
+
+```yaml
+✅ Testes em Node.js 18.x e 20.x
+✅ Type checking com TypeScript
+✅ Linting (ESLint)
+✅ Testes unitários com coverage
+✅ Build de produção
+✅ Security audit (npm audit)
+✅ Upload de artifacts e coverage para Codecov
+```
+
+#### 2. **Deploy to GitHub Pages** (`deploy.yml`)
+
+Deploy automático em push para `main`:
+
+```yaml
+✅ Build com variáveis de ambiente do GitHub Secrets
+✅ Testes antes do deploy
+✅ Deploy para GitHub Pages
+✅ URL gerada automaticamente
+```
+
+#### 3. **Dependabot** (`dependabot.yml`)
+
+Atualizações automáticas de dependências:
+
+```yaml
+✅ NPM dependencies (weekly, Monday 9am)
+✅ GitHub Actions (weekly, Monday 9am)
+✅ Agrupamento de minor/patch updates
+✅ Auto-assign para revisão
+```
+
+### Configuração do Deploy
+
+**Secrets necessários no GitHub:**
+
+```bash
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service
+VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
+VITE_ENCRYPTION_KEY=your_32_char_encryption_key
+```
+
+### Performance em Produção
+
+**Bundle Size (Otimizado):**
+```
+Entry point:  11.98 kB gzipped
+ManagerPage:  285.93 kB gzipped (lazy loaded)
+MemberPage:   8.72 kB gzipped (lazy loaded)
+Firebase:     80.88 kB gzipped
+React:        52.31 kB gzipped
+Total:        ~480 kB gzipped
+```
+
+**Web Vitals (Target):**
+- LCP (Largest Contentful Paint): < 2.5s
+- FID (First Input Delay): < 100ms
+- CLS (Cumulative Layout Shift): < 0.1
 
 ## Melhorias Futuras
 
