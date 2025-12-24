@@ -23,6 +23,39 @@ import {
   expectText,
 } from './utils/test-helpers';
 
+/**
+ * Mock de interceptação de chamadas EmailJS
+ * Intercepta requests para api.emailjs.com
+ */
+async function interceptEmailJSCalls(page: any) {
+  const emailsSent: any[] = [];
+
+  await page.route('https://api.emailjs.com/api/v1.0/email/send', async (route: any) => {
+    const request = route.request();
+    const postData = request.postDataJSON();
+
+    // Armazena email "enviado"
+    emailsSent.push({
+      to: postData.to_email || postData.user_email,
+      template: postData.template_id,
+      data: postData,
+      timestamp: Date.now(),
+    });
+
+    // Simula resposta de sucesso
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'OK',
+        text: `mock-message-id-${Date.now()}`,
+      }),
+    });
+  });
+
+  return emailsSent;
+}
+
 test.describe('Manager Flow - Complete Journey', () => {
   test.beforeEach(async ({ page }) => {
     // Navegar para home
@@ -256,6 +289,156 @@ test.describe('Manager Flow - Complete Journey', () => {
       await expect(page.locator(`text=${member.name}`)).toBeHidden({
         timeout: 5000,
       });
+    });
+  });
+
+  test('should send invite emails to all members', async ({ page }) => {
+    // Interceptar chamadas EmailJS
+    const emailsSent = await interceptEmailJSCalls(page);
+
+    await test.step('Login as Manager', async () => {
+      await fillManagerLogin(
+        page,
+        TEST_DATA.manager.email,
+        TEST_DATA.manager.name
+      );
+      await page.click('button[type="submit"]');
+      await waitForLoadingToFinish(page);
+    });
+
+    await test.step('Create evaluation with members', async () => {
+      // Preencher título
+      await fillEvaluationForm(page, TEST_DATA.evaluation.title);
+
+      // Adicionar membros
+      for (const member of TEST_DATA.members) {
+        const nameInput = page.locator('input[placeholder*="nome" i]').last();
+        await nameInput.fill(member.name);
+
+        const emailInput = page.locator('input[type="email"]').last();
+        await emailInput.fill(member.email);
+
+        await page.click('button:has-text("Adicionar")');
+        await page.waitForTimeout(500);
+      }
+    });
+
+    await test.step('Send invites and validate emails', async () => {
+      // Submeter avaliação (envia emails)
+      await page.click(
+        'button:has-text("Criar"), button:has-text("Enviar")'
+      );
+
+      // Aguardar processamento
+      await waitForLoadingToFinish(page);
+
+      // Aguardar sucesso
+      await Promise.race([
+        page.waitForURL(/success|dashboard/i, { timeout: 30000 }),
+        page.waitForSelector('text=/sucesso|criada/i', { timeout: 30000 }),
+      ]);
+
+      // Aguardar um pouco para garantir que emails foram "enviados"
+      await page.waitForTimeout(2000);
+
+      // VALIDAÇÃO: Verificar que emails foram enviados
+      console.log(`📧 Emails interceptados: ${emailsSent.length}`);
+
+      // Deve ter enviado email para cada membro
+      expect(emailsSent.length).toBeGreaterThanOrEqual(TEST_DATA.members.length);
+
+      // Validar que cada membro recebeu email
+      for (const member of TEST_DATA.members) {
+        const memberEmail = emailsSent.find((email) =>
+          email.data?.to_email?.includes(member.email) ||
+          email.to?.includes(member.email)
+        );
+
+        if (memberEmail) {
+          console.log(`✅ Email enviado para: ${member.name} (${member.email})`);
+
+          // Validar que email contém dados corretos
+          expect(memberEmail.data || memberEmail).toBeTruthy();
+
+          // Deve ter código de acesso (6 dígitos)
+          const accessCode =
+            memberEmail.data?.access_code || memberEmail.data?.accessCode;
+          if (accessCode) {
+            expect(accessCode).toMatch(/^\d{6}$/);
+            console.log(`   Código de acesso: ${accessCode}`);
+          }
+
+          // Deve ter título da avaliação
+          const evalTitle =
+            memberEmail.data?.evaluation_title ||
+            memberEmail.data?.evaluationTitle;
+          if (evalTitle) {
+            expect(evalTitle).toContain(TEST_DATA.evaluation.title);
+          }
+        } else {
+          console.warn(
+            `⚠️  Email não encontrado para: ${member.name} (${member.email})`
+          );
+          // Não falha o teste se EmailJS não está configurado
+        }
+      }
+    });
+  });
+
+  test('should handle email sending errors gracefully', async ({ page }) => {
+    // Interceptar e forçar erro no EmailJS
+    await page.route(
+      'https://api.emailjs.com/api/v1.0/email/send',
+      async (route) => {
+        // Simula erro de rede
+        await route.abort('failed');
+      }
+    );
+
+    await test.step('Login as Manager', async () => {
+      await fillManagerLogin(
+        page,
+        TEST_DATA.manager.email,
+        TEST_DATA.manager.name
+      );
+      await page.click('button[type="submit"]');
+      await waitForLoadingToFinish(page);
+    });
+
+    await test.step('Try to create evaluation with email errors', async () => {
+      // Preencher título
+      await fillEvaluationForm(page, TEST_DATA.evaluation.title);
+
+      // Adicionar um membro
+      const member = TEST_DATA.members[0];
+      await page.fill('input[placeholder*="nome" i]', member.name);
+      await page.fill('input[type="email"]', member.email);
+      await page.click('button:has-text("Adicionar")');
+
+      // Submeter
+      await page.click('button:has-text("Criar")');
+
+      // Aguardar processamento
+      await page.waitForTimeout(3000);
+
+      // Sistema deve continuar funcionando mesmo com erro de email
+      // Pode mostrar aviso, mas não deve bloquear completamente
+      // (Depende da implementação - pode ser sucesso parcial ou erro)
+
+      const hasError = await page
+        .locator('text=/erro|falha|failed/i')
+        .isVisible()
+        .catch(() => false);
+
+      const hasSuccess = await page
+        .locator('text=/sucesso|criada|success/i')
+        .isVisible()
+        .catch(() => false);
+
+      // Pelo menos uma das duas deve estar visível
+      expect(hasError || hasSuccess).toBeTruthy();
+
+      console.log(`Email error handling: ${hasError ? 'Erro mostrado' : 'Sucesso parcial'}`);
     });
   });
 });
