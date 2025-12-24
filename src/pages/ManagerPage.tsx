@@ -342,7 +342,6 @@ export function ManagerPage() {
 
           {step === 'create-evaluation' && (
             <CreateEvaluationForm
-              managerEmail={managerEmail}
               onSubmit={handleCreateEvaluation}
               onCancel={handleLogout}
             />
