@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { PageLayout } from './components/layout';
+import { ErrorBoundary } from './components/shared';
 // Force Firebase initialization on app load
 import './services/firebase/config';
 
@@ -22,15 +23,17 @@ function PageLoader() {
 
 function App() {
   return (
-    <Router>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/gestor" element={<ManagerPage />} />
-          <Route path="/colaborador" element={<MemberPage />} />
-        </Routes>
-      </Suspense>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/gestor" element={<ManagerPage />} />
+            <Route path="/colaborador" element={<MemberPage />} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

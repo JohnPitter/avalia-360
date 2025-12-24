@@ -28,3 +28,6 @@ export {
   RatingBadge,
 } from './Badge';
 export type { BadgeVariant, BadgeSize } from './Badge';
+
+// Error Handling
+export { ErrorBoundary, WithErrorBoundary } from './ErrorBoundary';
