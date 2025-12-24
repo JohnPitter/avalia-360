@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/shared';
 import { initPerformanceMonitoring } from './services/observability/webVitals';
 import { initGlobalErrorHandlers } from './services/observability/errorHandlers';
 import { logger } from './services/observability/logger';
+import { verifyConfigIntegrity } from './utils/integrity';
 // Force Firebase initialization on app load
 import './services/firebase/config';
 
@@ -32,7 +33,19 @@ function App() {
       env: import.meta.env.MODE,
     });
 
+    // OWASP A08 - Verificar integridade de configuração
+    verifyConfigIntegrity().then((valid) => {
+      if (!valid) {
+        logger.critical('Configuration integrity check failed', undefined, {
+          component: 'App',
+        });
+      }
+    });
+
+    // OWASP A09 - Global error handlers
     initGlobalErrorHandlers();
+
+    // Performance monitoring
     initPerformanceMonitoring();
 
     logger.info('Application initialized successfully', {
