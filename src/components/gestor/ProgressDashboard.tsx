@@ -1,8 +1,10 @@
+import { memo, useMemo } from 'react';
 import type { Evaluation, TeamMember } from '@/types';
 
 /**
  * Dashboard de Progresso da Avaliação
  * Exibe progresso geral e individual dos membros
+ * Otimizado com React.memo e useMemo para cálculos complexos
  */
 
 interface MemberProgress {
@@ -19,33 +21,38 @@ interface ProgressDashboardProps {
   onLogout: () => void;
 }
 
-export function ProgressDashboard({
+const ProgressDashboardComponent = ({
   evaluation,
   members,
   totalResponses,
   expectedResponses,
   onViewResults,
   onLogout,
-}: ProgressDashboardProps) {
-  const overallProgress = Math.round(
-    (totalResponses / expectedResponses) * 100
+}: ProgressDashboardProps) => {
+  // Memoize expensive calculations
+  const overallProgress = useMemo(
+    () => Math.round((totalResponses / expectedResponses) * 100),
+    [totalResponses, expectedResponses]
   );
 
-  const isComplete = totalResponses >= expectedResponses;
+  const isComplete = useMemo(
+    () => totalResponses >= expectedResponses,
+    [totalResponses, expectedResponses]
+  );
 
-  const getMemberProgress = (member: TeamMember): MemberProgress => {
-    const percentage = Math.round(
-      (member.completed_evaluations / member.total_evaluations) * 100
-    );
+  const memberProgressList = useMemo(() => {
+    return members.map((member): MemberProgress => {
+      const percentage = Math.round(
+        (member.completed_evaluations / member.total_evaluations) * 100
+      );
+      return { member, percentage };
+    });
+  }, [members]);
 
-    return { member, percentage };
-  };
-
-  const memberProgressList = members.map(getMemberProgress);
-
-  const completedMembers = memberProgressList.filter(
-    (mp) => mp.percentage === 100
-  ).length;
+  const completedMembers = useMemo(
+    () => memberProgressList.filter((mp) => mp.percentage === 100).length,
+    [memberProgressList]
+  );
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -356,4 +363,7 @@ export function ProgressDashboard({
       )}
     </div>
   );
-}
+};
+
+// Memoize component to prevent unnecessary re-renders
+export const ProgressDashboard = memo(ProgressDashboardComponent);

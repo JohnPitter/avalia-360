@@ -1,18 +1,35 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { ManagerPage } from './pages/ManagerPage';
-import { MemberPage } from './pages/MemberPage';
 import { PageLayout } from './components/layout';
 // Force Firebase initialization on app load
 import './services/firebase/config';
 
+// Lazy load pages for code splitting
+const ManagerPage = lazy(() => import('./pages/ManagerPage').then(module => ({ default: module.ManagerPage })));
+const MemberPage = lazy(() => import('./pages/MemberPage').then(module => ({ default: module.MemberPage })));
+
+// Loading component
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mb-4"></div>
+        <p className="text-lg text-gray-600 font-medium">Carregando...</p>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/gestor" element={<ManagerPage />} />
-        <Route path="/colaborador" element={<MemberPage />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/gestor" element={<ManagerPage />} />
+          <Route path="/colaborador" element={<MemberPage />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { PerformanceRadarChart } from '@/components/shared';
 import type { ConsolidatedResult } from '@/types';
 
 /**
  * Card de Resultado Individual
  * Exibe médias e comentários de um membro avaliado
+ * Otimizado com React.memo para evitar re-renders desnecessários
  */
 
 interface ResultCardProps {
@@ -12,7 +13,7 @@ interface ResultCardProps {
   rank?: number;
 }
 
-export function ResultCard({ result, rank }: ResultCardProps) {
+const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
   const [showComments, setShowComments] = useState(false);
 
   const { member, averages, comments, totalResponses } = result;
@@ -225,4 +226,7 @@ export function ResultCard({ result, rank }: ResultCardProps) {
       )}
     </div>
   );
-}
+};
+
+// Memoize component to prevent unnecessary re-renders
+export const ResultCard = memo(ResultCardComponent);

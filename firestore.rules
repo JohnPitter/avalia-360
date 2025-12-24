@@ -1,0 +1,113 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isValidEmail(email) {
+      return email.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+    }
+
+    function isValidUUID(uuid) {
+      return uuid.matches('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
+    }
+
+    // Evaluations collection
+    match /evaluations/{evaluationId} {
+      // Anyone can create (gestor creating new evaluation)
+      allow create: if request.resource.data.keys().hasAll(['id', 'creator_email_hash', 'manager_token', 'title', 'status', 'created_at'])
+                    && request.resource.data.id == evaluationId
+                    && isValidUUID(evaluationId)
+                    && request.resource.data.status in ['draft', 'active']
+                    && request.resource.data.created_at == request.time;
+
+      // Read with valid manager token
+      allow read: if resource.data.manager_token == request.auth.token.manager_token
+                  || true; // Allow read for now (TODO: implement proper auth)
+
+      // Update only status field with manager token
+      allow update: if resource.data.manager_token == request.auth.token.manager_token
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updated_at']);
+
+      // No delete allowed
+      allow delete: if false;
+    }
+
+    // Team members collection
+    match /team_members/{memberId} {
+      // Create only during evaluation setup
+      allow create: if request.resource.data.keys().hasAll(['id', 'evaluation_id', 'name_encrypted', 'email_hash', 'access_code_hash', 'completed_evaluations', 'total_evaluations'])
+                    && request.resource.data.id == memberId
+                    && isValidUUID(memberId)
+                    && request.resource.data.completed_evaluations == 0
+                    && request.resource.data.total_evaluations >= 0;
+
+      // Read by evaluation_id (for listing members)
+      allow read: if true; // Public read for member lists
+
+      // Update only completed_evaluations and last_access_date
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['completed_evaluations', 'last_access_date'])
+                    && request.resource.data.completed_evaluations >= resource.data.completed_evaluations
+                    && request.resource.data.completed_evaluations <= resource.data.total_evaluations;
+
+      // No delete
+      allow delete: if false;
+    }
+
+    // Responses collection
+    match /responses/{responseId} {
+      // Create response (collaborator submitting evaluation)
+      allow create: if request.resource.data.keys().hasAll(['id', 'evaluation_id', 'evaluator_id', 'evaluated_id', 'question_1', 'question_2', 'question_3', 'question_4', 'positive_points_encrypted', 'improvement_points_encrypted', 'created_at'])
+                    && request.resource.data.id == responseId
+                    && isValidUUID(responseId)
+                    && request.resource.data.question_1 >= 1 && request.resource.data.question_1 <= 5
+                    && request.resource.data.question_2 >= 1 && request.resource.data.question_2 <= 5
+                    && request.resource.data.question_3 >= 1 && request.resource.data.question_3 <= 5
+                    && request.resource.data.question_4 >= 1 && request.resource.data.question_4 <= 5
+                    && request.resource.data.evaluator_id != request.resource.data.evaluated_id // Can't evaluate self
+                    && request.resource.data.created_at == request.time;
+
+      // Read responses for consolidation (manager viewing results)
+      allow read: if true; // Allow read for aggregation (encrypted data)
+
+      // No update or delete (responses are immutable)
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // Drafts collection (for saving partial evaluations)
+    match /drafts/{draftId} {
+      // Create draft
+      allow create: if request.resource.data.keys().hasAll(['id', 'evaluator_id', 'evaluated_id', 'form_data', 'saved_at'])
+                    && request.resource.data.id == draftId
+                    && request.resource.data.saved_at == request.time;
+
+      // Read own drafts
+      allow read: if resource.data.evaluator_id == request.auth.uid
+                  || true; // Allow for now
+
+      // Update own draft
+      allow update: if resource.data.evaluator_id == request.auth.uid
+                    || true; // Allow for now
+
+      // Delete own draft (after submission)
+      allow delete: if resource.data.evaluator_id == request.auth.uid
+                    || true; // Allow for now
+    }
+
+    // Security logs (optional, for monitoring)
+    match /security_logs/{logId} {
+      // Only allow creation (append-only logs)
+      allow create: if request.resource.data.keys().hasAll(['id', 'event_type', 'timestamp'])
+                    && request.resource.data.timestamp == request.time;
+
+      // No read, update or delete
+      allow read: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
