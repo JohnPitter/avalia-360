@@ -2,6 +2,103 @@
 
 Este projeto segue 12 princípios fundamentais que devem guiar TODAS as sugestões de código.
 
+## 🤖 INSTRUÇÕES DIRETAS PARA SUGESTÕES
+
+### ⚡ Regras de Sugestão de Código
+
+#### 1. ECONOMIA DE TOKENS - CÓDIGO CONCISO
+- ❌ **NUNCA** adicione comentários longos e verbosos
+- ❌ **NUNCA** sugira código com explicações embutidas
+- ❌ **NUNCA** adicione JSDoc excessivo (apenas em funções complexas)
+- ✅ **SEMPRE** sugira código limpo e autoexplicativo
+- ✅ **SEMPRE** use nomes de variáveis descritivos
+- ✅ **SEMPRE** prefira código que se explica sozinho
+
+**Exemplo:**
+```typescript
+// ❌ RUIM - Comentários excessivos
+// Esta função calcula a média das avaliações
+// Ela recebe um array de ratings
+// E retorna a média aritmética
+function calculateAverage(ratings: number[]): number {
+  // Soma todos os ratings
+  const sum = ratings.reduce((a, b) => a + b, 0);
+  // Divide pela quantidade de ratings
+  return sum / ratings.length;
+}
+
+// ✅ BOM - Código autoexplicativo
+function calculateAverage(ratings: number[]): number {
+  const sum = ratings.reduce((a, b) => a + b, 0);
+  return sum / ratings.length;
+}
+```
+
+#### 2. PERFORMANCE SEMPRE - O(N) OU MELHOR
+- ❌ **NUNCA** sugira loops aninhados (O(N²))
+- ❌ **NUNCA** sugira operações caras dentro de loops
+- ✅ **SEMPRE** use Map/Set para lookups O(1)
+- ✅ **SEMPRE** prefira algoritmos eficientes
+- ✅ **SEMPRE** considere complexidade algorítmica
+
+**Exemplo:**
+```typescript
+// ❌ RUIM - O(N²)
+function findDuplicates(items: string[]) {
+  const duplicates = [];
+  for (const item of items) {
+    for (const other of items) {
+      if (item === other) duplicates.push(item);
+    }
+  }
+  return duplicates;
+}
+
+// ✅ BOM - O(N)
+function findDuplicates(items: string[]) {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const item of items) {
+    if (seen.has(item)) {
+      duplicates.add(item);
+    }
+    seen.add(item);
+  }
+
+  return Array.from(duplicates);
+}
+```
+
+#### 3. SEGURANÇA PRIMEIRO - SEMPRE VALIDAR
+- ❌ **NUNCA** sugira código sem validação de input
+- ❌ **NUNCA** sugira uso direto de user input
+- ✅ **SEMPRE** valide e sanitize inputs
+- ✅ **SEMPRE** use as utilities do projeto (validateEmail, sanitizeHTML, etc)
+- ✅ **SEMPRE** adicione proteção contra vulnerabilidades
+
+**Exemplo:**
+```typescript
+// ❌ RUIM - Sem validação
+function saveEmail(email: string) {
+  database.save(email);
+}
+
+// ✅ BOM - Com validação
+import { validateEmail, sanitizeText } from '@/utils';
+
+function saveEmail(email: string) {
+  if (!validateEmail(email)) {
+    throw new Error('Email inválido');
+  }
+
+  const safeEmail = sanitizeText(email);
+  database.save(safeEmail);
+}
+```
+
+---
+
 ## 🎯 Princípios Obrigatórios
 
 ### 1. Arquitetura Limpa
