@@ -26,6 +26,20 @@ VITE_FIREBASE_MESSAGING_SENDER_ID
 VITE_FIREBASE_APP_ID
 ```
 
+### Encryption Key (Obrigatória)
+
+```bash
+VITE_ENCRYPTION_KEY
+```
+
+**Importante:** Esta chave é usada para criptografar dados sensíveis como rascunhos de avaliação.
+
+**Como gerar a chave:**
+```bash
+# Use Node.js para gerar uma chave aleatória segura de 32 caracteres
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
 ### EmailJS Configuration (Opcionais)
 
 ```bash
@@ -100,6 +114,17 @@ const firebaseConfig = {
 - **Name**: `VITE_FIREBASE_APP_ID`
 - **Value**: Cole o valor de `appId`
 - Clique em **Add secret**
+
+#### Secret 7: VITE_ENCRYPTION_KEY
+- **Name**: `VITE_ENCRYPTION_KEY`
+- **Value**: Gere uma chave executando:
+  ```bash
+  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+  ```
+  Copie a chave gerada (64 caracteres hexadecimais)
+- Clique em **Add secret**
+
+**⚠️ IMPORTANTE:** Guarde esta chave em um local seguro! Se você perder a chave, não poderá descriptografar rascunhos antigos.
 
 ### 3. Configurar Firebase Service Account (Para Deploy)
 
