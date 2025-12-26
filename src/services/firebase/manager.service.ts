@@ -7,6 +7,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './config';
 import { hash } from '@/utils/crypto';
 import type { Evaluation } from '@/types';
+import { debugLog } from '@/services/debug/debugLogger';
 
 /**
  * Resultado da busca de avaliações do gestor
@@ -35,11 +36,14 @@ export async function searchManagerEvaluations(
   email: string,
   token?: string
 ): Promise<ManagerEvaluationResult[]> {
+  debugLog.start('searchManagerEvaluations', { component: 'manager.service', data: { email: '******', hasToken: !!token } });
   try {
     // Hash do email do gestor
+    debugLog.debug('Hasheando email do gestor', { component: 'manager.service' });
     const emailHash = hash(email.toLowerCase().trim());
 
     // Buscar todas as avaliações criadas por este email
+    debugLog.debug('Buscando avaliações por email hash', { component: 'manager.service' });
     const q = query(
       collection(db, 'evaluations'),
       where('creator_email', '==', emailHash)
@@ -48,19 +52,32 @@ export async function searchManagerEvaluations(
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
+      debugLog.info('Nenhuma avaliação encontrada', { component: 'manager.service' });
       return [];
     }
+
+    debugLog.info(`${querySnapshot.docs.length} avaliações encontradas`, { component: 'manager.service', data: { count: querySnapshot.docs.length } });
 
     // Mapear resultados
     const results: ManagerEvaluationResult[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
+
+      // created_at pode ser number (Date.now()) ou Timestamp do Firestore
+      let createdAtTimestamp: number;
+      if (typeof data.created_at === 'number') {
+        createdAtTimestamp = data.created_at;
+      } else if (data.created_at?.toDate) {
+        createdAtTimestamp = data.created_at.toDate().getTime();
+      } else {
+        createdAtTimestamp = Date.now();
+      }
 
       const evaluation: Evaluation = {
         id: doc.id,
         title: data.title || '',
         creator_email: data.creator_email,
         creator_token: data.creator_token,
-        created_at: data.created_at?.toDate() || new Date(),
+        created_at: createdAtTimestamp,
         status: data.status || 'draft',
       };
 
@@ -73,8 +90,11 @@ export async function searchManagerEvaluations(
       };
     });
 
+    debugLog.success(`${results.length} avaliações mapeadas com sucesso`, { component: 'manager.service' });
+    debugLog.end('searchManagerEvaluations', { component: 'manager.service' });
     return results;
   } catch (error) {
+    debugLog.error('Erro ao buscar avaliações do gestor', error as Error, { component: 'manager.service' });
     throw new Error(
       `Erro ao buscar avaliações: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
     );
