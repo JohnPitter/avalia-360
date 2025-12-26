@@ -84,6 +84,17 @@ export async function searchManagerEvaluations(
       // Verificar se o token fornecido tem acesso
       const hasAccess = token ? data.creator_token === token : false;
 
+      debugLog.debug('Verificando acesso', {
+        component: 'manager.service',
+        data: {
+          evaluationId: doc.id,
+          hasToken: !!token,
+          tokenMatch: hasAccess,
+          storedTokenType: typeof data.creator_token,
+          providedTokenType: typeof token
+        }
+      });
+
       return {
         evaluation,
         hasAccess,

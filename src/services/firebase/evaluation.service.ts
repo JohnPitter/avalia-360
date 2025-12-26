@@ -13,6 +13,7 @@ import type { Evaluation, EvaluationStatus } from '@/types';
 import { encrypt, decrypt, hash, generateToken, generateEncryptionKey } from '@/utils/crypto';
 import { isValidTitle, isValidEmail } from '@/utils/validation';
 import { sanitizeText, sanitizeForFirestore } from '@/utils/sanitization';
+import { debugLog } from '@/services/debug/debugLogger';
 
 /**
  * Serviço de Avaliações
@@ -38,36 +39,44 @@ export interface CreateEvaluationData {
 export async function createEvaluation(
   data: CreateEvaluationData
 ): Promise<{ evaluation: Evaluation; managerToken: string }> {
+  debugLog.start('createEvaluation', { component: 'evaluation.service', data: { title: data.title, email: '******' } });
+
   // Validação
   if (!isValidEmail(data.creatorEmail)) {
+    debugLog.error('Email inválido', undefined, { component: 'evaluation.service' });
     throw new Error('Email do criador inválido');
   }
 
   if (!isValidTitle(data.title)) {
+    debugLog.error('Título inválido', undefined, { component: 'evaluation.service' });
     throw new Error('Título inválido (1-200 caracteres)');
   }
 
   // Sanitização
+  debugLog.debug('Sanitizando dados', { component: 'evaluation.service' });
   const sanitizedEmail = sanitizeForFirestore(data.creatorEmail.toLowerCase().trim());
   const sanitizedTitle = sanitizeText(data.title, 200);
 
   // Gera token UUID para o gestor
+  debugLog.debug('Gerando token UUID', { component: 'evaluation.service' });
   const managerToken = generateToken();
 
-  // Criptografia
+  // Criptografia do título apenas
+  debugLog.debug('Criptografando título', { component: 'evaluation.service' });
   const encryptionKey = generateEncryptionKey(managerToken);
   const emailHash = hash(sanitizedEmail);
   const encryptedTitle = encrypt(sanitizedTitle, encryptionKey);
-  const encryptedToken = encrypt(managerToken, encryptionKey);
 
-  // Cria documento
+  // Cria documento (token em plaintext para permitir busca)
   const evaluationData = {
     creator_email: emailHash,
-    creator_token: encryptedToken,
+    creator_token: managerToken, // Plaintext (protegido por Firestore Rules)
     title: encryptedTitle,
     created_at: Date.now(),
     status: 'draft' as EvaluationStatus,
   };
+
+  debugLog.info('Salvando no Firestore', { component: 'evaluation.service', data: { hasToken: !!managerToken } });
 
   try {
     const docRef = await addDoc(collection(db, 'evaluations'), evaluationData);
@@ -77,9 +86,11 @@ export async function createEvaluation(
       ...evaluationData,
     };
 
+    debugLog.success('Avaliação criada com sucesso', { component: 'evaluation.service', data: { id: docRef.id } });
+    debugLog.end('createEvaluation', { component: 'evaluation.service' });
     return { evaluation, managerToken };
   } catch (error) {
-    console.error('Erro ao criar avaliação:', error);
+    debugLog.error('Erro ao salvar no Firestore', error as Error, { component: 'evaluation.service' });
     throw new Error('Falha ao criar avaliação no banco de dados');
   }
 }
