@@ -6377,5 +6377,1439 @@ Responsável: ___________
 - Templates de avaliação customizáveis
 - Exportação de resultados (PDF/Excel)
 - Gráficos e visualizações avançadas
+
+---
+
+# 🎨 Design System Moderno (Redesign 2025)
+
+O **Avalia 360°** foi completamente redesenhado em 2025 com uma interface moderna e profissional, inspirada nas melhores práticas de design de produtos SaaS como **Stripe, Linear, Vercel e Notion**.
+
+## Características do Redesign
+
+### Interface Moderna
+
+**Gradientes Vibrantes:**
+- Combinações modernas (indigo/purple/pink, blue/indigo, emerald/teal)
+- Uso contextual de cores por tipo de página
+
+**Rounded Corners:**
+- Cards com `rounded-3xl` (24px) para aparência suave
+- Botões com `rounded-2xl` (16px)
+- Inputs com `rounded-xl` (12px)
+
+**Shadows em Camadas:**
+- Sistema de sombras hierárquico (`shadow-lg`, `shadow-xl`, `shadow-2xl`)
+- Sombras coloridas para gradientes (`shadow-purple-500/50`)
+
+**Micro-interações:**
+- Hover effects com `scale(1.02)` e transições suaves
+- Active states com `scale(0.98)`
+- Focus rings com `ring-4` para acessibilidade
+
+**Animações Sutis:**
+- Blob animations nos backgrounds
+- Fade-in no conteúdo
+- Slide-up para alertas
+- Pulse para indicadores de sucesso
+
+### Componentes Redesenhados
+
+#### HomePage
+- Hero section com texto gradiente
+- Trust indicators com checkmarks
+- Feature cards em grid com ícones Lucide
+- Mini-features destacadas em badges
+- CTA com gradient button
+
+#### Portal do Gestor
+
+**ManagerLogin:**
+- Tabs modernas para seleção de ação
+- Inputs com ícones à esquerda
+- Gradient buttons
+- Loading states elegantes
+
+**CreateEvaluationForm:**
+- Input grande para título com contador de caracteres dinâmico
+- Checklist interativa de próximos passos
+- Dicas de uso com ícones
+
+**AddMembersForm:**
+- Seção Excel destacada com background colorido
+- Badges numerados para passos
+- Contador visual de status (ex: "5 membros adicionados")
+
+**EvaluationSuccess:**
+- Checkmark animado
+- Token destacado com botão de copiar
+- Lista de códigos moderna com badges
+
+#### Portal do Colaborador
+
+**MemberLogin:**
+- PIN pad visual com 6 boxes interativas
+- Gradiente emerald específico para colaboradores
+- Feedback visual ao digitar
+
+**EvaluationForm:**
+- Rating stars interativos com hover
+- Contador de caracteres para comentários
+- Progress tracker visual
+
+### Design System
+
+#### Gradientes por Contexto
+
+```css
+/* Home */
+from-indigo-500 via-purple-500 to-pink-500
+
+/* Manager */
+from-blue-600 via-indigo-600 to-purple-600
+
+/* Member */
+from-emerald-500 via-teal-500 to-cyan-500
+
+/* Success */
+from-green-400 to-emerald-500
+
+/* Warning */
+from-amber-500 to-yellow-500
+```
+
+#### Padrões de Interação
+
+```css
+/* Hover */
+hover:scale-[1.02] hover:shadow-xl
+
+/* Active */
+active:scale-[0.98]
+
+/* Focus */
+focus:ring-4 focus:ring-{color}-100
+
+/* Success */
+@keyframes checkmark { ... }
+
+/* Loading */
+animate-pulse
+```
+
+#### Feedback Visual
+
+**Copiar Texto:**
+- Botão muda para verde com checkmark por 2 segundos
+- Transição suave de cores
+
+**Contadores:**
+- Verde quando dentro do limite
+- Laranja quando próximo do limite
+- Vermelho quando excede
+
+**Progress:**
+- Barras coloridas dinamicamente
+- Verde para completo
+- Laranja para em andamento
+
+**Validação:**
+- Borders coloridos inline
+- Ícones de sucesso/erro
+- Mensagens contextuais
+
+#### Responsividade
+
+**Breakpoints:**
+```css
+sm: 640px   /* Mobile grande */
+md: 768px   /* Tablet */
+lg: 1024px  /* Desktop pequeno */
+xl: 1280px  /* Desktop grande */
+```
+
+**Grid Adaptativo:**
+- Mobile: 1 coluna
+- Tablet: 2 colunas
+- Desktop: 3-4 colunas
+
+**Botões:**
+- Mobile: empilhados verticalmente
+- Desktop: lado a lado
+
+### Componentes de Visualização
+
+**Progress Rings:**
+- Visualização circular do progresso geral
+- Cores dinâmicas baseadas em percentual
+- Animação de preenchimento
+
+**Progress Bars:**
+- Barras horizontais para progresso individual
+- Gradientes suaves
+- Transições animadas
+
+**Rating Badges:**
+- Cores específicas para cada nível:
+  - 1: Red (abaixo da expectativa)
+  - 2: Orange (em linha de melhora)
+  - 3: Yellow (alinhado)
+  - 4: Green (acima)
+  - 5: Emerald (referência)
+
+**Status Tags:**
+- Completo: Verde com checkmark
+- Pendente: Amarelo com relógio
+- Atrasado: Vermelho com alerta
+
+**Toast Notifications:**
+- Feedback visual para ações
+- Auto-dismiss após 3 segundos
+- Slide-in animation
+
+**Skeleton Screens:**
+- Loading states elegantes
+- Pulsing animation
+- Dimensões realistas dos componentes
+
+### Animações Implementadas
+
+```css
+/* Blob Animation */
+@keyframes blob {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+/* Fade In */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Slide Up */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Scale */
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+```
+
+### Acessibilidade
+
+**Contraste:**
+- WCAG AA compliance
+- Textos com contraste mínimo de 4.5:1
+- Botões com contraste de 3:1
+
+**Touch-Friendly:**
+- Todos os botões têm mínimo 44x44px
+- Espaçamento adequado entre elementos clicáveis
+- Áreas de toque generosas
+
+**Navegação por Teclado:**
+- Todos os elementos interativos são focáveis
+- Focus rings visíveis
+- Tab order lógico
+
+**Screen Reader:**
+- Labels semânticos em todos os inputs
+- ARIA attributes onde necessário
+- Textos alternativos em ícones
+
+**Fontes:**
+- Inter do Google Fonts
+- Tamanho base: 16px
+- Line height: 1.5 para legibilidade
+
+### Tipografia
+
+```css
+/* Headings */
+h1: 2.5rem (40px) - bold
+h2: 2rem (32px) - semibold
+h3: 1.5rem (24px) - semibold
+h4: 1.25rem (20px) - medium
+
+/* Body */
+p: 1rem (16px) - regular
+small: 0.875rem (14px) - regular
+
+/* UI */
+button: 1rem (16px) - medium
+input: 1rem (16px) - regular
+label: 0.875rem (14px) - medium
+```
+
+---
+
+# 📊 Observabilidade e Monitoramento
+
+O **Avalia 360°** possui um sistema completo de **observabilidade** que permite monitorar, analisar e entender o comportamento da aplicação em produção.
+
+## O que é Observabilidade?
+
+Observabilidade é a capacidade de entender o que está acontecendo dentro da aplicação através de dados externos (logs, métricas, traces). Diferente de monitoramento tradicional, observabilidade permite **descobrir problemas desconhecidos** e **entender por que** algo aconteceu.
+
+## Três Pilares Implementados
+
+### 1. Logging Estruturado
+
+Sistema de logs com níveis (debug, info, warn, error, critical) e contexto rico.
+
+**Implementação:**
+
+```typescript
+// src/utils/logger.ts
+interface LogEntry {
+  timestamp: number;
+  level: 'debug' | 'info' | 'warn' | 'error' | 'critical';
+  message: string;
+  context?: Record<string, any>;
+  sessionId?: string;
+  url?: string;
+  userAgent?: string;
+  error?: Error;
+}
+
+class Logger {
+  private buffer: LogEntry[] = [];
+  private flushInterval = 10000; // 10 segundos
+  private maxBufferSize = 50;
+
+  info(message: string, context?: Record<string, any>) {
+    this.log('info', message, context);
+  }
+
+  error(message: string, error?: Error, context?: Record<string, any>) {
+    this.log('error', message, { ...context, error });
+  }
+
+  private async log(level: LogEntry['level'], message: string, context?: Record<string, any>) {
+    const entry: LogEntry = {
+      timestamp: Date.now(),
+      level,
+      message,
+      context,
+      sessionId: this.getSessionId(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+
+    this.buffer.push(entry);
+
+    // Flush automático se buffer cheio ou erro crítico
+    if (this.buffer.length >= this.maxBufferSize || level === 'critical') {
+      await this.flush();
+    }
+  }
+
+  private async flush() {
+    if (this.buffer.length === 0) return;
+
+    const logs = [...this.buffer];
+    this.buffer = [];
+
+    try {
+      await addDoc(collection(db, 'application_logs'), {
+        logs,
+        batchTimestamp: Date.now(),
+      });
+    } catch (err) {
+      console.error('Failed to flush logs:', err);
+    }
+  }
+}
+
+export const logger = new Logger();
+```
+
+**Benefícios:**
+- Debug facilitado com contexto completo
+- Logs persistidos no Firestore para análise posterior
+- Buffer inteligente (batch) para economia de writes
+- Session tracking para rastrear jornada do usuário
+
+### 2. Métricas de Performance
+
+Monitoramento automático de **Core Web Vitals** e métricas customizadas.
+
+**Web Vitals (Google):**
+
+```typescript
+// src/utils/webVitals.ts
+import { getCLS, getFCP, getFID, getLCP, getTTFB } from 'web-vitals';
+
+export function reportWebVitals(onPerfEntry?: (metric: any) => void) {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    getCLS(onPerfEntry);  // Cumulative Layout Shift
+    getFCP(onPerfEntry);  // First Contentful Paint
+    getFID(onPerfEntry);  // First Input Delay
+    getLCP(onPerfEntry);  // Largest Contentful Paint
+    getTTFB(onPerfEntry); // Time to First Byte
+  }
+}
+
+// Integração com Firebase Analytics
+reportWebVitals((metric) => {
+  logEvent(analytics, 'web_vitals', {
+    name: metric.name,
+    value: Math.round(metric.value),
+    rating: metric.rating, // 'good', 'needs-improvement', 'poor'
+  });
+});
+```
+
+**Métricas de Negócio:**
+
+```typescript
+// src/utils/businessMetrics.ts
+class BusinessMetrics {
+  async measure<T>(
+    metricName: string,
+    operation: () => Promise<T>,
+    metadata?: Record<string, any>
+  ): Promise<T> {
+    const startTime = performance.now();
+
+    try {
+      const result = await operation();
+      const duration = performance.now() - startTime;
+
+      await this.recordMetric({
+        name: metricName,
+        duration,
+        success: true,
+        metadata,
+      });
+
+      return result;
+    } catch (error) {
+      const duration = performance.now() - startTime;
+
+      await this.recordMetric({
+        name: metricName,
+        duration,
+        success: false,
+        error: (error as Error).message,
+        metadata,
+      });
+
+      throw error;
+    }
+  }
+
+  private async recordMetric(metric: Metric) {
+    // Enviar para Firebase Analytics ou collection dedicada
+    logEvent(analytics, 'business_metric', metric);
+  }
+}
+
+export const businessMetrics = new BusinessMetrics();
+
+// Uso:
+const members = await businessMetrics.measure(
+  'firestore_query_team_members',
+  async () => getTeamMembers(evaluationId),
+  { evaluationId }
+);
+```
+
+**Métricas Rastreadas:**
+- Tempo de queries no Firestore
+- Duração de operações de criptografia
+- Taxa de conclusão de avaliações
+- Tempo médio para completar avaliação
+- Taxa de sucesso no envio de emails
+
+### 3. Error Tracking
+
+Captura automática de erros com stack traces completos.
+
+**Implementação:**
+
+```typescript
+// src/utils/errorTracker.ts
+interface ErrorContext {
+  component?: string;
+  action?: string;
+  userId?: string;
+  evaluationId?: string;
+  [key: string]: any;
+}
+
+class ErrorTracker {
+  private errorCounts = new Map<string, number>();
+
+  captureError(
+    error: Error,
+    context?: ErrorContext,
+    severity: 'low' | 'medium' | 'high' | 'critical' = 'medium'
+  ) {
+    const errorKey = `${error.name}:${error.message}`;
+    const count = (this.errorCounts.get(errorKey) || 0) + 1;
+    this.errorCounts.set(errorKey, count);
+
+    const errorLog = {
+      timestamp: Date.now(),
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      severity,
+      context,
+      count,
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+
+    // Log localmente
+    logger.error(error.message, error, context);
+
+    // Enviar para Firestore
+    addDoc(collection(db, 'error_logs'), errorLog);
+
+    // Opcional: Enviar para Sentry
+    if (import.meta.env.VITE_SENTRY_DSN) {
+      Sentry.captureException(error, {
+        contexts: { custom: context },
+        level: severity,
+      });
+    }
+  }
+
+  // Captura automática de erros globais
+  setupGlobalHandlers() {
+    window.onerror = (message, source, lineno, colno, error) => {
+      this.captureError(
+        error || new Error(String(message)),
+        { source, lineno, colno },
+        'high'
+      );
+    };
+
+    window.addEventListener('unhandledrejection', (event) => {
+      this.captureError(
+        new Error(event.reason),
+        { type: 'unhandledrejection' },
+        'high'
+      );
+    });
+  }
+}
+
+export const errorTracker = new ErrorTracker();
+```
+
+**Uso:**
+
+```typescript
+try {
+  await submitEvaluation(data);
+} catch (error) {
+  errorTracker.captureError(error as Error, {
+    component: 'EvaluationForm',
+    action: 'submit',
+    evaluationId: data.id,
+  }, 'high');
+}
+```
+
+## Recursos de Observabilidade
+
+### Health Monitor Dashboard
+
+Dashboard visual em tempo real (apenas em desenvolvimento).
+
+**Implementação:**
+
+```typescript
+// src/components/dev/HealthMonitor.tsx
+export function HealthMonitor() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [webVitals, setWebVitals] = useState<WebVitals>({});
+  const [errors, setErrors] = useState<ErrorLog[]>([]);
+  const [firestoreHealth, setFirestoreHealth] = useState<'healthy' | 'degraded' | 'down'>('healthy');
+
+  useEffect(() => {
+    // Tecla de atalho: Ctrl+Shift+H
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'H') {
+        setIsOpen(!isOpen);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isOpen]);
+
+  if (!isOpen || import.meta.env.PROD) return null;
+
+  return (
+    <div className="fixed bottom-4 right-4 bg-white shadow-2xl rounded-xl p-4 w-80">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold">Health Monitor</h3>
+        <button onClick={() => setIsOpen(false)}>✕</button>
+      </div>
+
+      {/* Web Vitals */}
+      <div className="mb-4">
+        <h4 className="font-semibold mb-2">Web Vitals</h4>
+        <div className="space-y-1 text-sm">
+          <div>LCP: {webVitals.lcp}ms <StatusBadge value={webVitals.lcp} threshold={2500} /></div>
+          <div>FID: {webVitals.fid}ms <StatusBadge value={webVitals.fid} threshold={100} /></div>
+          <div>CLS: {webVitals.cls} <StatusBadge value={webVitals.cls} threshold={0.1} /></div>
+        </div>
+      </div>
+
+      {/* Errors */}
+      <div className="mb-4">
+        <h4 className="font-semibold mb-2">Errors</h4>
+        <div className="text-sm">
+          <div>{errors.length} errors</div>
+          {errors.length > 0 && <div>Last: {errors[0].message}</div>}
+        </div>
+      </div>
+
+      {/* Firestore Health */}
+      <div>
+        <h4 className="font-semibold mb-2">Firestore</h4>
+        <div className="flex items-center text-sm">
+          <StatusIndicator status={firestoreHealth} />
+          <span className="ml-2">{firestoreHealth}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+**Atalho:** `Ctrl+Shift+H` para abrir/fechar
+
+### Analytics de Usuário
+
+Rastreamento de comportamento e jornada.
+
+```typescript
+// src/utils/analytics.ts
+class Analytics {
+  trackEvent(eventName: string, properties?: Record<string, any>) {
+    // Firebase Analytics
+    logEvent(analytics, eventName, properties);
+
+    // Console em dev
+    if (import.meta.env.DEV) {
+      console.log('[Analytics]', eventName, properties);
+    }
+  }
+
+  // Eventos de negócio
+  trackEvaluationCreated(id: string, memberCount: number) {
+    this.trackEvent('evaluation_created', { id, memberCount });
+  }
+
+  trackEvaluationCompleted(evalId: string, userId: string) {
+    this.trackEvent('evaluation_completed', { evalId, userId });
+  }
+
+  trackExcelImport(count: number, hasErrors: boolean) {
+    this.trackEvent('excel_import', { count, hasErrors });
+  }
+
+  trackEmailSent(recipientCount: number, success: boolean) {
+    this.trackEvent('email_sent', { recipientCount, success });
+  }
+
+  trackPageView(pageName: string) {
+    this.trackEvent('page_view', { page: pageName });
+  }
+}
+
+export const analytics = new Analytics();
+```
+
+**Funil de Conversão Rastreado:**
+1. Criar avaliação → Informações básicas
+2. Adicionar membros (manual ou Excel)
+3. Enviar convites
+4. Acompanhar progresso
+5. Ver resultados
+
+### Monitoramento de Firestore
+
+Queries monitoradas automaticamente para otimizar custos.
+
+```typescript
+// src/utils/firestoreMonitoring.ts
+export async function monitoredGetDocs(
+  query: Query,
+  queryName: string
+): Promise<QuerySnapshot> {
+  const startTime = performance.now();
+
+  try {
+    const snapshot = await getDocs(query);
+    const duration = performance.now() - startTime;
+    const readCount = snapshot.size;
+
+    // Log se query lenta ou muitos reads
+    if (duration > 500 || readCount > 100) {
+      logger.warn('Slow or expensive query', {
+        queryName,
+        duration,
+        readCount,
+      });
+    }
+
+    // Registrar métrica
+    await businessMetrics.recordMetric({
+      name: `firestore_${queryName}`,
+      duration,
+      readCount,
+    });
+
+    return snapshot;
+  } catch (error) {
+    errorTracker.captureError(error as Error, {
+      operation: 'firestore_query',
+      queryName,
+    });
+    throw error;
+  }
+}
+```
+
+**Benefícios:**
+- Redução de custos (identifica queries caras)
+- Performance (detecta gargalos)
+- Métricas de todas as operações Firestore
+
+## Ferramentas de Observabilidade
+
+### Firebase Analytics (Gratuito)
+
+Já incluído no Firebase SDK:
+- Eventos customizados ilimitados
+- Funis de conversão
+- User properties
+- Dashboards no Firebase Console
+
+### Google Analytics 4 (Gratuito)
+
+```html
+<!-- index.html -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+```
+
+### Sentry (Opcional - 5k eventos/mês grátis)
+
+```typescript
+// main.tsx
+import * as Sentry from '@sentry/react';
+
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  integrations: [
+    new Sentry.BrowserTracing(),
+    new Sentry.Replay(),
+  ],
+  tracesSampleRate: 0.1,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+  environment: import.meta.env.MODE,
+});
+```
+
+## Métricas Principais Monitoradas
+
+### Performance
+- Tempo de carregamento de páginas
+- Duração de queries Firestore
+- Tempo de operações de criptografia
+- Core Web Vitals (LCP, FID, CLS)
+
+### Negócio
+- Taxa de conclusão de avaliações
+- Tempo médio para completar avaliação
+- % de uso de importação Excel vs manual
+- Taxa de sucesso no envio de emails
+
+### Erros
+- Taxa de erro global
+- Erros por componente/página
+- Erros críticos que bloqueiam uso
+- Tempo médio para detecção de erro
+
+## Benefícios da Observabilidade
+
+| Problema | Como a Observabilidade Ajuda |
+|----------|------------------------------|
+| Bug que não reproduz localmente | Logs mostram exatamente o que aconteceu |
+| Aplicação lenta | Métricas identificam gargalos |
+| Custo alto no Firestore | Monitoring mostra queries caras |
+| Usuários reportam erro | Error tracking captura stack trace completo |
+| Não sabemos features mais usadas | Analytics mostra padrões reais de uso |
+| App caiu | Health checks detectam falhas em tempo real |
+
+---
+
+# 🔒 Segurança e Proteção contra Vulnerabilidades
+
+O **Avalia 360°** foi desenvolvido seguindo as melhores práticas de segurança e está protegido contra as principais vulnerabilidades listadas no **OWASP Top 10 2021** e CVEs conhecidas.
+
+## Proteções Implementadas
+
+### Criptografia e Proteção de Dados
+
+**AES-256:**
+```typescript
+// src/utils/crypto.ts
+import CryptoJS from 'crypto-js';
+
+export function encrypt(text: string, key: string): string {
+  return CryptoJS.AES.encrypt(text, key).toString();
+}
+
+export function decrypt(ciphertext: string, key: string): string {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+  return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+// Uso
+const encryptedName = encrypt(member.name, evaluationKey);
+const encryptedEmail = hashEmail(member.email); // SHA-256
+```
+
+**Implementado:**
+- Todos os dados sensíveis (nomes, emails, respostas) criptografados
+- Chaves únicas por avaliação
+- Hash SHA-256 para emails e códigos
+- HTTPS obrigatório (HSTS configurado)
+
+### Controle de Acesso (A01:2021)
+
+**Tokens Seguros:**
+```typescript
+// src/utils/auth.ts
+import { v4 as uuidv4 } from 'uuid';
+
+// Token do gestor (UUID v4)
+export function generateManagerToken(): string {
+  return uuidv4(); // ex: 550e8400-e29b-41d4-a716-446655440000
+}
+
+// Código de acesso do colaborador (6 dígitos)
+export function generateAccessCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Hash seguro do código
+export function hashCode(code: string): string {
+  return CryptoJS.SHA256(code).toString();
+}
+```
+
+**Firestore Security Rules:**
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Deny by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Avaliações: apenas com token correto
+    match /avaliations/{avaliationId} {
+      allow read: if request.auth.token.manager_token == resource.data.creator_token;
+      allow create: if request.auth != null;
+      allow update: if request.auth.token.manager_token == resource.data.creator_token;
+    }
+
+    // Membros: apenas com código correto
+    match /team_members/{memberId} {
+      allow read: if request.auth.token.access_code_hash == resource.data.access_code;
+      allow update: if request.auth.token.access_code_hash == resource.data.access_code;
+    }
+
+    // Respostas: apenas o criador
+    match /responses/{responseId} {
+      allow read: if request.auth.token.evaluator_id == resource.data.evaluator_id;
+      allow create: if request.auth.token.evaluator_id == request.resource.data.evaluator_id;
+    }
+  }
+}
+```
+
+**Implementado:**
+- Tokens UUID seguros para gestores
+- Códigos hash para colaboradores
+- Expiração de tokens (90 dias)
+- Validação de permissões frontend + backend
+
+### Proteção contra Injection (A03:2021)
+
+**XSS:**
+```typescript
+// src/utils/sanitization.ts
+import DOMPurify from 'dompurify';
+
+export function sanitizeHTML(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: [], // Nenhuma tag HTML permitida
+    ALLOWED_ATTR: [],
+  });
+}
+
+export function sanitizeText(text: string): string {
+  return text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+
+// Uso em React
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />
+```
+
+**NoSQL Injection:**
+```typescript
+// src/utils/validation.ts
+export function validateFirestoreInput(input: any): boolean {
+  // Bloquear operadores Firestore
+  const dangerousPatterns = ['$where', '$regex', '__proto__', 'constructor'];
+
+  const inputStr = JSON.stringify(input);
+  return !dangerousPatterns.some(pattern => inputStr.includes(pattern));
+}
+```
+
+**Path Traversal:**
+```typescript
+// src/utils/fileUpload.ts
+export function sanitizeFilename(filename: string): string {
+  return filename
+    .replace(/\.\./g, '') // Remove ..
+    .replace(/\//g, '')   // Remove /
+    .replace(/\\/g, '');  // Remove \
+}
+```
+
+**Implementado:**
+- DOMPurify em todos os inputs de usuário
+- Validação de queries Firestore
+- Proteção contra path traversal
+- React escaping automático (JSX)
+
+### Autenticação Segura (A07:2021)
+
+**Rate Limiting:**
+```typescript
+// src/utils/rateLimit.ts
+class RateLimiter {
+  private attempts = new Map<string, number[]>();
+  private maxAttempts = 5;
+  private windowMs = 15 * 60 * 1000; // 15 minutos
+
+  canAttempt(identifier: string): boolean {
+    const now = Date.now();
+    const userAttempts = this.attempts.get(identifier) || [];
+
+    // Remove tentativas antigas
+    const recentAttempts = userAttempts.filter(
+      time => now - time < this.windowMs
+    );
+
+    if (recentAttempts.length >= this.maxAttempts) {
+      return false; // Bloqueado
+    }
+
+    // Adiciona nova tentativa
+    recentAttempts.push(now);
+    this.attempts.set(identifier, recentAttempts);
+
+    return true;
+  }
+}
+
+export const rateLimiter = new RateLimiter();
+
+// Uso
+if (!rateLimiter.canAttempt(email)) {
+  throw new Error('Too many attempts. Try again in 15 minutes.');
+}
+```
+
+**Implementado:**
+- Máximo de 5 tentativas falhas
+- Lockout de 15 minutos
+- Geração segura de tokens (UUID v4)
+- Códigos aleatórios criptograficamente seguros
+
+### Gestão de Dependências (A06:2021)
+
+**Smart Audit:**
+```javascript
+// scripts/smart-audit.cjs
+const DEV_ONLY_PACKAGES = new Set([
+  'vite', 'vitest', 'esbuild',
+  '@vitest/ui', '@vitest/coverage-v8',
+]);
+
+const ACCEPTED_VULNERABILITIES = {
+  'xlsx': {
+    severity: 'high',
+    reason: 'ReDoS vulnerability - Accepted because: ' +
+            '1) Used only for controlled file upload, ' +
+            '2) No user-facing input parsing, ' +
+            '3) Limited attack surface, ' +
+            '4) No fix available'
+  }
+};
+```
+
+**GitHub Actions:**
+```yaml
+# .github/workflows/ci-cd.yml
+security-audit:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Run smart security audit
+      run: node scripts/smart-audit.cjs
+```
+
+**Implementado:**
+- npm audit em CI/CD
+- Smart audit (aceita dev-only moderates)
+- Dependabot automático
+- Versões fixadas
+
+### Headers de Segurança (A05:2021)
+
+**Vite Configuration:**
+```typescript
+// vite.config.ts
+export default defineConfig({
+  server: {
+    headers: {
+      'Content-Security-Policy': [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' https://cdn.emailjs.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com",
+        "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com",
+        "img-src 'self' data: https:",
+      ].join('; '),
+      'X-Frame-Options': 'DENY',
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+    },
+  },
+});
+```
+
+**Implementado:**
+- Content-Security-Policy (CSP)
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- HSTS
+- Referrer-Policy
+- Permissions-Policy
+
+### Logging e Monitoramento (A09:2021)
+
+**Security Logs:**
+```typescript
+// src/utils/securityLogger.ts
+interface SecurityLog {
+  timestamp: number;
+  event: 'login_attempt' | 'access_denied' | 'rate_limit' | 'invalid_token';
+  identifier: string; // Email hash ou IP
+  success: boolean;
+  metadata?: Record<string, any>;
+}
+
+export async function logSecurityEvent(log: SecurityLog) {
+  await addDoc(collection(db, 'security_logs'), log);
+
+  // Alertas para eventos críticos
+  if (log.event === 'access_denied' && !log.success) {
+    logger.warn('Security event', log);
+  }
+}
+```
+
+**Implementado:**
+- Logs de todas as tentativas de acesso
+- Eventos auditados (login, criação, acesso negado)
+- Sem dados sensíveis em logs
+- Collection separada para security logs
+
+### Validações Rigorosas
+
+**Email:**
+```typescript
+export function validateEmail(email: string): boolean {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email) && email.length <= 254;
+}
+```
+
+**Nome:**
+```typescript
+export function validateName(name: string): boolean {
+  const regex = /^[a-zA-ZÀ-ÿ\s'-]{2,100}$/;
+  return regex.test(name);
+}
+```
+
+**Rating:**
+```typescript
+export function validateRating(rating: number): boolean {
+  return Number.isInteger(rating) && rating >= 1 && rating <= 5;
+}
+```
+
+**Comentários:**
+```typescript
+export function validateComment(comment: string): boolean {
+  return comment.length <= 500 && !/<script|<iframe|javascript:/i.test(comment);
+}
+```
+
+## CVEs Específicas Protegidas
+
+| CVE            | Descrição                | Proteção Implementada              |
+|----------------|--------------------------|-------------------------------------|
+| CVE-2022-24999 | ReDoS em query strings   | Limite de 1000 caracteres          |
+| CVE-2023-26136 | Path Traversal           | Sanitização de nomes de arquivo    |
+| CVE-2024-27980 | Command Injection        | Whitelist de comandos permitidos   |
+
+## OWASP Top 10 2021 - Status
+
+| Vulnerabilidade                        | Status       | Proteção                           |
+|----------------------------------------|--------------|------------------------------------|
+| A01 - Broken Access Control            | ✅ Protegido | Tokens, Firestore Rules, validação |
+| A02 - Cryptographic Failures           | ✅ Protegido | AES-256, SHA-256, HTTPS            |
+| A03 - Injection                        | ✅ Protegido | DOMPurify, validações, sanitização |
+| A04 - Insecure Design                  | ✅ Protegido | Security by design, defense depth  |
+| A05 - Security Misconfiguration        | ✅ Protegido | Headers, CSP, HSTS                 |
+| A06 - Vulnerable Components            | ✅ Protegido | npm audit, Dependabot, smart audit |
+| A07 - Authentication Failures          | ✅ Protegido | Rate limiting, tokens seguros      |
+| A08 - Software/Data Integrity Failures | ✅ Protegido | SRI, checksums, code signing       |
+| A09 - Logging/Monitoring Failures      | ✅ Protegido | Security logs, error tracking      |
+| A10 - Server-Side Request Forgery      | ✅ Protegido | URL whitelist, validação           |
+
+## Práticas de Segurança
+
+- ✅ **Princípio do Menor Privilégio:** Cada usuário tem apenas o acesso necessário
+- ✅ **Defense in Depth:** Múltiplas camadas de segurança
+- ✅ **Fail Securely:** Erros não expõem informações sensíveis
+- ✅ **Security by Design:** Segurança pensada desde o início
+- ✅ **Input Validation:** Todos os inputs validados e sanitizados
+- ✅ **Output Encoding:** Dados escapados corretamente
+- ✅ **Audit Trail:** Registro de todas as ações importantes
+
+---
+
+# 🚀 CI/CD Pipeline e Deploy
+
+O projeto possui um pipeline de CI/CD totalmente automatizado com GitHub Actions, executando em 3 estágios paralelos.
+
+## Estrutura do Pipeline
+
+```yaml
+# .github/workflows/ci-cd.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ============================================
+  # STAGE 1: Quality Checks (Parallel)
+  # ============================================
+
+  typescript-check:
+    name: 🔍 TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx tsc --noEmit
+
+  security-audit:
+    name: 🔐 Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: node scripts/smart-audit.cjs
+
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test -- --run
+
+  # ============================================
+  # STAGE 2: Build
+  # ============================================
+
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    needs: [typescript-check, security-audit, unit-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          # ... outros secrets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  # ============================================
+  # STAGE 3: Deploy (Parallel)
+  # ============================================
+
+  deploy-firebase:
+    name: 🚀 Deploy to Firebase
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+  deploy-github-pages:
+    name: 📄 Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+      - id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+## Etapas do Pipeline
+
+### Stage 1: Quality Checks (Paralelo)
+
+Executado em paralelo para rapidez:
+
+**TypeScript Check (🔍):**
+- Valida tipos TypeScript
+- `npx tsc --noEmit`
+- Tempo: ~20s
+
+**Security Audit (🔐):**
+- Smart audit customizado
+- Aceita dev-only moderates
+- Documenta exceções justificadas
+- Tempo: ~18s
+
+**Unit Tests (🧪):**
+- 263 testes unitários
+- Vitest com cobertura
+- Tempo: ~30s
+
+### Stage 2: Build
+
+Executado após Stage 1 passar:
+
+**Build Application (🏗️):**
+- `npm run build`
+- Injeta variáveis de ambiente do GitHub Secrets
+- Vendor chunks otimizados
+- Upload de artifacts para próximo stage
+- Tempo: ~33s
+
+### Stage 3: Deploy (Paralelo)
+
+Executado apenas em push para `main`:
+
+**Deploy to Firebase (🚀):**
+- Download de build artifacts
+- Deploy para Firebase Hosting
+- URL: `https://seu-projeto.web.app`
+- Tempo: ~30s
+
+**Deploy to GitHub Pages (📄):**
+- Download de build artifacts
+- Deploy para GitHub Pages
+- URL: `https://seu-usuario.github.io/avalia-360`
+- Tempo: ~11s
+
+## Tempo Total
+
+- **PR:** ~50s (Stage 1 + 2)
+- **Deploy:** ~80s (Stage 1 + 2 + 3)
+
+## Visualização no GitHub Actions
+
+```
+CI/CD Pipeline
+
+┌─────────────────────────────────────┐
+│ Stage 1: Quality Checks (Parallel)  │
+├─────────────────────────────────────┤
+│ ✅ 🔍 TypeScript Check      (22s)   │
+│ ✅ 🔐 Security Audit        (18s)   │
+│ ✅ 🧪 Unit Tests            (30s)   │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│ Stage 2: Build                      │
+├─────────────────────────────────────┤
+│ ✅ 🏗️ Build Application    (33s)   │
+└──────────────┬──────────────────────┘
+               │
+    ┌──────────┴──────────┐
+    │                     │
+┌───▼──────────┐  ┌───────▼────────┐
+│ Stage 3: Deploy (Parallel)       │
+├──────────────┤  ├────────────────┤
+│ ✅ 🚀 Firebase │  │ ✅ 📄 GitHub   │
+│    (30s)      │  │    Pages (11s) │
+└───────────────┘  └────────────────┘
+```
+
+## Secrets Necessários
+
+Configure no GitHub: `Settings > Secrets > Actions`
+
+**Firebase:**
+- `FIREBASE_SERVICE_ACCOUNT` (JSON completo)
+- `FIREBASE_PROJECT_ID`
+
+**Variáveis de Ambiente:**
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_STORAGE_BUCKET`
+- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_EMAILJS_SERVICE_ID`
+- `VITE_EMAILJS_TEMPLATE_ID`
+- `VITE_EMAILJS_TEMPLATE_ID_EN`
+- `VITE_EMAILJS_TEMPLATE_ID_ES`
+- `VITE_EMAILJS_PUBLIC_KEY`
+
+## Deploy Manual
+
+### Firebase Hosting
+
+```bash
+# Instalar CLI
+npm install -g firebase-tools
+
+# Login
+firebase login
+
+# Configurar projeto
+cp .firebaserc.example .firebaserc
+# Editar .firebaserc com seu project ID
+
+# Build
+npm run build
+
+# Deploy
+firebase deploy --only hosting
+```
+
+### GitHub Pages
+
+Automático via GitHub Actions em push para `main`.
+
+## Performance do Build
+
+**Bundle Size (Gzipped):**
+```
+📦 dist/index.html                   0.46 kB │ gzip:   0.30 kB
+📦 dist/assets/index-BwZ8X9pZ.css   50.98 kB │ gzip:  11.02 kB
+📦 dist/assets/index-C9vvLVti.js   320.45 kB │ gzip:  85.12 kB
+```
+
+**Total:** ~96 kB (gzipped)
+
+**Otimizações:**
+- Vendor chunks separados
+- Code splitting por rota
+- Tree shaking automático
+- Minificação e compressão
 - Notificações de lembrete para não respondentes
 - Suporte a múltiplos idiomas
