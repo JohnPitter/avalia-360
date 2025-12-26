@@ -6,14 +6,11 @@ import {
   updateDoc,
   query,
   where,
-  writeBatch,
 } from 'firebase/firestore';
-import { db } from './config';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from './config';
 import type { TeamMember } from '@/types';
-import {
-  hashAccessCode,
-  generateAccessCode,
-} from '@/utils/crypto';
+import { hashAccessCode } from '@/utils/crypto'; // Mantido para funções legadas
 import { validateTeamMembers } from '@/utils/validation';
 import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
 import { debugLog } from '@/services/debug/debugLogger';
@@ -40,13 +37,15 @@ export interface MemberWithAccessCode extends TeamMember {
 }
 
 /**
- * Adiciona membros à avaliação
- * Gera códigos de acesso para cada membro
+ * Adiciona membros à avaliação (v2 - COM CLOUD FUNCTION)
+ * - Frontend envia dados plaintext
+ * - Cloud Function criptografa e salva no Firestore
+ * - Retorna membros com códigos de acesso (plaintext, uma vez apenas)
  * Complexidade: O(N) onde N é o número de membros
  *
  * @param evaluationId - ID da avaliação
  * @param members - Lista de membros
- * @param managerToken - Token do gestor
+ * @param _managerToken - Token do gestor (não usado)
  * @returns Lista de membros com códigos de acesso
  */
 export async function addMembers(
@@ -60,76 +59,59 @@ export async function addMembers(
     throw new Error(`Validação falhou: ${validation.errors.join(', ')}`);
   }
 
-  const batch = writeBatch(db);
-  const membersWithCodes: MemberWithAccessCode[] = [];
-
   try {
-    for (const member of members) {
-      // Sanitização
-      const sanitizedName = sanitizeText(member.name, 100);
-      const sanitizedEmail = sanitizeEmail(member.email);
+    // Sanitização dos dados antes de enviar
+    const sanitizedMembers = members.map(member => ({
+      name: sanitizeText(member.name, 100),
+      email: sanitizeEmail(member.email),
+    }));
 
-      // Gera código de acesso
-      const accessCode = generateAccessCode();
+    debugLog.info('Chamando Cloud Function addMembersEncrypted', {
+      component: 'member.service',
+      data: {
+        evaluationId,
+        memberCount: sanitizedMembers.length,
+      }
+    });
 
-      // Criptografia apenas do código de acesso
-      const codeHash = hashAccessCode(accessCode);
+    // Chama Cloud Function que criptografa e salva
+    const addMembersEncrypted = httpsCallable<
+      { evaluationId: string; members: MemberData[] },
+      { success: boolean; members: MemberWithAccessCode[] }
+    >(functions, 'addMembersEncrypted');
 
-      // Debug: log do código gerado
-      debugLog.info('Gerando código de acesso para membro', {
-        component: 'member.service',
-        data: {
-          name: sanitizedName,
-          accessCode: accessCode, // Código plaintext (antes do hash)
-          hash: codeHash,
-          hashPrefix: codeHash.substring(0, 16) + '...',
-        }
-      });
+    const result = await addMembersEncrypted({
+      evaluationId,
+      members: sanitizedMembers,
+    });
 
-      // Total de avaliações que o membro precisa fazer (N-1)
-      const totalEvaluations = members.length - 1;
-
-      const memberData = {
-        avaliation_id: evaluationId,
-        name: sanitizedName, // Plaintext (protegido por Firestore Rules)
-        email: sanitizedEmail, // Plaintext (protegido por Firestore Rules)
-        access_code: codeHash,
-        completed_evaluations: 0,
-        total_evaluations: totalEvaluations,
-        last_access_date: null,
-      };
-
-      const docRef = doc(collection(db, 'team_members'));
-      batch.set(docRef, memberData);
-
-      membersWithCodes.push({
-        id: docRef.id,
-        avaliation_id: evaluationId,
-        name: sanitizedName,
-        email: sanitizedEmail,
-        access_code: codeHash,
-        completed_evaluations: 0,
-        total_evaluations: totalEvaluations,
-        last_access_date: null,
-        accessCode, // Código não-hasheado (só disponível aqui)
-      });
+    if (!result.data.success) {
+      throw new Error('Cloud Function retornou erro');
     }
 
-    await batch.commit();
+    debugLog.success(`${result.data.members.length} membros adicionados com sucesso`, {
+      component: 'member.service',
+      data: { count: result.data.members.length }
+    });
 
-    return membersWithCodes;
+    return result.data.members;
   } catch (error) {
-    console.error('Erro ao adicionar membros:', error);
+    debugLog.error('Erro ao adicionar membros via Cloud Function', error as Error, {
+      component: 'member.service'
+    });
     throw new Error('Falha ao adicionar membros ao banco de dados');
   }
 }
 
 /**
- * Busca membros de uma avaliação
+ * Busca membros de uma avaliação (v2 - COM CLOUD FUNCTION)
+ * - Cloud Function busca dados criptografados do Firestore
+ * - Descriptografa nomes e emails
+ * - Retorna dados plaintext para o frontend
  * Complexidade: O(N) onde N é o número de membros
  *
  * @param evaluationId - ID da avaliação
- * @param managerToken - Token do gestor (para descriptografar nomes)
+ * @param _managerToken - Token do gestor (não usado)
  * @returns Lista de membros
  */
 export async function getMembers(
@@ -137,32 +119,33 @@ export async function getMembers(
   _managerToken: string
 ): Promise<TeamMember[]> {
   try {
-    const q = query(
-      collection(db, 'team_members'),
-      where('avaliation_id', '==', evaluationId)
-    );
-
-    const querySnapshot = await getDocs(q);
-    const members: TeamMember[] = [];
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-
-      members.push({
-        id: doc.id,
-        avaliation_id: data.avaliation_id,
-        name: data.name, // Já em plaintext
-        email: data.email, // Já em plaintext
-        access_code: data.access_code,
-        completed_evaluations: data.completed_evaluations,
-        total_evaluations: data.total_evaluations,
-        last_access_date: data.last_access_date,
-      });
+    debugLog.info('Chamando Cloud Function getMembersEncrypted', {
+      component: 'member.service',
+      data: { evaluationId }
     });
 
-    return members;
+    // Chama Cloud Function que descriptografa e retorna
+    const getMembersEncrypted = httpsCallable<
+      { evaluationId: string },
+      { success: boolean; members: TeamMember[] }
+    >(functions, 'getMembersEncrypted');
+
+    const result = await getMembersEncrypted({ evaluationId });
+
+    if (!result.data.success) {
+      throw new Error('Cloud Function retornou erro');
+    }
+
+    debugLog.success(`${result.data.members.length} membros carregados`, {
+      component: 'member.service',
+      data: { count: result.data.members.length }
+    });
+
+    return result.data.members;
   } catch (error) {
-    console.error('Erro ao buscar membros:', error);
+    debugLog.error('Erro ao buscar membros via Cloud Function', error as Error, {
+      component: 'member.service'
+    });
     return [];
   }
 }
@@ -206,7 +189,13 @@ export async function getMember(
 }
 
 /**
- * Valida código de acesso do membro
+ * Valida código de acesso do membro (LEGADO - NÃO RECOMENDADO)
+ *
+ * @deprecated Use getMembersByAccessCode() que usa Cloud Function com criptografia
+ *
+ * Esta função faz acesso direto ao Firestore e NÃO descriptografa nomes/emails.
+ * Prefira usar getMembersByAccessCode() que chama a Cloud Function.
+ *
  * Complexidade: O(N) onde N é o número de membros (precisa buscar todos)
  *
  * @param evaluationId - ID da avaliação
@@ -417,18 +406,19 @@ export async function removeMember(memberId: string): Promise<void> {
 }
 
 /**
- * Busca todos os membros de uma avaliação usando código de acesso
- *
- * Esta função permite que um colaborador com código de acesso válido
- * veja os nomes descriptografados dos outros membros da equipe.
+ * Busca todos os membros de uma avaliação usando código de acesso (v2 - COM CLOUD FUNCTION)
+ * - Frontend envia código plaintext
+ * - Cloud Function valida código (hash)
+ * - Busca todos membros criptografados
+ * - Descriptografa e retorna plaintext
  *
  * Fluxo:
- * 1. Valida o código de acesso
- * 2. Busca o membro e obtém evaluation_id
- * 3. Busca a avaliação para obter o manager_token
- * 4. Usa o manager_token para descriptografar os nomes
+ * 1. Cloud Function hasheia o código e busca membro
+ * 2. Busca todos membros da mesma avaliação
+ * 3. Descriptografa nomes e emails
+ * 4. Retorna plaintext para o frontend
  *
- * @param accessCode - Código de acesso válido do colaborador
+ * @param accessCode - Código de acesso válido do colaborador (6 dígitos)
  * @returns Lista de membros com nomes descriptografados
  */
 export async function getMembersByAccessCode(
@@ -436,93 +426,38 @@ export async function getMembersByAccessCode(
 ): Promise<TeamMember[]> {
   debugLog.start('getMembersByAccessCode', { component: 'member.service', data: { accessCode: '******' } });
   try {
-    // 1. Buscar o membro com este código de acesso
-    debugLog.debug('Hasheando código de acesso', { component: 'member.service', data: { accessCodeLength: accessCode.length } });
-    const codeHash = hashAccessCode(accessCode);
-    debugLog.info('Hash gerado para busca', { component: 'member.service', data: { hashPrefix: codeHash.substring(0, 16) + '...' } });
-
-    const memberQuery = query(
-      collection(db, 'team_members'),
-      where('access_code', '==', codeHash)
-    );
-
-    debugLog.debug('Buscando membro por código', { component: 'member.service' });
-    const memberSnapshot = await getDocs(memberQuery);
-
-    if (memberSnapshot.empty) {
-      debugLog.warn('Código de acesso não encontrado no Firestore', { component: 'member.service' });
-
-      // Debug: buscar TODOS os membros para ver o que existe
-      debugLog.warn('Buscando amostra de TODOS os membros no banco...', { component: 'member.service' });
-      const allMembersQuery = query(collection(db, 'team_members'));
-      const allMembersSnap = await getDocs(allMembersQuery);
-
-      const sampleData = allMembersSnap.docs.slice(0, 10).map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          evaluationId: data.avaliation_id,
-          hashPrefix: data.access_code?.substring(0, 16) + '...',
-          hashFull: data.access_code, // Mostrar hash completo para comparar
-        };
-      });
-
-      debugLog.error('Membros existentes no banco', undefined, {
-        component: 'member.service',
-        data: {
-          total: allMembersSnap.size,
-          searchedHash: codeHash,
-          searchedHashPrefix: codeHash.substring(0, 16) + '...',
-          sampleMembers: sampleData,
-        }
-      });
-
-      throw new Error('Código de acesso inválido');
-    }
-
-    const memberData = memberSnapshot.docs[0].data();
-    const evaluationId = memberData.avaliation_id;
-    debugLog.info('Membro encontrado', { component: 'member.service', data: { evaluationId, memberId: memberSnapshot.docs[0].id } });
-
-    // 2. Verificar se a avaliação existe
-    debugLog.debug('Verificando se avaliação existe', { component: 'member.service', data: { evaluationId } });
-    const evalDoc = await getDoc(doc(db, 'evaluations', evaluationId));
-
-    if (!evalDoc.exists()) {
-      debugLog.error('Avaliação não encontrada no Firestore', undefined, { component: 'member.service', data: { evaluationId } });
-      throw new Error('Avaliação não encontrada');
-    }
-
-    // 3. Buscar todos os membros
-    debugLog.debug('Buscando todos os membros da avaliação', { component: 'member.service', data: { evaluationId } });
-    const membersQuery = query(
-      collection(db, 'team_members'),
-      where('avaliation_id', '==', evaluationId)
-    );
-
-    const membersSnapshot = await getDocs(membersQuery);
-    const members: TeamMember[] = [];
-
-    membersSnapshot.forEach((memberDoc) => {
-      const data = memberDoc.data();
-
-      members.push({
-        id: memberDoc.id,
-        avaliation_id: data.avaliation_id,
-        name: data.name, // Plaintext
-        email: data.email, // Plaintext
-        access_code: data.access_code,
-        completed_evaluations: data.completed_evaluations,
-        total_evaluations: data.total_evaluations,
-        last_access_date: data.last_access_date,
-      });
+    debugLog.info('Chamando Cloud Function getMembersByAccessCodeEncrypted', {
+      component: 'member.service',
+      data: { accessCodeLength: accessCode.length }
     });
 
-    debugLog.success(`${members.length} membros carregados`, { component: 'member.service', data: { count: members.length } });
+    // Chama Cloud Function que valida, descriptografa e retorna
+    const getMembersByAccessCodeEncrypted = httpsCallable<
+      { accessCode: string },
+      { success: boolean; evaluationId: string; currentMemberId: string; members: TeamMember[] }
+    >(functions, 'getMembersByAccessCodeEncrypted');
+
+    const result = await getMembersByAccessCodeEncrypted({ accessCode });
+
+    if (!result.data.success) {
+      throw new Error('Cloud Function retornou erro');
+    }
+
+    debugLog.success(`${result.data.members.length} membros carregados`, {
+      component: 'member.service',
+      data: {
+        count: result.data.members.length,
+        evaluationId: result.data.evaluationId,
+        currentMemberId: result.data.currentMemberId,
+      }
+    });
+
     debugLog.end('getMembersByAccessCode', { component: 'member.service' });
-    return members;
+    return result.data.members;
   } catch (error) {
-    debugLog.error('Erro ao buscar membros por código de acesso', error as Error, { component: 'member.service' });
+    debugLog.error('Erro ao buscar membros por código de acesso via Cloud Function', error as Error, {
+      component: 'member.service'
+    });
     throw new Error('Falha ao buscar membros da equipe');
   }
 }

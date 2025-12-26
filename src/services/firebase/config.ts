@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 // Configuração do Firebase usando variáveis de ambiente
 const firebaseConfig = {
@@ -46,8 +47,18 @@ export const app = initializeApp(firebaseConfig);
 // Inicializa o Firestore
 export const db = getFirestore(app);
 
+// Inicializa o Firebase Functions
+export const functions = getFunctions(app, 'southamerica-east1');
+
+// Conecta ao emulador em desenvolvimento (opcional)
+if (import.meta.env.DEV && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
+  console.log('🔧 Conectando ao Firebase Functions Emulator...');
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+}
+
 // Log de inicialização (apenas em desenvolvimento)
 if (import.meta.env.DEV) {
   console.log('🔥 Firebase inicializado com sucesso');
   console.log('📊 Firestore conectado ao projeto:', firebaseConfig.projectId);
+  console.log('⚡ Firebase Functions configurado (região: southamerica-east1)');
 }
