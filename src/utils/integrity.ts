@@ -30,7 +30,6 @@ export async function verifyConfigIntegrity(): Promise<boolean> {
     const requiredEnvVars = [
       'VITE_FIREBASE_API_KEY',
       'VITE_FIREBASE_PROJECT_ID',
-      'VITE_ENCRYPTION_KEY',
     ];
 
     const missing = requiredEnvVars.filter(
@@ -41,17 +40,6 @@ export async function verifyConfigIntegrity(): Promise<boolean> {
       logger.critical('Missing critical environment variables', undefined, {
         component: 'IntegrityCheck',
         missing,
-      });
-      return false;
-    }
-
-    // Verificar comprimento da chave de criptografia
-    const encryptionKey = import.meta.env.VITE_ENCRYPTION_KEY;
-    if (encryptionKey && encryptionKey.length !== 32) {
-      logger.critical('Invalid encryption key length', undefined, {
-        component: 'IntegrityCheck',
-        expected: 32,
-        actual: encryptionKey.length,
       });
       return false;
     }
