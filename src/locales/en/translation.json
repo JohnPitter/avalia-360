@@ -134,7 +134,24 @@
       "description": "Description (optional)",
       "descriptionPlaceholder": "Describe the purpose of this evaluation",
       "addMembers": "Add Members",
-      "submit": "Create Evaluation"
+      "submit": "Create Evaluation",
+      "titleHint": "💡 Choose a clear and descriptive title",
+      "titleError": "Title must be between 1 and 200 characters",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "nextStepsTitle": "📋 Next steps",
+      "nextSteps": {
+        "step1": "Define the evaluation title",
+        "step2": "Add team members (minimum 2)",
+        "step3": "Review data and send invitations",
+        "step4": "Track progress on the dashboard"
+      },
+      "tipsTitle": "💡 Tips for a good title",
+      "tips": {
+        "tip1": "Identify the period: \"Q4 2024\", \"Semester 2024\", \"Annual 2024\"",
+        "tip2": "Include the team/department: \"Sales Team\", \"Product Team\"",
+        "tip3": "Remember: all members will see this title"
+      }
     },
     "addMembers": {
       "title": "Add Team Members",

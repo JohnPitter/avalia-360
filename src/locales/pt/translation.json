@@ -134,7 +134,24 @@
       "description": "Descrição (opcional)",
       "descriptionPlaceholder": "Descreva o objetivo desta avaliação",
       "addMembers": "Adicionar Membros",
-      "submit": "Criar Avaliação"
+      "submit": "Criar Avaliação",
+      "titleHint": "💡 Escolha um título claro e descritivo",
+      "titleError": "Título deve ter entre 1 e 200 caracteres",
+      "cancel": "Cancelar",
+      "continue": "Continuar",
+      "nextStepsTitle": "📋 Próximos passos",
+      "nextSteps": {
+        "step1": "Defina o título da avaliação",
+        "step2": "Adicione os membros da equipe (mínimo 2)",
+        "step3": "Revise os dados e envie os convites",
+        "step4": "Acompanhe o progresso no dashboard"
+      },
+      "tipsTitle": "💡 Dicas para um bom título",
+      "tips": {
+        "tip1": "Identifique o período: \"Q4 2024\", \"Semestral 2024\", \"Anual 2024\"",
+        "tip2": "Inclua o time/departamento: \"Time de Vendas\", \"Equipe Produto\"",
+        "tip3": "Lembre-se: todos os membros verão este título"
+      }
     },
     "addMembers": {
       "title": "Adicionar Membros da Equipe",

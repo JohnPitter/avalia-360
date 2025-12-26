@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { isValidEmail } from '@/utils/validation';
 import { sanitizeEmail } from '@/utils/sanitization';
 
@@ -12,6 +13,7 @@ interface ManagerLoginProps {
 }
 
 export function ManagerLogin({ onLogin }: ManagerLoginProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
   const [mode, setMode] = useState<'create' | 'access'>('create');
@@ -25,12 +27,12 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
     // Valida email
     const sanitizedEmail = sanitizeEmail(email);
     if (!isValidEmail(sanitizedEmail)) {
-      validationErrors.push('Email inválido');
+      validationErrors.push(t('manager.login.errors.invalidEmail'));
     }
 
     // Se modo "access", valida token
     if (mode === 'access' && !token.trim()) {
-      validationErrors.push('Token é obrigatório para acessar avaliação existente');
+      validationErrors.push(t('manager.login.errors.tokenRequired'));
     }
 
     if (validationErrors.length > 0) {
@@ -53,10 +55,10 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Bem-vindo, Gestor!
+            {t('manager.login.welcome')}
           </h2>
           <p className="text-gray-600">
-            Comece criando uma nova avaliação ou acesse uma existente
+            {t('manager.login.subtitle')}
           </p>
         </div>
 
@@ -75,7 +77,7 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              <span>Criar Nova</span>
+              <span>{t('manager.login.tabCreate')}</span>
             </div>
           </button>
           <button
@@ -91,7 +93,7 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
               </svg>
-              <span>Acessar Existente</span>
+              <span>{t('manager.login.tabAccess')}</span>
             </div>
           </button>
         </div>
@@ -100,7 +102,7 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
-              Email do Gestor
+              {t('manager.login.emailLabel')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -114,15 +116,15 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
-                placeholder="seu.email@empresa.com"
+                placeholder={t('manager.login.emailPlaceholder')}
                 required
                 autoComplete="email"
               />
             </div>
             <p className="mt-2 text-sm text-gray-600">
               {mode === 'create'
-                ? '💡 Você receberá um token de acesso para gerenciar a avaliação'
-                : '🔑 Use o mesmo email cadastrado na criação da avaliação'}
+                ? t('manager.login.emailHintCreate')
+                : t('manager.login.emailHintAccess')}
             </p>
           </div>
 
@@ -130,7 +132,7 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
           {mode === 'access' && (
             <div className="animate-slide-up">
               <label htmlFor="token" className="block text-sm font-semibold text-gray-900 mb-2">
-                Token de Acesso
+                {t('manager.login.tokenLabel')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -144,12 +146,12 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
                   value={token}
                   onChange={(e) => setToken(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none font-mono text-sm"
-                  placeholder="550e8400-e29b-41d4-a716-446655440000"
+                  placeholder={t('manager.login.tokenPlaceholder')}
                   required
                 />
               </div>
               <p className="mt-2 text-sm text-gray-600">
-                🔐 Token UUID recebido ao criar a avaliação
+                {t('manager.login.tokenHint')}
               </p>
             </div>
           )}
@@ -177,7 +179,7 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
             type="submit"
             className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
-            {mode === 'create' ? '✨ Criar Nova Avaliação' : '🚀 Acessar Dashboard'}
+            {mode === 'create' ? t('manager.login.buttonCreate') : t('manager.login.buttonAccess')}
           </button>
         </form>
       </div>
@@ -192,26 +194,26 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-gray-900 mb-3">
-              {mode === 'create' ? '📋 Como funciona?' : '🔍 Esqueceu o token?'}
+              {mode === 'create' ? t('manager.login.infoCreate.title') : t('manager.login.infoAccess.title')}
             </h3>
             <ul className="space-y-2 text-sm text-gray-700">
               {mode === 'create' ? (
                 <>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600 font-bold">1.</span>
-                    <span>Informe seu email profissional</span>
+                    <span>{t('manager.login.infoCreate.step1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600 font-bold">2.</span>
-                    <span>Configure a avaliação e adicione os membros da equipe</span>
+                    <span>{t('manager.login.infoCreate.step2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600 font-bold">3.</span>
-                    <span>Guarde o token UUID para acessar o dashboard depois</span>
+                    <span>{t('manager.login.infoCreate.step3')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600 font-bold">4.</span>
-                    <span>Os membros receberão códigos de acesso automaticamente</span>
+                    <span>{t('manager.login.infoCreate.step4')}</span>
                   </li>
                 </>
               ) : (
@@ -220,25 +222,25 @@ export function ManagerLogin({ onLogin }: ManagerLoginProps) {
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span>O token foi enviado ao criar a avaliação</span>
+                    <span>{t('manager.login.infoAccess.tip1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span>Verifique seu email (pode estar no spam)</span>
+                    <span>{t('manager.login.infoAccess.tip2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span>Formato: xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx</span>
+                    <span>{t('manager.login.infoAccess.tip3')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span>Caso não encontre, crie uma nova avaliação</span>
+                    <span>{t('manager.login.infoAccess.tip4')}</span>
                   </li>
                 </>
               )}

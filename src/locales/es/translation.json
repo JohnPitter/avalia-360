@@ -134,7 +134,24 @@
       "description": "Descripción (opcional)",
       "descriptionPlaceholder": "Describa el objetivo de esta evaluación",
       "addMembers": "Añadir Miembros",
-      "submit": "Crear Evaluación"
+      "submit": "Crear Evaluación",
+      "titleHint": "💡 Elija un título claro y descriptivo",
+      "titleError": "El título debe tener entre 1 y 200 caracteres",
+      "cancel": "Cancelar",
+      "continue": "Continuar",
+      "nextStepsTitle": "📋 Próximos pasos",
+      "nextSteps": {
+        "step1": "Defina el título de la evaluación",
+        "step2": "Añada los miembros del equipo (mínimo 2)",
+        "step3": "Revise los datos y envíe las invitaciones",
+        "step4": "Siga el progreso en el panel"
+      },
+      "tipsTitle": "💡 Consejos para un buen título",
+      "tips": {
+        "tip1": "Identifique el período: \"Q4 2024\", \"Semestre 2024\", \"Anual 2024\"",
+        "tip2": "Incluya el equipo/departamento: \"Equipo de Ventas\", \"Equipo de Producto\"",
+        "tip3": "Recuerde: todos los miembros verán este título"
+      }
     },
     "addMembers": {
       "title": "Añadir Miembros del Equipo",

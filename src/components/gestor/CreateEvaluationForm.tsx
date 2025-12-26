@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { isValidTitle } from '@/utils/validation';
 import { sanitizeText } from '@/utils/sanitization';
 
@@ -16,6 +17,7 @@ export function CreateEvaluationForm({
   onSubmit,
   onCancel,
 }: CreateEvaluationFormProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -28,7 +30,7 @@ export function CreateEvaluationForm({
     const sanitizedTitle = sanitizeText(title, 200);
 
     if (!isValidTitle(sanitizedTitle)) {
-      validationErrors.push('Título deve ter entre 1 e 200 caracteres');
+      validationErrors.push(t('manager.createEvaluation.titleError'));
     }
 
     if (validationErrors.length > 0) {
@@ -47,7 +49,7 @@ export function CreateEvaluationForm({
           {/* Título da Avaliação */}
           <div>
             <label htmlFor="title" className="block text-sm font-semibold text-gray-900 mb-3">
-              Título da Avaliação *
+              {t('manager.createEvaluation.evaluationTitle')} *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -61,7 +63,7 @@ export function CreateEvaluationForm({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none text-lg"
-                placeholder="Ex: Avaliação de Desempenho Q4 2024"
+                placeholder={t('manager.createEvaluation.evaluationTitlePlaceholder')}
                 required
                 maxLength={200}
                 autoFocus
@@ -69,7 +71,7 @@ export function CreateEvaluationForm({
             </div>
             <div className="flex items-center justify-between mt-2">
               <p className="text-sm text-gray-600">
-                💡 Escolha um título claro e descritivo
+                {t('manager.createEvaluation.titleHint')}
               </p>
               <p className={`text-sm font-medium ${title.length > 180 ? 'text-orange-600' : 'text-gray-500'}`}>
                 {title.length}/200
@@ -104,13 +106,13 @@ export function CreateEvaluationForm({
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-gray-900 mb-3">📋 Próximos passos</h3>
+                <h3 className="font-bold text-gray-900 mb-3">{t('manager.createEvaluation.nextStepsTitle')}</h3>
                 <ol className="space-y-2.5">
                   {[
-                    { text: 'Defina o título da avaliação', done: title.length > 0 },
-                    { text: 'Adicione os membros da equipe (mínimo 2)', done: false },
-                    { text: 'Revise os dados e envie os convites', done: false },
-                    { text: 'Acompanhe o progresso no dashboard', done: false },
+                    { text: t('manager.createEvaluation.nextSteps.step1'), done: title.length > 0 },
+                    { text: t('manager.createEvaluation.nextSteps.step2'), done: false },
+                    { text: t('manager.createEvaluation.nextSteps.step3'), done: false },
+                    { text: t('manager.createEvaluation.nextSteps.step4'), done: false },
                   ].map((step, index) => (
                     <li key={index} className="flex items-start gap-2.5 text-sm">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
@@ -143,25 +145,25 @@ export function CreateEvaluationForm({
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-gray-900 mb-3">💡 Dicas para um bom título</h3>
+                <h3 className="font-bold text-gray-900 mb-3">{t('manager.createEvaluation.tipsTitle')}</h3>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Identifique o período: "Q4 2024", "Semestral 2024", "Anual 2024"</span>
+                    <span>{t('manager.createEvaluation.tips.tip1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Inclua o time/departamento: "Time de Vendas", "Equipe Produto"</span>
+                    <span>{t('manager.createEvaluation.tips.tip2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Lembre-se: todos os membros verão este título</span>
+                    <span>{t('manager.createEvaluation.tips.tip3')}</span>
                   </li>
                 </ul>
               </div>
@@ -175,14 +177,14 @@ export function CreateEvaluationForm({
               onClick={onCancel}
               className="flex-1 py-4 px-6 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
             >
-              Cancelar
+              {t('manager.createEvaluation.cancel')}
             </button>
             <button
               type="submit"
               className="flex-1 py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               <span className="flex items-center justify-center gap-2">
-                Continuar
+                {t('manager.createEvaluation.continue')}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
