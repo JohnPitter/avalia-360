@@ -6,13 +6,10 @@
  */
 
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import {EvaluationController} from '../controllers/EvaluationController';
 import {MemberController} from '../controllers/MemberController';
 
-// Inicializar Firebase Admin
-admin.initializeApp();
-
+// Firebase Admin já inicializado em index.ts
 const evaluationController = new EvaluationController();
 const memberController = new MemberController();
 
