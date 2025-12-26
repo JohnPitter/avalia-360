@@ -262,19 +262,30 @@ export function MemberPage() {
                   {step === 'evaluation' && 'Preencha a avaliação com honestidade e construtividade'}
                 </p>
               </div>
-              {currentMember && (
-                <div className="hidden lg:flex items-center space-x-3 bg-white rounded-2xl px-4 py-3 shadow-lg border border-gray-100">
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                    </svg>
+              <div className="flex items-center gap-3">
+                {currentMember && (
+                  <div className="hidden lg:flex items-center space-x-3 bg-white rounded-2xl px-4 py-3 shadow-lg border border-gray-100">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Colaborador</p>
+                      <p className="text-sm font-semibold text-gray-900">{currentMember.name}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Colaborador</p>
-                    <p className="text-sm font-semibold text-gray-900">{currentMember.name}</p>
-                  </div>
-                </div>
-              )}
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="hidden sm:inline">Sair</span>
+                </button>
+              </div>
             </div>
 
             {/* Progress Indicator */}
@@ -330,15 +341,27 @@ export function MemberPage() {
         <div className="animate-fade-in">
           {step === 'login' && <MemberLogin onLogin={handleLogin} error={error} loading={loading} />}
 
-          {step === 'member-list' && currentMember && (
+          {step === 'member-list' && currentMember && allMembers.length > 0 && (
             <MembersList
               evaluationTitle={evaluation?.title || 'Avaliação 360°'}
               currentMember={currentMember}
               allMembers={allMembers}
               evaluatedMemberIds={evaluatedMemberIds}
               onSelectMember={handleSelectMember}
-              onLogout={handleLogout}
             />
+          )}
+
+          {step === 'member-list' && currentMember && allMembers.length === 0 && !error && (
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center">
+                <div className="relative w-24 h-24 mx-auto mb-6">
+                  <div className="absolute inset-0 animate-spin border-4 border-emerald-600 border-t-transparent rounded-full" />
+                  <div className="absolute inset-3 animate-spin border-4 border-emerald-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Carregando membros da equipe</h3>
+                <p className="text-gray-600">Aguarde enquanto buscamos os dados...</p>
+              </div>
+            </div>
           )}
 
           {step === 'evaluation' && selectedMember && currentMember && (

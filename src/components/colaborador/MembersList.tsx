@@ -11,7 +11,6 @@ interface MembersListProps {
   allMembers: TeamMember[];
   evaluatedMemberIds: string[];
   onSelectMember: (memberId: string) => void;
-  onLogout: () => void;
 }
 
 export function MembersList({
@@ -20,7 +19,6 @@ export function MembersList({
   allMembers,
   evaluatedMemberIds,
   onSelectMember,
-  onLogout,
 }: MembersListProps) {
   // Filtra para não avaliar a si mesmo
   const membersToEvaluate = allMembers.filter(
@@ -40,36 +38,20 @@ export function MembersList({
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {evaluationTitle}
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Olá, <span className="font-semibold text-emerald-600">{currentMember.name}</span>
-                </p>
-              </div>
-            </div>
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
           </div>
-
-          <button
-            onClick={onLogout}
-            className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
-          >
-            <span className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Sair
-            </span>
-          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {evaluationTitle}
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Olá, <span className="font-semibold text-emerald-600">{currentMember.name}</span>
+            </p>
+          </div>
         </div>
 
         {/* Progress Section */}
