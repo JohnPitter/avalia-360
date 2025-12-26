@@ -98,15 +98,7 @@ export function MemberPage() {
       // Extrai dados do resultado da busca
       const { evaluationId: foundEvalId, member } = searchResult;
 
-      // Se o nome está criptografado, usa email como fallback
-      const displayMember = {
-        ...member,
-        name: member.name.startsWith('U2FsdGVk')
-          ? member.email.split('@')[0]
-          : member.name,
-      };
-
-      setCurrentMember(displayMember);
+      setCurrentMember(member);
       setEvaluationId(foundEvalId);
 
       // Atualiza último acesso
@@ -138,25 +130,17 @@ export function MemberPage() {
 
       const membersList = await getMembersByAccessCode(session.token);
 
-      // Substitui nomes criptografados por emails (fallback)
-      const membersWithDisplayNames = membersList.map((member) => ({
-        ...member,
-        name: member.name.startsWith('U2FsdGVk') // Se começa com base64 (criptografado)
-          ? member.email.split('@')[0] // Usa primeira parte do email
-          : member.name, // Ou nome descriptografado
-      }));
-
-      setAllMembers(membersWithDisplayNames);
+      setAllMembers(membersList);
 
       // Carrega avaliações já feitas
       const pending = await getPendingEvaluations(
         evalId,
         memberId,
-        membersWithDisplayNames
+        membersList
       );
 
       // Calcula quais já foram avaliados
-      const allMemberIds = membersWithDisplayNames
+      const allMemberIds = membersList
         .filter((m) => m.id !== memberId)
         .map((m) => m.id);
       const evaluated = allMemberIds.filter((id) => !pending.includes(id));

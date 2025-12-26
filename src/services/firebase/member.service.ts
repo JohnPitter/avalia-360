@@ -11,12 +11,8 @@ import {
 import { db } from './config';
 import type { TeamMember } from '@/types';
 import {
-  encrypt,
-  decrypt,
-  hashEmail,
   hashAccessCode,
   generateAccessCode,
-  generateEncryptionKey,
 } from '@/utils/crypto';
 import { validateTeamMembers } from '@/utils/validation';
 import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
@@ -55,7 +51,7 @@ export interface MemberWithAccessCode extends TeamMember {
 export async function addMembers(
   evaluationId: string,
   members: MemberData[],
-  managerToken: string
+  _managerToken: string
 ): Promise<MemberWithAccessCode[]> {
   // Validação
   const validation = validateTeamMembers(members);
@@ -63,7 +59,6 @@ export async function addMembers(
     throw new Error(`Validação falhou: ${validation.errors.join(', ')}`);
   }
 
-  const encryptionKey = generateEncryptionKey(managerToken);
   const batch = writeBatch(db);
   const membersWithCodes: MemberWithAccessCode[] = [];
 
@@ -76,9 +71,7 @@ export async function addMembers(
       // Gera código de acesso
       const accessCode = generateAccessCode();
 
-      // Criptografia
-      const encryptedName = encrypt(sanitizedName, encryptionKey);
-      const emailHash = hashEmail(sanitizedEmail);
+      // Criptografia apenas do código de acesso
       const codeHash = hashAccessCode(accessCode);
 
       // Total de avaliações que o membro precisa fazer (N-1)
@@ -86,8 +79,8 @@ export async function addMembers(
 
       const memberData = {
         avaliation_id: evaluationId,
-        name: encryptedName,
-        email: emailHash,
+        name: sanitizedName, // Plaintext (protegido por Firestore Rules)
+        email: sanitizedEmail, // Plaintext (protegido por Firestore Rules)
         access_code: codeHash,
         completed_evaluations: 0,
         total_evaluations: totalEvaluations,
@@ -99,7 +92,13 @@ export async function addMembers(
 
       membersWithCodes.push({
         id: docRef.id,
-        ...memberData,
+        avaliation_id: evaluationId,
+        name: sanitizedName,
+        email: sanitizedEmail,
+        access_code: codeHash,
+        completed_evaluations: 0,
+        total_evaluations: totalEvaluations,
+        last_access_date: null,
         accessCode, // Código não-hasheado (só disponível aqui)
       });
     }
@@ -123,7 +122,7 @@ export async function addMembers(
  */
 export async function getMembers(
   evaluationId: string,
-  managerToken: string
+  _managerToken: string
 ): Promise<TeamMember[]> {
   try {
     const q = query(
@@ -132,29 +131,21 @@ export async function getMembers(
     );
 
     const querySnapshot = await getDocs(q);
-    const encryptionKey = generateEncryptionKey(managerToken);
-
     const members: TeamMember[] = [];
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
 
-      try {
-        const decryptedName = decrypt(data.name, encryptionKey);
-
-        members.push({
-          id: doc.id,
-          avaliation_id: data.avaliation_id,
-          name: decryptedName,
-          email: data.email,
-          access_code: data.access_code,
-          completed_evaluations: data.completed_evaluations,
-          total_evaluations: data.total_evaluations,
-          last_access_date: data.last_access_date,
-        });
-      } catch (error) {
-        console.error(`Erro ao descriptografar membro ${doc.id}:`, error);
-      }
+      members.push({
+        id: doc.id,
+        avaliation_id: data.avaliation_id,
+        name: data.name, // Já em plaintext
+        email: data.email, // Já em plaintext
+        access_code: data.access_code,
+        completed_evaluations: data.completed_evaluations,
+        total_evaluations: data.total_evaluations,
+        last_access_date: data.last_access_date,
+      });
     });
 
     return members;
@@ -174,7 +165,7 @@ export async function getMembers(
  */
 export async function getMember(
   memberId: string,
-  managerToken: string
+  _managerToken: string
 ): Promise<TeamMember | null> {
   try {
     const docRef = doc(db, 'team_members', memberId);
@@ -185,15 +176,12 @@ export async function getMember(
     }
 
     const data = docSnap.data();
-    const encryptionKey = generateEncryptionKey(managerToken);
-
-    const decryptedName = decrypt(data.name, encryptionKey);
 
     return {
       id: docSnap.id,
       avaliation_id: data.avaliation_id,
-      name: decryptedName,
-      email: data.email,
+      name: data.name, // Já em plaintext
+      email: data.email, // Já em plaintext
       access_code: data.access_code,
       completed_evaluations: data.completed_evaluations,
       total_evaluations: data.total_evaluations,
@@ -236,13 +224,11 @@ export async function validateAccessCode(
     const docSnap = querySnapshot.docs[0];
     const data = docSnap.data();
 
-    // Não descriptografa o nome aqui pois não temos o managerToken
-    // O nome será descriptografado quando necessário
     return {
       id: docSnap.id,
       avaliation_id: data.avaliation_id,
-      name: data.name, // Ainda criptografado
-      email: data.email,
+      name: data.name, // Plaintext
+      email: data.email, // Plaintext
       access_code: data.access_code,
       completed_evaluations: data.completed_evaluations,
       total_evaluations: data.total_evaluations,
@@ -461,7 +447,6 @@ export async function getMembersByAccessCode(
     }
 
     // 3. Buscar todos os membros
-    // Nota: Nomes virão criptografados - serão convertidos para emails no frontend
     const membersQuery = query(
       collection(db, 'team_members'),
       where('avaliation_id', '==', evaluationId)
@@ -476,8 +461,8 @@ export async function getMembersByAccessCode(
       members.push({
         id: memberDoc.id,
         avaliation_id: data.avaliation_id,
-        name: data.name, // Ainda criptografado - será tratado no frontend
-        email: data.email,
+        name: data.name, // Plaintext
+        email: data.email, // Plaintext
         access_code: data.access_code,
         completed_evaluations: data.completed_evaluations,
         total_evaluations: data.total_evaluations,
