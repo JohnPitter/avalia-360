@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { isValidAccessCode } from '@/utils/validation';
 import { sanitizeNumeric } from '@/utils/sanitization';
 
@@ -14,6 +15,7 @@ interface MemberLoginProps {
 }
 
 export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
+  const { t } = useTranslation();
   const [accessCode, setAccessCode] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -29,7 +31,7 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
     const validationErrors: string[] = [];
 
     if (!isValidAccessCode(accessCode)) {
-      validationErrors.push('Código deve ter exatamente 6 dígitos');
+      validationErrors.push(t('member.login.errors.invalidCode'));
     }
 
     if (validationErrors.length > 0) {
@@ -52,10 +54,10 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Bem-vindo, Colaborador!
+            {t('member.login.welcome')}
           </h2>
           <p className="text-gray-600">
-            Insira seu código de acesso para começar as avaliações
+            {t('member.login.subtitle')}
           </p>
         </div>
 
@@ -63,7 +65,7 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
           {/* Código de Acesso */}
           <div>
             <label htmlFor="accessCode" className="block text-sm font-semibold text-gray-900 mb-4 text-center">
-              Código de Acesso (6 dígitos)
+              {t('member.login.codeLabel')}
             </label>
 
             {/* Input Oculto para acessibilidade */}
@@ -98,7 +100,7 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
             </div>
 
             <p className="text-sm text-gray-600 text-center">
-              💌 Digite o código de 6 dígitos que você recebeu por email
+              {t('member.login.codeHint')}
             </p>
           </div>
 
@@ -137,12 +139,12 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Verificando...
+                {t('member.login.verifying')}
               </span>
             ) : accessCode.length === 6 ? (
-              '🚀 Acessar Avaliação'
+              t('member.login.buttonAccess')
             ) : (
-              `Digite os 6 dígitos (${accessCode.length}/6)`
+              t('member.login.buttonIncomplete', { count: accessCode.length })
             )}
           </button>
         </form>
@@ -159,25 +161,25 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-gray-900 mb-3">📧 Onde está meu código?</h3>
+              <h3 className="font-bold text-gray-900 mb-3">{t('member.login.info.title')}</h3>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>Verifique seu email (caixa de spam também)</span>
+                  <span>{t('member.login.info.tip1')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>O código tem exatamente <strong>6 dígitos</strong></span>
+                  <span dangerouslySetInnerHTML={{ __html: t('member.login.info.tip2') }} />
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>Foi enviado pelo gestor da sua equipe</span>
+                  <span>{t('member.login.info.tip3')}</span>
                 </li>
               </ul>
             </div>
@@ -193,25 +195,25 @@ export function MemberLogin({ onLogin, error, loading }: MemberLoginProps) {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-gray-900 mb-3">🔒 Privacidade & Segurança</h3>
+              <h3 className="font-bold text-gray-900 mb-3">{t('member.login.security.title')}</h3>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>Suas avaliações são <strong>100% anônimas</strong></span>
+                  <span dangerouslySetInnerHTML={{ __html: t('member.login.security.tip1') }} />
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>Dados <strong>criptografados</strong> ponta a ponta</span>
+                  <span dangerouslySetInnerHTML={{ __html: t('member.login.security.tip2') }} />
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>Ninguém saberá quem avaliou quem</span>
+                  <span>{t('member.login.security.tip3')}</span>
                 </li>
               </ul>
             </div>
