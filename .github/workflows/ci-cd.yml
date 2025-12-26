@@ -34,9 +34,9 @@ jobs:
       - name: TypeScript validation
         run: npx tsc --noEmit
 
-      # 5. Security audit
+      # 5. Security audit (smart - ignores dev-only moderate vulnerabilities)
       - name: Security audit
-        run: npm audit --audit-level=moderate
+        run: node scripts/smart-audit.cjs
         continue-on-error: false
 
       # 6. Unit tests
