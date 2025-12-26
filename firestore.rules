@@ -34,9 +34,7 @@ service cloud.firestore {
     // Team members collection
     match /team_members/{memberId} {
       // Create only during evaluation setup
-      allow create: if request.resource.data.keys().hasAll(['id', 'evaluation_id', 'name_encrypted', 'email_hash', 'access_code_hash', 'completed_evaluations', 'total_evaluations'])
-                    && request.resource.data.id == memberId
-                    && isValidUUID(memberId)
+      allow create: if request.resource.data.keys().hasAll(['avaliation_id', 'name', 'email', 'access_code', 'completed_evaluations', 'total_evaluations', 'last_access_date'])
                     && request.resource.data.completed_evaluations == 0
                     && request.resource.data.total_evaluations >= 0;
 
