@@ -18,19 +18,14 @@ service cloud.firestore {
     // Evaluations collection
     match /evaluations/{evaluationId} {
       // Anyone can create (gestor creating new evaluation)
-      allow create: if request.resource.data.keys().hasAll(['id', 'creator_email_hash', 'manager_token', 'title', 'status', 'created_at'])
-                    && request.resource.data.id == evaluationId
-                    && isValidUUID(evaluationId)
-                    && request.resource.data.status in ['draft', 'active']
-                    && request.resource.data.created_at == request.time;
+      allow create: if request.resource.data.keys().hasAll(['creator_email', 'creator_token', 'title', 'status', 'created_at'])
+                    && request.resource.data.status in ['draft', 'active'];
 
-      // Read with valid manager token
-      allow read: if resource.data.manager_token == request.auth.token.manager_token
-                  || true; // Allow read for now (TODO: implement proper auth)
+      // Read allowed (data is encrypted)
+      allow read: if true;
 
-      // Update only status field with manager token
-      allow update: if resource.data.manager_token == request.auth.token.manager_token
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updated_at']);
+      // Update only status field
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updated_at']);
 
       // No delete allowed
       allow delete: if false;

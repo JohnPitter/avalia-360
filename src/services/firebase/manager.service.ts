@@ -41,7 +41,7 @@ export async function searchManagerEvaluations(
 
     // Buscar todas as avaliações criadas por este email
     const q = query(
-      collection(db, 'avaliations'),
+      collection(db, 'evaluations'),
       where('creator_email', '==', emailHash)
     );
 

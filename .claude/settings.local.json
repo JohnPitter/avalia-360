@@ -20,7 +20,22 @@
       "Bash(npx tsc --noEmit)",
       "Bash(npx playwright install chromium)",
       "Bash(find:*)",
-      "Bash(firebase deploy:*)"
+      "Bash(firebase deploy:*)",
+      "Bash(npm update:*)",
+      "Bash(node scripts/smart-audit.js:*)",
+      "Bash(node scripts/smart-audit.cjs:*)",
+      "Bash(npm view:*)",
+      "Bash(git restore:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr close:*)",
+      "Bash(for pr in 6 7 8 9 10 11 12 13)",
+      "Bash(do echo \"=== PR #$pr ===\")",
+      "Bash(done)",
+      "Bash(do:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []
