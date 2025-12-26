@@ -1,0 +1,300 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "delete": "Excluir",
+      "edit": "Editar",
+      "close": "Fechar",
+      "next": "Próximo",
+      "previous": "Anterior",
+      "confirm": "Confirmar",
+      "back": "Voltar"
+    },
+    "messages": {
+      "success": "Operação concluída com sucesso",
+      "error": "Ocorreu um erro",
+      "loading": "Carregando...",
+      "noData": "Nenhum dado disponível",
+      "confirmDelete": "Tem certeza que deseja excluir?",
+      "unsavedChanges": "Você tem alterações não salvas"
+    },
+    "labels": {
+      "email": "Email",
+      "name": "Nome",
+      "date": "Data",
+      "status": "Status",
+      "actions": "Ações",
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "sort": "Ordenar"
+    },
+    "trustIndicators": {
+      "free": "100% Gratuito",
+      "encrypted": "Dados Criptografados",
+      "realtime": "Resultados em Tempo Real"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Sistema de Avaliação 360° Mais Completo",
+      "title": "Transforme",
+      "titleGradient": "Feedbacks em Crescimento",
+      "subtitle": "Avaliações 360° modernas e seguras. Todos avaliam todos para uma visão completa do desempenho da equipe.",
+      "ctaPrimary": "Criar Nova Avaliação",
+      "ctaSecondary": "Acessar com Código"
+    },
+    "features": {
+      "title": "Por que escolher o Avalia 360°?",
+      "subtitle": "Uma plataforma completa com recursos avançados para facilitar o processo de avaliação.",
+      "manager": {
+        "title": "Para Gestores",
+        "subtitle": "Crie avaliações personalizadas, gerencie sua equipe e visualize resultados consolidados em dashboards interativos.",
+        "feature1": "Criação rápida de avaliações",
+        "feature2": "Dashboards em tempo real",
+        "feature3": "Exportação de relatórios"
+      },
+      "member": {
+        "title": "Para Colaboradores",
+        "subtitle": "Avalie seus colegas de forma anônima e contribua com feedback construtivo para o crescimento da equipe.",
+        "feature1": "Avaliações 100% anônimas",
+        "feature2": "Interface intuitiva e rápida",
+        "feature3": "Auto-save de rascunhos"
+      },
+      "security": {
+        "title": "Segurança Máxima",
+        "description": "Criptografia AES-256 end-to-end para proteger dados sensíveis e garantir privacidade total."
+      },
+      "analytics": {
+        "title": "Analytics Avançado",
+        "description": "Visualize resultados com gráficos interativos, radar charts e comparações em tempo real."
+      },
+      "setup": {
+        "title": "Setup Instantâneo",
+        "description": "Comece em minutos. Importe membros via Excel e envie convites automaticamente."
+      },
+      "notifications": {
+        "title": "Notificações Auto",
+        "description": "Emails automáticos com códigos de acesso únicos para cada membro da equipe."
+      },
+      "export": {
+        "title": "Exportação Fácil",
+        "description": "Exporte relatórios completos em PDF ou Excel com um clique."
+      },
+      "autosave": {
+        "title": "Auto-Save",
+        "description": "Rascunhos salvos automaticamente. Nunca perca seu progresso."
+      }
+    },
+    "cta": {
+      "title": "Pronto para começar?",
+      "subtitle": "Crie sua primeira avaliação 360° em menos de 5 minutos.",
+      "button": "Começar Agora - É Grátis"
+    }
+  },
+  "manager": {
+    "login": {
+      "welcome": "Bem-vindo, Gestor!",
+      "subtitle": "Comece criando uma nova avaliação ou acesse uma existente",
+      "tabCreate": "Criar Nova",
+      "tabAccess": "Acessar Existente",
+      "emailLabel": "Email do Gestor",
+      "emailPlaceholder": "seu.email@empresa.com",
+      "emailHintCreate": "💡 Você receberá um token de acesso para gerenciar a avaliação",
+      "emailHintAccess": "🔑 Use o mesmo email cadastrado na criação da avaliação",
+      "tokenLabel": "Token de Acesso",
+      "tokenPlaceholder": "550e8400-e29b-41d4-a716-446655440000",
+      "tokenHint": "🔐 Token UUID recebido ao criar a avaliação",
+      "buttonCreate": "✨ Criar Nova Avaliação",
+      "buttonAccess": "🚀 Acessar Dashboard",
+      "errors": {
+        "invalidEmail": "Email inválido",
+        "tokenRequired": "Token é obrigatório para acessar avaliação existente"
+      },
+      "infoCreate": {
+        "title": "📋 Como funciona?",
+        "step1": "Informe seu email profissional",
+        "step2": "Configure a avaliação e adicione os membros da equipe",
+        "step3": "Guarde o token UUID para acessar o dashboard depois",
+        "step4": "Os membros receberão códigos de acesso automaticamente"
+      },
+      "infoAccess": {
+        "title": "🔍 Esqueceu o token?",
+        "tip1": "O token foi enviado ao criar a avaliação",
+        "tip2": "Verifique seu email (pode estar no spam)",
+        "tip3": "Formato: xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx",
+        "tip4": "Caso não encontre, crie uma nova avaliação"
+      }
+    },
+    "createEvaluation": {
+      "title": "Criar Nova Avaliação",
+      "evaluationTitle": "Título da Avaliação",
+      "evaluationTitlePlaceholder": "Ex: Avaliação de Desempenho Q4 2024",
+      "description": "Descrição (opcional)",
+      "descriptionPlaceholder": "Descreva o objetivo desta avaliação",
+      "addMembers": "Adicionar Membros",
+      "submit": "Criar Avaliação"
+    },
+    "addMembers": {
+      "title": "Adicionar Membros da Equipe",
+      "subtitle": "Adicione os colaboradores que participarão da avaliação",
+      "manualAdd": "Adicionar Manualmente",
+      "excelUpload": "Importar via Excel",
+      "nameLabel": "Nome do Colaborador",
+      "namePlaceholder": "João Silva",
+      "emailLabel": "Email",
+      "emailPlaceholder": "joao.silva@empresa.com",
+      "buttonAdd": "Adicionar",
+      "membersList": "Membros Adicionados",
+      "noMembers": "Nenhum membro adicionado ainda",
+      "remove": "Remover"
+    },
+    "excelUpload": {
+      "title": "Importar Membros via Excel",
+      "dropzone": "Arraste um arquivo Excel aqui ou clique para selecionar",
+      "downloadTemplate": "Baixar Template Excel",
+      "uploading": "Processando arquivo...",
+      "success": "{{count}} membros importados com sucesso",
+      "errors": {
+        "invalidFile": "Arquivo inválido. Use o formato .xlsx ou .xls",
+        "emptyFile": "Arquivo vazio",
+        "invalidData": "Dados inválidos na linha {{row}}"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard - {{evaluationTitle}}",
+      "progress": "Progresso da Avaliação",
+      "totalMembers": "Total de Membros",
+      "completed": "Concluídas",
+      "pending": "Pendentes",
+      "completionRate": "Taxa de Conclusão",
+      "viewResults": "Ver Resultados",
+      "sendReminders": "Enviar Lembretes",
+      "exportData": "Exportar Dados"
+    },
+    "results": {
+      "title": "Resultados da Avaliação",
+      "memberName": "Membro",
+      "averageRating": "Avaliação Média",
+      "responses": "Respostas Recebidas",
+      "viewDetails": "Ver Detalhes",
+      "noResults": "Aguardando respostas",
+      "filters": {
+        "all": "Todos",
+        "completed": "Concluídos",
+        "pending": "Pendentes"
+      }
+    },
+    "success": {
+      "title": "✨ Avaliação Criada com Sucesso!",
+      "subtitle": "Seus membros receberão os códigos de acesso por email",
+      "tokenTitle": "Guarde seu Token de Acesso",
+      "tokenSubtitle": "Use este token para acessar o dashboard desta avaliação",
+      "copyToken": "Copiar Token",
+      "tokenCopied": "Token copiado!",
+      "important": "Importante: Salve este token em local seguro. Você precisará dele para acessar os resultados.",
+      "nextSteps": "Próximos Passos",
+      "step1": "Os membros receberão emails com códigos de acesso",
+      "step2": "Acompanhe o progresso no dashboard",
+      "step3": "Visualize os resultados em tempo real",
+      "goToDashboard": "Ir para Dashboard"
+    }
+  },
+  "member": {
+    "login": {
+      "welcome": "Bem-vindo, Colaborador!",
+      "subtitle": "Digite seu código de acesso para participar da avaliação",
+      "codeLabel": "Código de Acesso",
+      "codePlaceholder": "123456",
+      "codeHint": "📧 Código de 6 dígitos recebido por email",
+      "button": "Acessar Avaliação",
+      "errors": {
+        "invalidCode": "Código inválido ou expirado",
+        "codeRequired": "Digite o código de acesso"
+      },
+      "info": {
+        "title": "ℹ️ Sobre a Avaliação",
+        "tip1": "Suas respostas são 100% anônimas",
+        "tip2": "Avalie todos os membros da equipe, incluindo você mesmo",
+        "tip3": "Seja honesto e construtivo nos feedbacks",
+        "tip4": "Seu progresso é salvo automaticamente"
+      }
+    },
+    "evaluation": {
+      "title": "Avaliação 360°",
+      "evaluating": "Avaliando: {{memberName}}",
+      "selfEvaluation": "Auto-avaliação",
+      "question": "Como você avalia {{memberName}} em:",
+      "ratingLabels": {
+        "1": "Muito Abaixo",
+        "2": "Abaixo",
+        "3": "Adequado",
+        "4": "Acima",
+        "5": "Excelente"
+      },
+      "commentsLabel": "Comentários (opcional)",
+      "commentsPlaceholder": "Compartilhe feedback construtivo...",
+      "progress": "Progresso: {{current}} de {{total}}",
+      "previousMember": "Anterior",
+      "nextMember": "Próximo",
+      "submit": "Enviar Avaliação",
+      "savingDraft": "Salvando rascunho...",
+      "draftSaved": "Rascunho salvo",
+      "submitting": "Enviando...",
+      "success": "Avaliação enviada com sucesso!"
+    },
+    "membersList": {
+      "title": "Membros para Avaliar",
+      "completed": "Concluído",
+      "pending": "Pendente",
+      "inProgress": "Em andamento",
+      "evaluate": "Avaliar",
+      "continue": "Continuar"
+    },
+    "complete": {
+      "title": "🎉 Avaliação Concluída!",
+      "subtitle": "Obrigado por participar e contribuir com feedback valioso",
+      "message": "Suas respostas foram enviadas com sucesso. O gestor terá acesso aos resultados consolidados.",
+      "anonymous": "Lembre-se: Suas respostas são 100% anônimas",
+      "close": "Fechar"
+    }
+  },
+  "evaluation": {
+    "criteria": {
+      "communication": "Comunicação",
+      "teamwork": "Trabalho em Equipe",
+      "leadership": "Liderança",
+      "technical": "Conhecimento Técnico",
+      "problemSolving": "Resolução de Problemas",
+      "initiative": "Iniciativa",
+      "quality": "Qualidade do Trabalho",
+      "deadline": "Cumprimento de Prazos"
+    }
+  },
+  "errors": {
+    "boundary": {
+      "title": "Ops! Algo deu errado",
+      "subtitle": "Encontramos um erro inesperado",
+      "reload": "Recarregar Página",
+      "contact": "Se o problema persistir, entre em contato com o suporte"
+    },
+    "network": {
+      "title": "Erro de Conexão",
+      "subtitle": "Verifique sua conexão com a internet",
+      "retry": "Tentar Novamente"
+    },
+    "notFound": {
+      "title": "Página Não Encontrada",
+      "subtitle": "A página que você procura não existe",
+      "home": "Voltar para Início"
+    }
+  },
+  "language": {
+    "label": "Idioma",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "changeLanguage": "Alterar idioma"
+  }
+}

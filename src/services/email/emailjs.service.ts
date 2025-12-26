@@ -21,8 +21,23 @@ import type { MemberWithAccessCode } from '../firebase/member.service';
 const EMAIL_CONFIG = {
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
   templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
+  templateIdEn: import.meta.env.VITE_EMAILJS_TEMPLATE_ID_EN || '',
+  templateIdEs: import.meta.env.VITE_EMAILJS_TEMPLATE_ID_ES || '',
   publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '',
 };
+
+/**
+ * Mapeia idioma para o template ID correspondente
+ * Fallback para português se template do idioma não configurado
+ */
+function getTemplateIdForLanguage(language: 'pt' | 'en' | 'es' = 'pt'): string {
+  const templates = {
+    pt: EMAIL_CONFIG.templateId,
+    en: EMAIL_CONFIG.templateIdEn || EMAIL_CONFIG.templateId,
+    es: EMAIL_CONFIG.templateIdEs || EMAIL_CONFIG.templateId,
+  };
+  return templates[language] || EMAIL_CONFIG.templateId;
+}
 
 /**
  * Circuit Breaker para EmailJS
@@ -96,10 +111,12 @@ export function isEmailJSConfigured(): boolean {
  * Complexidade: O(1) - uma chamada API
  *
  * @param emailData - Dados do email
+ * @param language - Idioma do email ('pt' | 'en' | 'es'), padrão: 'pt'
  * @returns Resultado do envio
  */
 export async function sendInviteEmail(
-  emailData: EmailData
+  emailData: EmailData,
+  language: 'pt' | 'en' | 'es' = 'pt'
 ): Promise<EmailResult> {
   if (!isEmailJSConfigured()) {
     logger.error('Cannot send email - EmailJS not configured', undefined, {
@@ -118,13 +135,16 @@ export async function sendInviteEmail(
       evaluation: emailData.evaluation_title,
     });
 
+    // Seleciona template ID baseado no idioma
+    const templateId = getTemplateIdForLanguage(language);
+
     // Envia email com circuit breaker + retry
     const response = await emailCircuitBreaker.execute(() =>
       withRetry(
         async () => {
           return await emailjs.send(
             EMAIL_CONFIG.serviceId,
-            EMAIL_CONFIG.templateId,
+            templateId,
             emailData as unknown as Record<string, unknown>,
             EMAIL_CONFIG.publicKey
           );

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LanguageSwitcher } from '../LanguageSwitcher';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -67,6 +68,11 @@ export function PageLayout({
                       <p className="text-xs text-white/80">Avaliações Empresariais</p>
                     </div>
                   </button>
+                </div>
+
+                {/* Language Switcher */}
+                <div>
+                  <LanguageSwitcher />
                 </div>
               </div>
             </div>

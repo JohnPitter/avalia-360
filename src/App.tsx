@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from './components/layout';
 import { ErrorBoundary } from './components/shared';
 import { initPerformanceMonitoring } from './services/observability/webVitals';
@@ -15,17 +16,21 @@ const MemberPage = lazy(() => import('./pages/MemberPage').then(module => ({ def
 
 // Loading component
 function PageLoader() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <div className="text-center">
         <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mb-4"></div>
-        <p className="text-lg text-gray-600 font-medium">Carregando...</p>
+        <p className="text-lg text-gray-600 font-medium">{t('common.messages.loading')}</p>
       </div>
     </div>
   );
 }
 
 function App() {
+  const { i18n } = useTranslation();
+
   useEffect(() => {
     // Inicializar observabilidade e monitoramento
     logger.info('Application starting', {
@@ -48,10 +53,24 @@ function App() {
     // Performance monitoring
     initPerformanceMonitoring();
 
+    // Language change listener - sync to Firestore for authenticated managers
+    const handleLanguageChange = (event: CustomEvent) => {
+      const { language } = event.detail;
+      logger.info('Language changed', { language, component: 'App' });
+      // TODO: Sync to Firestore if user is authenticated manager
+      // This will be handled by manager.service.ts when implemented
+    };
+
+    window.addEventListener('languageChanged' as any, handleLanguageChange);
+
     logger.info('Application initialized successfully', {
       component: 'App',
     });
-  }, []);
+
+    return () => {
+      window.removeEventListener('languageChanged' as any, handleLanguageChange);
+    };
+  }, [i18n]);
 
   return (
     <ErrorBoundary>
@@ -71,6 +90,7 @@ function App() {
 // Home Page Component
 function HomePage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <PageLayout variant="home">
@@ -83,18 +103,18 @@ function HomePage() {
               <svg className="w-4 h-4 text-indigo-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
-              <span className="text-sm font-medium text-indigo-700">Sistema de Avaliação 360° Mais Completo</span>
+              <span className="text-sm font-medium text-indigo-700">{t('home.hero.badge')}</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-              Transforme<br />
+              {t('home.hero.title')}<br />
               <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Feedbacks em Crescimento
+                {t('home.hero.titleGradient')}
               </span>
             </h1>
 
             <p className="text-xl text-gray-600 mb-12 leading-relaxed max-w-2xl mx-auto">
-              Avaliações 360° modernas e seguras. Todos avaliam todos para uma visão completa do desempenho da equipe.
+              {t('home.hero.subtitle')}
             </p>
 
             {/* CTA Buttons */}
@@ -108,7 +128,7 @@ function HomePage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Criar Nova Avaliação
+                  {t('home.hero.ctaPrimary')}
                 </span>
               </button>
 
@@ -120,7 +140,7 @@ function HomePage() {
                   <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                   </svg>
-                  Acessar com Código
+                  {t('home.hero.ctaSecondary')}
                 </span>
               </button>
             </div>
@@ -131,19 +151,19 @@ function HomePage() {
                 <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>100% Gratuito</span>
+                <span>{t('common.trustIndicators.free')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Dados Criptografados</span>
+                <span>{t('common.trustIndicators.encrypted')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Resultados em Tempo Real</span>
+                <span>{t('common.trustIndicators.realtime')}</span>
               </div>
             </div>
           </div>
@@ -163,28 +183,28 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Para Gestores</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('home.features.manager.title')}</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Crie avaliações personalizadas, gerencie sua equipe e visualize resultados consolidados em dashboards interativos.
+                {t('home.features.manager.subtitle')}
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2 text-gray-700">
                   <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm">Criação rápida de avaliações</span>
+                  <span className="text-sm">{t('home.features.manager.feature1')}</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm">Dashboards em tempo real</span>
+                  <span className="text-sm">{t('home.features.manager.feature2')}</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm">Exportação de relatórios</span>
+                  <span className="text-sm">{t('home.features.manager.feature3')}</span>
                 </li>
               </ul>
             </div>
@@ -202,28 +222,28 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Para Colaboradores</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('home.features.member.title')}</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Avalie seus colegas de forma anônima e contribua com feedback construtivo para o crescimento da equipe.
+                {t('home.features.member.subtitle')}
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2 text-gray-700">
                   <svg className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm">Avaliações 100% anônimas</span>
+                  <span className="text-sm">{t('home.features.member.feature1')}</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <svg className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm">Interface intuitiva e rápida</span>
+                  <span className="text-sm">{t('home.features.member.feature2')}</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <svg className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm">Auto-save de rascunhos</span>
+                  <span className="text-sm">{t('home.features.member.feature3')}</span>
                 </li>
               </ul>
             </div>
@@ -233,9 +253,9 @@ function HomePage() {
         {/* Features Grid */}
         <section className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Por que escolher o Avalia 360°?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('home.features.title')}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Uma plataforma completa com recursos avançados para facilitar o processo de avaliação.
+              {t('home.features.subtitle')}
             </p>
           </div>
 
@@ -246,9 +266,9 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Segurança Máxima</h3>
+              <h3 className="font-bold text-gray-900 mb-2">{t('home.features.security.title')}</h3>
               <p className="text-sm text-gray-600">
-                Criptografia AES-256 end-to-end para proteger dados sensíveis e garantir privacidade total.
+                {t('home.features.security.description')}
               </p>
             </div>
 
@@ -258,9 +278,9 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Analytics Avançado</h3>
+              <h3 className="font-bold text-gray-900 mb-2">{t('home.features.analytics.title')}</h3>
               <p className="text-sm text-gray-600">
-                Visualize resultados com gráficos interativos, radar charts e comparações em tempo real.
+                {t('home.features.analytics.description')}
               </p>
             </div>
 
@@ -270,9 +290,9 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Setup Instantâneo</h3>
+              <h3 className="font-bold text-gray-900 mb-2">{t('home.features.setup.title')}</h3>
               <p className="text-sm text-gray-600">
-                Comece em minutos. Importe membros via Excel e envie convites automaticamente.
+                {t('home.features.setup.description')}
               </p>
             </div>
 
@@ -282,9 +302,9 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Notificações Auto</h3>
+              <h3 className="font-bold text-gray-900 mb-2">{t('home.features.notifications.title')}</h3>
               <p className="text-sm text-gray-600">
-                Emails automáticos com códigos de acesso únicos para cada membro da equipe.
+                {t('home.features.notifications.description')}
               </p>
             </div>
 
@@ -294,9 +314,9 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Exportação Fácil</h3>
+              <h3 className="font-bold text-gray-900 mb-2">{t('home.features.export.title')}</h3>
               <p className="text-sm text-gray-600">
-                Exporte relatórios completos em PDF ou Excel com um clique.
+                {t('home.features.export.description')}
               </p>
             </div>
 
@@ -306,9 +326,9 @@ function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Auto-Save</h3>
+              <h3 className="font-bold text-gray-900 mb-2">{t('home.features.autosave.title')}</h3>
               <p className="text-sm text-gray-600">
-                Rascunhos salvos automaticamente. Nunca perca seu progresso.
+                {t('home.features.autosave.description')}
               </p>
             </div>
           </div>
@@ -317,16 +337,16 @@ function HomePage() {
         {/* CTA Final */}
         <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-12 text-center shadow-2xl">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Pronto para começar?
+            {t('home.cta.title')}
           </h2>
           <p className="text-indigo-100 text-lg mb-8 max-w-2xl mx-auto">
-            Crie sua primeira avaliação 360° em menos de 5 minutos.
+            {t('home.cta.subtitle')}
           </p>
           <button
             onClick={() => navigate('/gestor')}
             className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
           >
-            Começar Agora - É Grátis
+            {t('home.cta.button')}
           </button>
         </section>
       </div>

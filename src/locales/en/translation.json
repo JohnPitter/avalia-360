@@ -1,0 +1,300 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "delete": "Delete",
+      "edit": "Edit",
+      "close": "Close",
+      "next": "Next",
+      "previous": "Previous",
+      "confirm": "Confirm",
+      "back": "Back"
+    },
+    "messages": {
+      "success": "Operation completed successfully",
+      "error": "An error occurred",
+      "loading": "Loading...",
+      "noData": "No data available",
+      "confirmDelete": "Are you sure you want to delete?",
+      "unsavedChanges": "You have unsaved changes"
+    },
+    "labels": {
+      "email": "Email",
+      "name": "Name",
+      "date": "Date",
+      "status": "Status",
+      "actions": "Actions",
+      "search": "Search",
+      "filter": "Filter",
+      "sort": "Sort"
+    },
+    "trustIndicators": {
+      "free": "100% Free",
+      "encrypted": "Encrypted Data",
+      "realtime": "Real-time Results"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "The Most Complete 360° Evaluation System",
+      "title": "Transform",
+      "titleGradient": "Feedback into Growth",
+      "subtitle": "Modern and secure 360° evaluations. Everyone evaluates everyone for a complete view of team performance.",
+      "ctaPrimary": "Create New Evaluation",
+      "ctaSecondary": "Access with Code"
+    },
+    "features": {
+      "title": "Why choose Avalia 360°?",
+      "subtitle": "A complete platform with advanced features to facilitate the evaluation process.",
+      "manager": {
+        "title": "For Managers",
+        "subtitle": "Create custom evaluations, manage your team, and view consolidated results in interactive dashboards.",
+        "feature1": "Quick evaluation creation",
+        "feature2": "Real-time dashboards",
+        "feature3": "Report export"
+      },
+      "member": {
+        "title": "For Team Members",
+        "subtitle": "Evaluate your colleagues anonymously and contribute constructive feedback for team growth.",
+        "feature1": "100% anonymous evaluations",
+        "feature2": "Intuitive and fast interface",
+        "feature3": "Auto-save drafts"
+      },
+      "security": {
+        "title": "Maximum Security",
+        "description": "End-to-end AES-256 encryption to protect sensitive data and ensure total privacy."
+      },
+      "analytics": {
+        "title": "Advanced Analytics",
+        "description": "View results with interactive charts, radar charts, and real-time comparisons."
+      },
+      "setup": {
+        "title": "Instant Setup",
+        "description": "Get started in minutes. Import members via Excel and send invites automatically."
+      },
+      "notifications": {
+        "title": "Auto Notifications",
+        "description": "Automatic emails with unique access codes for each team member."
+      },
+      "export": {
+        "title": "Easy Export",
+        "description": "Export complete reports in PDF or Excel with one click."
+      },
+      "autosave": {
+        "title": "Auto-Save",
+        "description": "Drafts saved automatically. Never lose your progress."
+      }
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "subtitle": "Create your first 360° evaluation in less than 5 minutes.",
+      "button": "Start Now - It's Free"
+    }
+  },
+  "manager": {
+    "login": {
+      "welcome": "Welcome, Manager!",
+      "subtitle": "Start by creating a new evaluation or accessing an existing one",
+      "tabCreate": "Create New",
+      "tabAccess": "Access Existing",
+      "emailLabel": "Manager Email",
+      "emailPlaceholder": "your.email@company.com",
+      "emailHintCreate": "💡 You will receive an access token to manage the evaluation",
+      "emailHintAccess": "🔑 Use the same email registered when creating the evaluation",
+      "tokenLabel": "Access Token",
+      "tokenPlaceholder": "550e8400-e29b-41d4-a716-446655440000",
+      "tokenHint": "🔐 UUID token received when creating the evaluation",
+      "buttonCreate": "✨ Create New Evaluation",
+      "buttonAccess": "🚀 Access Dashboard",
+      "errors": {
+        "invalidEmail": "Invalid email",
+        "tokenRequired": "Token is required to access existing evaluation"
+      },
+      "infoCreate": {
+        "title": "📋 How it works?",
+        "step1": "Enter your professional email",
+        "step2": "Configure the evaluation and add team members",
+        "step3": "Save the UUID token to access the dashboard later",
+        "step4": "Members will receive access codes automatically"
+      },
+      "infoAccess": {
+        "title": "🔍 Forgot your token?",
+        "tip1": "The token was sent when you created the evaluation",
+        "tip2": "Check your email (it may be in spam)",
+        "tip3": "Format: xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx",
+        "tip4": "If you can't find it, create a new evaluation"
+      }
+    },
+    "createEvaluation": {
+      "title": "Create New Evaluation",
+      "evaluationTitle": "Evaluation Title",
+      "evaluationTitlePlaceholder": "E.g.: Q4 2024 Performance Evaluation",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Describe the purpose of this evaluation",
+      "addMembers": "Add Members",
+      "submit": "Create Evaluation"
+    },
+    "addMembers": {
+      "title": "Add Team Members",
+      "subtitle": "Add the team members who will participate in the evaluation",
+      "manualAdd": "Add Manually",
+      "excelUpload": "Import via Excel",
+      "nameLabel": "Member Name",
+      "namePlaceholder": "John Doe",
+      "emailLabel": "Email",
+      "emailPlaceholder": "john.doe@company.com",
+      "buttonAdd": "Add",
+      "membersList": "Added Members",
+      "noMembers": "No members added yet",
+      "remove": "Remove"
+    },
+    "excelUpload": {
+      "title": "Import Members via Excel",
+      "dropzone": "Drag an Excel file here or click to select",
+      "downloadTemplate": "Download Excel Template",
+      "uploading": "Processing file...",
+      "success": "{{count}} members imported successfully",
+      "errors": {
+        "invalidFile": "Invalid file. Use .xlsx or .xls format",
+        "emptyFile": "Empty file",
+        "invalidData": "Invalid data on row {{row}}"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard - {{evaluationTitle}}",
+      "progress": "Evaluation Progress",
+      "totalMembers": "Total Members",
+      "completed": "Completed",
+      "pending": "Pending",
+      "completionRate": "Completion Rate",
+      "viewResults": "View Results",
+      "sendReminders": "Send Reminders",
+      "exportData": "Export Data"
+    },
+    "results": {
+      "title": "Evaluation Results",
+      "memberName": "Member",
+      "averageRating": "Average Rating",
+      "responses": "Responses Received",
+      "viewDetails": "View Details",
+      "noResults": "Waiting for responses",
+      "filters": {
+        "all": "All",
+        "completed": "Completed",
+        "pending": "Pending"
+      }
+    },
+    "success": {
+      "title": "✨ Evaluation Created Successfully!",
+      "subtitle": "Your members will receive access codes via email",
+      "tokenTitle": "Save Your Access Token",
+      "tokenSubtitle": "Use this token to access this evaluation's dashboard",
+      "copyToken": "Copy Token",
+      "tokenCopied": "Token copied!",
+      "important": "Important: Save this token in a secure place. You will need it to access the results.",
+      "nextSteps": "Next Steps",
+      "step1": "Members will receive emails with access codes",
+      "step2": "Track progress on the dashboard",
+      "step3": "View results in real-time",
+      "goToDashboard": "Go to Dashboard"
+    }
+  },
+  "member": {
+    "login": {
+      "welcome": "Welcome, Team Member!",
+      "subtitle": "Enter your access code to participate in the evaluation",
+      "codeLabel": "Access Code",
+      "codePlaceholder": "123456",
+      "codeHint": "📧 6-digit code received via email",
+      "button": "Access Evaluation",
+      "errors": {
+        "invalidCode": "Invalid or expired code",
+        "codeRequired": "Enter the access code"
+      },
+      "info": {
+        "title": "ℹ️ About the Evaluation",
+        "tip1": "Your responses are 100% anonymous",
+        "tip2": "Evaluate all team members, including yourself",
+        "tip3": "Be honest and constructive in your feedback",
+        "tip4": "Your progress is saved automatically"
+      }
+    },
+    "evaluation": {
+      "title": "360° Evaluation",
+      "evaluating": "Evaluating: {{memberName}}",
+      "selfEvaluation": "Self-evaluation",
+      "question": "How do you rate {{memberName}} on:",
+      "ratingLabels": {
+        "1": "Very Below",
+        "2": "Below",
+        "3": "Adequate",
+        "4": "Above",
+        "5": "Excellent"
+      },
+      "commentsLabel": "Comments (optional)",
+      "commentsPlaceholder": "Share constructive feedback...",
+      "progress": "Progress: {{current}} of {{total}}",
+      "previousMember": "Previous",
+      "nextMember": "Next",
+      "submit": "Submit Evaluation",
+      "savingDraft": "Saving draft...",
+      "draftSaved": "Draft saved",
+      "submitting": "Submitting...",
+      "success": "Evaluation submitted successfully!"
+    },
+    "membersList": {
+      "title": "Members to Evaluate",
+      "completed": "Completed",
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "evaluate": "Evaluate",
+      "continue": "Continue"
+    },
+    "complete": {
+      "title": "🎉 Evaluation Complete!",
+      "subtitle": "Thank you for participating and contributing valuable feedback",
+      "message": "Your responses have been submitted successfully. The manager will have access to the consolidated results.",
+      "anonymous": "Remember: Your responses are 100% anonymous",
+      "close": "Close"
+    }
+  },
+  "evaluation": {
+    "criteria": {
+      "communication": "Communication",
+      "teamwork": "Teamwork",
+      "leadership": "Leadership",
+      "technical": "Technical Knowledge",
+      "problemSolving": "Problem Solving",
+      "initiative": "Initiative",
+      "quality": "Work Quality",
+      "deadline": "Meeting Deadlines"
+    }
+  },
+  "errors": {
+    "boundary": {
+      "title": "Oops! Something went wrong",
+      "subtitle": "We encountered an unexpected error",
+      "reload": "Reload Page",
+      "contact": "If the problem persists, contact support"
+    },
+    "network": {
+      "title": "Connection Error",
+      "subtitle": "Check your internet connection",
+      "retry": "Try Again"
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "subtitle": "The page you are looking for does not exist",
+      "home": "Back to Home"
+    }
+  },
+  "language": {
+    "label": "Language",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "changeLanguage": "Change language"
+  }
+}

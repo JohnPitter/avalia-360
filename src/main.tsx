@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+// Initialize i18n before React renders
+import './i18n/config';
 
 console.log('🚀 main.tsx carregado');
 console.log('📦 Environment:', import.meta.env.MODE);
