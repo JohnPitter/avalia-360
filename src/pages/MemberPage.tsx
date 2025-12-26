@@ -18,6 +18,7 @@ import {
   clearSession,
 } from '@/utils/session';
 import type { TeamMember, Evaluation, EvaluationFormData } from '@/types';
+import { debugLog } from '@/services/debug/debugLogger';
 
 /**
  * Página Principal do Colaborador
@@ -82,14 +83,17 @@ export function MemberPage() {
   };
 
   const handleLogin = async (accessCode: string) => {
+    debugLog.start('Member Login', { component: 'MemberPage', data: { accessCode: '******' } });
     setLoading(true);
     setError(null);
 
     try {
+      debugLog.debug('Buscando avaliação por código de acesso', { component: 'MemberPage' });
       // Busca avaliação usando apenas o código de acesso
       const searchResult = await searchEvaluationByAccessCode(accessCode);
 
       if (!searchResult) {
+        debugLog.warn('Código de acesso não encontrado', { component: 'MemberPage' });
         throw new Error(
           'Código de acesso inválido ou não encontrado. Verifique se você digitou corretamente o código de 6 dígitos que recebeu por email.'
         );
@@ -97,13 +101,16 @@ export function MemberPage() {
 
       // Extrai dados do resultado da busca
       const { evaluationId: foundEvalId, member } = searchResult;
+      debugLog.success('Avaliação encontrada', { component: 'MemberPage', data: { evaluationId: foundEvalId, memberId: member.id } });
 
       setCurrentMember(member);
       setEvaluationId(foundEvalId);
 
+      debugLog.debug('Atualizando último acesso', { component: 'MemberPage', data: { memberId: member.id } });
       // Atualiza último acesso
       await updateLastAccess(member.id);
 
+      debugLog.debug('Criando sessão de membro', { component: 'MemberPage' });
       // Cria sessão
       createMemberSession(foundEvalId, member.id, accessCode);
 
@@ -111,7 +118,9 @@ export function MemberPage() {
       await loadEvaluationData(foundEvalId, member.id);
 
       setStep('member-list');
+      debugLog.end('Member Login', { component: 'MemberPage' });
     } catch (err) {
+      debugLog.error('Erro no login do membro', err as Error, { component: 'MemberPage' });
       setError(
         err instanceof Error ? err.message : 'Erro ao fazer login'
       );
@@ -121,17 +130,23 @@ export function MemberPage() {
   };
 
   const loadEvaluationData = async (evalId: string, memberId: string) => {
+    debugLog.start('Load Evaluation Data', { component: 'MemberPage', data: { evalId, memberId } });
     try {
+      debugLog.debug('Verificando sessão', { component: 'MemberPage' });
       // Carrega todos os membros usando código de acesso
       const session = getSession();
       if (!session || session.type !== 'member') {
+        debugLog.error('Sessão inválida', undefined, { component: 'MemberPage' });
         throw new Error('Sessão inválida');
       }
 
+      debugLog.debug('Carregando membros da equipe', { component: 'MemberPage', data: { token: '******' } });
       const membersList = await getMembersByAccessCode(session.token);
+      debugLog.success(`${membersList.length} membros carregados`, { component: 'MemberPage', data: { count: membersList.length } });
 
       setAllMembers(membersList);
 
+      debugLog.debug('Carregando avaliações pendentes', { component: 'MemberPage' });
       // Carrega avaliações já feitas
       const pending = await getPendingEvaluations(
         evalId,
@@ -144,10 +159,15 @@ export function MemberPage() {
         .filter((m) => m.id !== memberId)
         .map((m) => m.id);
       const evaluated = allMemberIds.filter((id) => !pending.includes(id));
+      debugLog.info(`Progresso: ${evaluated.length}/${allMemberIds.length} avaliações completadas`, {
+        component: 'MemberPage',
+        data: { completed: evaluated.length, total: allMemberIds.length }
+      });
 
       setEvaluatedMemberIds(evaluated);
+      debugLog.end('Load Evaluation Data', { component: 'MemberPage' });
     } catch (err) {
-      console.error('Erro ao carregar dados:', err);
+      debugLog.error('Erro ao carregar dados da avaliação', err as Error, { component: 'MemberPage' });
       setError(
         err instanceof Error
           ? err.message

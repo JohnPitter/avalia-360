@@ -102,5 +102,18 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if false;
     }
+
+    // App configuration (debug settings)
+    match /app_config/{configId} {
+      // Allow read for all (to check debug status)
+      allow read: if true;
+
+      // Allow create/update only in development (controlled by admin)
+      allow create: if true;
+      allow update: if true;
+
+      // No delete
+      allow delete: if false;
+    }
   }
 }

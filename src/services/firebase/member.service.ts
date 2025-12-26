@@ -16,6 +16,7 @@ import {
 } from '@/utils/crypto';
 import { validateTeamMembers } from '@/utils/validation';
 import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
+import { debugLog } from '@/services/debug/debugLogger';
 
 /**
  * Serviço de Membros da Equipe
@@ -422,31 +423,39 @@ export async function removeMember(memberId: string): Promise<void> {
 export async function getMembersByAccessCode(
   accessCode: string
 ): Promise<TeamMember[]> {
+  debugLog.start('getMembersByAccessCode', { component: 'member.service', data: { accessCode: '******' } });
   try {
     // 1. Buscar o membro com este código de acesso
+    debugLog.debug('Hasheando código de acesso', { component: 'member.service' });
     const codeHash = hashAccessCode(accessCode);
     const memberQuery = query(
       collection(db, 'team_members'),
       where('access_code', '==', codeHash)
     );
 
+    debugLog.debug('Buscando membro por código', { component: 'member.service' });
     const memberSnapshot = await getDocs(memberQuery);
 
     if (memberSnapshot.empty) {
+      debugLog.warn('Código de acesso não encontrado no Firestore', { component: 'member.service' });
       throw new Error('Código de acesso inválido');
     }
 
     const memberData = memberSnapshot.docs[0].data();
     const evaluationId = memberData.avaliation_id;
+    debugLog.info('Membro encontrado', { component: 'member.service', data: { evaluationId, memberId: memberSnapshot.docs[0].id } });
 
     // 2. Verificar se a avaliação existe
+    debugLog.debug('Verificando se avaliação existe', { component: 'member.service', data: { evaluationId } });
     const evalDoc = await getDoc(doc(db, 'evaluations', evaluationId));
 
     if (!evalDoc.exists()) {
+      debugLog.error('Avaliação não encontrada no Firestore', undefined, { component: 'member.service', data: { evaluationId } });
       throw new Error('Avaliação não encontrada');
     }
 
     // 3. Buscar todos os membros
+    debugLog.debug('Buscando todos os membros da avaliação', { component: 'member.service', data: { evaluationId } });
     const membersQuery = query(
       collection(db, 'team_members'),
       where('avaliation_id', '==', evaluationId)
@@ -470,9 +479,11 @@ export async function getMembersByAccessCode(
       });
     });
 
+    debugLog.success(`${members.length} membros carregados`, { component: 'member.service', data: { count: members.length } });
+    debugLog.end('getMembersByAccessCode', { component: 'member.service' });
     return members;
   } catch (error) {
-    console.error('Erro ao buscar membros por código de acesso:', error);
+    debugLog.error('Erro ao buscar membros por código de acesso', error as Error, { component: 'member.service' });
     throw new Error('Falha ao buscar membros da equipe');
   }
 }
