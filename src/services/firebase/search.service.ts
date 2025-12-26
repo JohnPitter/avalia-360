@@ -14,6 +14,7 @@ import {
   getDocs,
   query,
   where,
+  limit,
 } from 'firebase/firestore';
 import { db } from './config';
 import {
@@ -181,6 +182,8 @@ export async function searchEvaluationByAccessCode(
   if (!isValidAccessCode(accessCode)) {
     logger.warn('Invalid access code format in member search', {
       component: 'SearchService',
+      accessCode: accessCode, // Mostrar código digitado para debug
+      accessCodeLength: accessCode.length,
     });
     return null;
   }
@@ -188,6 +191,11 @@ export async function searchEvaluationByAccessCode(
   try {
     // Hash do código
     const codeHash = hashAccessCode(accessCode);
+    logger.debug('Searching for access code', {
+      component: 'SearchService',
+      accessCodeLength: accessCode.length,
+      codeHash: codeHash.substring(0, 16) + '...', // Primeiros 16 chars do hash
+    });
 
     // Buscar membro com esse código
     const q = query(
@@ -198,9 +206,23 @@ export async function searchEvaluationByAccessCode(
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      logger.info('No member found for access code', {
+      logger.warn('No member found for access code - checking all members', {
         component: 'SearchService',
       });
+
+      // Debug: buscar TODOS os membros para verificar o que há no banco
+      const allMembersQuery = query(collection(db, 'team_members'), limit(5));
+      const allMembersSnap = await getDocs(allMembersQuery);
+
+      logger.warn('Sample of members in database', {
+        component: 'SearchService',
+        count: allMembersSnap.size,
+        sampleHashes: allMembersSnap.docs.map(doc => ({
+          id: doc.id,
+          hashPrefix: doc.data().access_code?.substring(0, 16) + '...',
+        })),
+      });
+
       return null;
     }
 
