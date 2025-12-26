@@ -30,6 +30,7 @@ dist-ssr
 .env.production.local
 .env.development.local
 .env.test.local
+functions/.env
 
 # Testing
 coverage

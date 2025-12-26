@@ -16,12 +16,19 @@
  * ✅ Independência: Domain não depende de frameworks
  */
 
+import * as admin from 'firebase-admin';
+
+// Inicializa Firebase Admin (apenas uma vez)
+admin.initializeApp();
+
 // Exporta todas as Cloud Functions implementadas com Clean Architecture
 export * from './presentation/http/functions';
 
+// Exporta Cloud Functions de gerenciamento de membros (COM CRIPTOGRAFIA)
+export * from './members.functions';
+
 // Funções auxiliares (serão migradas para Use Cases futuramente)
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import * as CryptoJS from 'crypto-js';
 
 const db = admin.firestore();

@@ -36,7 +36,8 @@
       "Bash(done)",
       "Bash(do:*)",
       "Bash(git pull:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(firebase functions:config:get:*)"
     ],
     "deny": [],
     "ask": []

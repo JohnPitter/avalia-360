@@ -32,9 +32,6 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
 var __importStar = (this && this.__importStar) || (function () {
     var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
@@ -52,13 +49,20 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.countResponses = exports.getMembersWithProgress = exports.getPendingEvaluations = exports.getMemberByAccessCode = exports.activateEvaluation = exports.getEvaluation = exports.validateManagerAccess = void 0;
+const admin = __importStar(require("firebase-admin"));
+// Inicializa Firebase Admin (apenas uma vez)
+admin.initializeApp();
 // Exporta todas as Cloud Functions implementadas com Clean Architecture
 __exportStar(require("./presentation/http/functions"), exports);
+// Exporta Cloud Functions de gerenciamento de membros (COM CRIPTOGRAFIA)
+__exportStar(require("./members.functions"), exports);
 // Funções auxiliares (serão migradas para Use Cases futuramente)
 const functions = __importStar(require("firebase-functions"));
-const admin = __importStar(require("firebase-admin"));
 const CryptoJS = __importStar(require("crypto-js"));
 const db = admin.firestore();
 function hash(text) {
