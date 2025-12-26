@@ -225,7 +225,9 @@
       "codeLabel": "Código de Acesso",
       "codePlaceholder": "123456",
       "codeHint": "📧 Código de 6 dígitos recebido por email",
-      "button": "Acessar Avaliação",
+      "buttonAccess": "Acessar Avaliação",
+      "buttonIncomplete": "Digite os {{count}} dígitos",
+      "verifying": "Verificando código...",
       "errors": {
         "invalidCode": "Código inválido ou expirado",
         "codeRequired": "Digite o código de acesso"
@@ -233,9 +235,14 @@
       "info": {
         "title": "ℹ️ Sobre a Avaliação",
         "tip1": "Suas respostas são 100% anônimas",
-        "tip2": "Avalie todos os membros da equipe, incluindo você mesmo",
-        "tip3": "Seja honesto e construtivo nos feedbacks",
-        "tip4": "Seu progresso é salvo automaticamente"
+        "tip2": "Avalie <strong>todos os membros</strong> da equipe",
+        "tip3": "Seja honesto e construtivo nos feedbacks"
+      },
+      "security": {
+        "title": "🔒 Privacidade e Segurança",
+        "tip1": "Respostas <strong>100% anônimas</strong>",
+        "tip2": "Dados <strong>criptografados</strong> AES-256",
+        "tip3": "Ninguém saberá quem avaliou quem"
       }
     },
     "evaluation": {

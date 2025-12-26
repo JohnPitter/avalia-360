@@ -225,7 +225,9 @@
       "codeLabel": "Access Code",
       "codePlaceholder": "123456",
       "codeHint": "📧 6-digit code received via email",
-      "button": "Access Evaluation",
+      "buttonAccess": "Access Evaluation",
+      "buttonIncomplete": "Enter {{count}} digits",
+      "verifying": "Verifying code...",
       "errors": {
         "invalidCode": "Invalid or expired code",
         "codeRequired": "Enter the access code"
@@ -233,9 +235,14 @@
       "info": {
         "title": "ℹ️ About the Evaluation",
         "tip1": "Your responses are 100% anonymous",
-        "tip2": "Evaluate all team members, including yourself",
-        "tip3": "Be honest and constructive in your feedback",
-        "tip4": "Your progress is saved automatically"
+        "tip2": "Evaluate <strong>all team members</strong>",
+        "tip3": "Be honest and constructive in your feedback"
+      },
+      "security": {
+        "title": "🔒 Privacy and Security",
+        "tip1": "<strong>100% anonymous</strong> responses",
+        "tip2": "Data <strong>encrypted</strong> with AES-256",
+        "tip3": "No one will know who evaluated whom"
       }
     },
     "evaluation": {
