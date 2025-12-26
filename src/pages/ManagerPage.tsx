@@ -19,12 +19,14 @@ import {
   type MemberData,
   type MemberWithAccessCode,
 } from '@/services/firebase';
+import { sendBulkInviteEmails } from '@/services/email/emailjs.service';
 import {
   createManagerSession,
   getSession,
   clearSession,
 } from '@/utils/session';
 import type { Evaluation, TeamMember } from '@/types';
+import { debugLog } from '@/services/debug/debugLogger';
 
 /**
  * Página Principal do Gestor
@@ -185,10 +187,12 @@ export function ManagerPage() {
   };
 
   const handleAddMembers = async (membersList: MemberData[]) => {
+    debugLog.start('Add Members', { component: 'ManagerPage', data: { count: membersList.length } });
     setLoading(true);
     setError(null);
 
     try {
+      debugLog.debug('Adicionando membros ao Firestore', { component: 'ManagerPage' });
       const result = await addMembers(
         evaluationId,
         membersList,
@@ -196,12 +200,32 @@ export function ManagerPage() {
       );
 
       setMembersWithCodes(result);
+      debugLog.success(`${result.length} membros adicionados`, { component: 'ManagerPage' });
+
+      debugLog.debug('Enviando emails de convite', { component: 'ManagerPage', data: { count: result.length } });
+      // Envia emails de convite para os membros
+      const emailResults = await sendBulkInviteEmails(
+        result,
+        evaluationTitle,
+        managerEmail
+      );
+
+      const successfulEmails = emailResults.filter(r => r.success).length;
+      const failedEmails = emailResults.filter(r => !r.success).length;
+
+      debugLog.info(`Emails enviados: ${successfulEmails} sucesso, ${failedEmails} falhas`, {
+        component: 'ManagerPage',
+        data: { successful: successfulEmails, failed: failedEmails }
+      });
 
       // Ativa a avaliação
+      debugLog.debug('Ativando avaliação', { component: 'ManagerPage' });
       await activateEvaluation(evaluationId);
 
+      debugLog.end('Add Members', { component: 'ManagerPage' });
       setStep('success');
     } catch (err) {
+      debugLog.error('Erro ao adicionar membros', err as Error, { component: 'ManagerPage' });
       setError(
         err instanceof Error ? err.message : 'Erro ao adicionar membros'
       );
