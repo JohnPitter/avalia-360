@@ -35,7 +35,8 @@
       "Bash(do echo \"=== PR #$pr ===\")",
       "Bash(done)",
       "Bash(do:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

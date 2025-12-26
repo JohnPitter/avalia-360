@@ -135,13 +135,13 @@ export function MemberPage() {
       debugLog.debug('Verificando sessão', { component: 'MemberPage' });
       // Carrega todos os membros usando código de acesso
       const session = getSession();
-      if (!session || session.type !== 'member') {
+      if (!session || session.type !== 'member' || !session.accessCode) {
         debugLog.error('Sessão inválida', undefined, { component: 'MemberPage' });
         throw new Error('Sessão inválida');
       }
 
-      debugLog.debug('Carregando membros da equipe', { component: 'MemberPage', data: { token: '******' } });
-      const membersList = await getMembersByAccessCode(session.token);
+      debugLog.debug('Carregando membros da equipe', { component: 'MemberPage', data: { accessCode: '******' } });
+      const membersList = await getMembersByAccessCode(session.accessCode);
       debugLog.success(`${membersList.length} membros carregados`, { component: 'MemberPage', data: { count: membersList.length } });
 
       setAllMembers(membersList);

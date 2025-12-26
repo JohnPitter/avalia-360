@@ -14,6 +14,7 @@ export interface Session {
   evaluationId: string;
   userId: string; // ID do gestor ou membro
   token: string; // Token UUID (gestor) ou código hasheado (membro)
+  accessCode?: string; // Código plaintext (apenas para membros) - usado para buscar dados
   createdAt: number;
   lastActivity: number;
   expiresAt: number;
@@ -104,7 +105,8 @@ class SessionManager {
       type: 'member',
       evaluationId,
       userId: memberId,
-      token: hash(accessCode), // Armazena hash do código
+      token: hash(accessCode), // Hash para validação
+      accessCode, // Código plaintext para buscar dados
       createdAt: now,
       lastActivity: now,
       expiresAt: now + this.config.maxAge,
