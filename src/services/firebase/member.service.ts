@@ -75,6 +75,17 @@ export async function addMembers(
       // Criptografia apenas do código de acesso
       const codeHash = hashAccessCode(accessCode);
 
+      // Debug: log do código gerado
+      debugLog.info('Gerando código de acesso para membro', {
+        component: 'member.service',
+        data: {
+          name: sanitizedName,
+          accessCode: accessCode, // Código plaintext (antes do hash)
+          hash: codeHash,
+          hashPrefix: codeHash.substring(0, 16) + '...',
+        }
+      });
+
       // Total de avaliações que o membro precisa fazer (N-1)
       const totalEvaluations = members.length - 1;
 
@@ -426,8 +437,10 @@ export async function getMembersByAccessCode(
   debugLog.start('getMembersByAccessCode', { component: 'member.service', data: { accessCode: '******' } });
   try {
     // 1. Buscar o membro com este código de acesso
-    debugLog.debug('Hasheando código de acesso', { component: 'member.service' });
+    debugLog.debug('Hasheando código de acesso', { component: 'member.service', data: { accessCodeLength: accessCode.length } });
     const codeHash = hashAccessCode(accessCode);
+    debugLog.info('Hash gerado para busca', { component: 'member.service', data: { hashPrefix: codeHash.substring(0, 16) + '...' } });
+
     const memberQuery = query(
       collection(db, 'team_members'),
       where('access_code', '==', codeHash)
@@ -438,6 +451,32 @@ export async function getMembersByAccessCode(
 
     if (memberSnapshot.empty) {
       debugLog.warn('Código de acesso não encontrado no Firestore', { component: 'member.service' });
+
+      // Debug: buscar TODOS os membros para ver o que existe
+      debugLog.warn('Buscando amostra de TODOS os membros no banco...', { component: 'member.service' });
+      const allMembersQuery = query(collection(db, 'team_members'));
+      const allMembersSnap = await getDocs(allMembersQuery);
+
+      const sampleData = allMembersSnap.docs.slice(0, 10).map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          evaluationId: data.avaliation_id,
+          hashPrefix: data.access_code?.substring(0, 16) + '...',
+          hashFull: data.access_code, // Mostrar hash completo para comparar
+        };
+      });
+
+      debugLog.error('Membros existentes no banco', undefined, {
+        component: 'member.service',
+        data: {
+          total: allMembersSnap.size,
+          searchedHash: codeHash,
+          searchedHashPrefix: codeHash.substring(0, 16) + '...',
+          sampleMembers: sampleData,
+        }
+      });
+
       throw new Error('Código de acesso inválido');
     }
 
