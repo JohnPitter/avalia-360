@@ -30,10 +30,11 @@ const ProgressDashboardComponent = ({
   onLogout,
 }: ProgressDashboardProps) => {
   // Memoize expensive calculations
-  const overallProgress = useMemo(
-    () => Math.round((totalResponses / expectedResponses) * 100),
-    [totalResponses, expectedResponses]
-  );
+  const overallProgress = useMemo(() => {
+    // Protege contra divisão por zero
+    if (expectedResponses === 0) return 100;
+    return Math.round((totalResponses / expectedResponses) * 100);
+  }, [totalResponses, expectedResponses]);
 
   const isComplete = useMemo(
     () => totalResponses >= expectedResponses,
@@ -42,9 +43,10 @@ const ProgressDashboardComponent = ({
 
   const memberProgressList = useMemo(() => {
     return members.map((member): MemberProgress => {
-      const percentage = Math.round(
-        (member.completed_evaluations / member.total_evaluations) * 100
-      );
+      // Protege contra divisão por zero (quando há apenas 1 membro)
+      const percentage = member.total_evaluations > 0
+        ? Math.round((member.completed_evaluations / member.total_evaluations) * 100)
+        : 100; // 100% se não há avaliações a fazer (1 membro apenas)
       return { member, percentage };
     });
   }, [members]);
