@@ -15,6 +15,7 @@ export interface Session {
   userId: string; // ID do gestor ou membro
   token: string; // Token UUID (gestor) ou código hasheado (membro)
   accessCode?: string; // Código plaintext (apenas para membros) - usado para buscar dados
+  email?: string; // Email do gestor (apenas para manager sessions)
   createdAt: number;
   lastActivity: number;
   expiresAt: number;
@@ -64,7 +65,8 @@ class SessionManager {
   createManagerSession(
     evaluationId: string,
     managerId: string,
-    token: string
+    token: string,
+    email: string
   ): Session | null {
     if (!isValidUUID(token)) {
       console.error('Token UUID inválido');
@@ -77,6 +79,7 @@ class SessionManager {
       evaluationId,
       userId: managerId,
       token,
+      email, // Salva email do gestor na sessão
       createdAt: now,
       lastActivity: now,
       expiresAt: now + this.config.maxAge,
@@ -363,9 +366,10 @@ export const sessionManager = new SessionManager();
 export function createManagerSession(
   evaluationId: string,
   managerId: string,
-  token: string
+  token: string,
+  email: string
 ): Session | null {
-  return sessionManager.createManagerSession(evaluationId, managerId, token);
+  return sessionManager.createManagerSession(evaluationId, managerId, token, email);
 }
 
 export function createMemberSession(

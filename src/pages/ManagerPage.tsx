@@ -65,7 +65,7 @@ export function ManagerPage() {
     const session = getSession();
 
     if (session && session.type === 'manager') {
-      setManagerEmail('session-email'); // TODO: Salvar email na sessão
+      setManagerEmail(session.email || 'Email não disponível');
       setManagerToken(session.token);
       setEvaluationId(session.evaluationId);
       loadDashboard(session.evaluationId, session.token);
@@ -141,7 +141,7 @@ export function ManagerPage() {
         setEvaluationId(evaluation.id);
 
         // Criar sessão
-        createManagerSession(evaluation.id, 'manager-id', token);
+        createManagerSession(evaluation.id, 'manager-id', token, managerEmail);
 
         // Carregar dashboard
         await loadDashboard(evaluation.id, token);
@@ -173,7 +173,8 @@ export function ManagerPage() {
       createManagerSession(
         result.evaluation.id,
         'manager-id', // TODO: Usar ID real do gestor
-        result.managerToken
+        result.managerToken,
+        managerEmail
       );
 
       setStep('add-members');

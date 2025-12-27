@@ -34,7 +34,7 @@ describe('Session Management', () => {
       const evaluationId = 'eval-123';
       const managerId = 'manager-456';
 
-      const session = createManagerSession(evaluationId, managerId, token);
+      const session = createManagerSession(evaluationId, managerId, token, 'test@example.com');
 
       expect(session).not.toBeNull();
       expect(session?.type).toBe('manager');
@@ -45,14 +45,14 @@ describe('Session Management', () => {
 
     it('should reject invalid UUID token', () => {
       const invalidToken = 'not-a-uuid';
-      const session = createManagerSession('eval-123', 'manager-456', invalidToken);
+      const session = createManagerSession('eval-123', 'manager-456', invalidToken, 'test@example.com');
 
       expect(session).toBeNull();
     });
 
     it('should validate correct manager token', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       expect(validateManagerToken(token)).toBe(true);
     });
@@ -61,7 +61,7 @@ describe('Session Management', () => {
       const token1 = generateToken();
       const token2 = generateToken();
 
-      createManagerSession('eval-123', 'manager-456', token1);
+      createManagerSession('eval-123', 'manager-456', token1, 'test@example.com');
 
       expect(validateManagerToken(token2)).toBe(false);
     });
@@ -110,7 +110,7 @@ describe('Session Management', () => {
   describe('Session Retrieval', () => {
     it('should retrieve active session', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       const session = getSession();
       expect(session).not.toBeNull();
@@ -125,7 +125,7 @@ describe('Session Management', () => {
     it('should check if session exists', () => {
       expect(hasActiveSession()).toBe(false);
 
-      createManagerSession('eval-123', 'manager-456', generateToken());
+      createManagerSession('eval-123', 'manager-456', generateToken(), 'test@example.com');
 
       expect(hasActiveSession()).toBe(true);
     });
@@ -135,7 +135,7 @@ describe('Session Management', () => {
     it('should return correct session type', () => {
       expect(getSessionType()).toBeNull();
 
-      createManagerSession('eval-123', 'manager-456', generateToken());
+      createManagerSession('eval-123', 'manager-456', generateToken(), 'test@example.com');
       expect(getSessionType()).toBe('manager');
 
       clearSession();
@@ -146,14 +146,14 @@ describe('Session Management', () => {
 
     it('should return evaluation ID', () => {
       const evaluationId = 'eval-abc-123';
-      createManagerSession(evaluationId, 'manager-456', generateToken());
+      createManagerSession(evaluationId, 'manager-456', generateToken(), 'test@example.com');
 
       expect(getEvaluationId()).toBe(evaluationId);
     });
 
     it('should return user ID', () => {
       const managerId = 'manager-xyz-789';
-      createManagerSession('eval-123', managerId, generateToken());
+      createManagerSession('eval-123', managerId, generateToken(), 'test@example.com');
 
       expect(getUserId()).toBe(managerId);
     });
@@ -162,7 +162,7 @@ describe('Session Management', () => {
   describe('Session Expiration', () => {
     it('should expire session after maxAge', () => {
       const token = generateToken();
-      const session = createManagerSession('eval-123', 'manager-456', token);
+      const session = createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       expect(session).not.toBeNull();
 
@@ -178,7 +178,7 @@ describe('Session Management', () => {
 
     it('should expire session after inactivity', () => {
       const token = generateToken();
-      const session = createManagerSession('eval-123', 'manager-456', token);
+      const session = createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       expect(session).not.toBeNull();
 
@@ -194,7 +194,7 @@ describe('Session Management', () => {
 
     it('should not expire valid session', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       const session = getSession();
       expect(session).not.toBeNull();
@@ -204,7 +204,7 @@ describe('Session Management', () => {
   describe('Session Activity', () => {
     it('should update last activity', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       const session1 = getSession();
       const initialActivity = session1?.lastActivity;
@@ -232,7 +232,7 @@ describe('Session Management', () => {
   describe('Session Renewal', () => {
     it('should renew active session', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       const session1 = getSession();
       const initialExpiry = session1?.expiresAt;
@@ -260,7 +260,7 @@ describe('Session Management', () => {
 
   describe('Session Clearing', () => {
     it('should clear active session', () => {
-      createManagerSession('eval-123', 'manager-456', generateToken());
+      createManagerSession('eval-123', 'manager-456', generateToken(), 'test@example.com');
 
       expect(hasActiveSession()).toBe(true);
 
@@ -278,7 +278,7 @@ describe('Session Management', () => {
   describe('Session Validation', () => {
     it('should validate session structure', () => {
       const token = generateToken();
-      const session = createManagerSession('eval-123', 'manager-456', token);
+      const session = createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       expect(session).toHaveProperty('type');
       expect(session).toHaveProperty('evaluationId');
@@ -291,7 +291,7 @@ describe('Session Management', () => {
 
     it('should validate timestamps', () => {
       const token = generateToken();
-      const session = createManagerSession('eval-123', 'manager-456', token);
+      const session = createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       expect(session?.createdAt).toBeLessThanOrEqual(Date.now());
       expect(session?.lastActivity).toBeLessThanOrEqual(Date.now());
@@ -313,7 +313,7 @@ describe('Session Management', () => {
   describe('Manager vs Member Validation', () => {
     it('should not validate member code for manager session', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       expect(validateMemberCode('123456')).toBe(false);
     });
@@ -375,7 +375,7 @@ describe('Session Management', () => {
 
     it('should get time until expiration', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       const session = getSession();
       if (session) {
@@ -389,7 +389,7 @@ describe('Session Management', () => {
 
     it('should get inactivity time', () => {
       const token = generateToken();
-      createManagerSession('eval-123', 'manager-456', token);
+      createManagerSession('eval-123', 'manager-456', token, 'test@example.com');
 
       const inactivityTime = sessionManager.getInactivityTime();
       expect(inactivityTime).not.toBeNull();
