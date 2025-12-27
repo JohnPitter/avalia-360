@@ -70,13 +70,11 @@ export function MemberPage() {
       setStep('member-list');
       debugLog.success('Sessão restaurada com sucesso', { component: 'MemberPage' });
     } catch (err) {
-      debugLog.error('Erro ao restaurar sessão', err as Error, { component: 'MemberPage' });
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Erro ao carregar dados. Por favor, faça login novamente.'
-      );
-      // Limpa a sessão e volta para login
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      debugLog.warn(`Sessão inválida ou expirada: ${errorMsg}`, {
+        component: 'MemberPage'
+      });
+      // Limpa a sessão e volta silenciosamente para login (sem mostrar erro)
       handleLogout();
     } finally {
       setLoading(false);
@@ -137,7 +135,7 @@ export function MemberPage() {
       // Carrega todos os membros usando código de acesso
       const session = getSession();
       if (!session || session.type !== 'member' || !session.accessCode) {
-        debugLog.error('Sessão inválida', undefined, { component: 'MemberPage' });
+        debugLog.warn('Sessão não encontrada ou inválida', { component: 'MemberPage' });
         throw new Error('Sessão inválida');
       }
 
@@ -183,12 +181,18 @@ export function MemberPage() {
       setEvaluatedMemberIds(evaluated);
       debugLog.end('Load Evaluation Data', { component: 'MemberPage' });
     } catch (err) {
-      debugLog.error('Erro ao carregar dados da avaliação', err as Error, { component: 'MemberPage' });
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Erro ao carregar membros da equipe'
-      );
+      // Se for erro de sessão inválida, loga como WARN (caso esperado)
+      // Se for outro erro, loga como ERROR
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      if (errorMessage.includes('Sessão inválida') || errorMessage.includes('Falha ao buscar')) {
+        debugLog.warn(`Falha ao carregar dados: ${errorMessage}`, {
+          component: 'MemberPage'
+        });
+      } else {
+        debugLog.error('Erro ao carregar dados da avaliação', err as Error, { component: 'MemberPage' });
+      }
+      // Propaga o erro para que a função chamadora (loadMemberData ou handleLogin) trate
+      throw err;
     }
   };
 

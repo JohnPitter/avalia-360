@@ -455,7 +455,9 @@ export async function getMembersByAccessCode(
     debugLog.end('getMembersByAccessCode', { component: 'member.service' });
     return result.data.members;
   } catch (error) {
-    debugLog.error('Erro ao buscar membros por código de acesso via Cloud Function', error as Error, {
+    // Código inválido ou sessão expirada é esperado, não é erro crítico
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+    debugLog.warn(`Código de acesso inválido ou sessão expirada: ${errorMsg}`, {
       component: 'member.service'
     });
     throw new Error('Falha ao buscar membros da equipe');
