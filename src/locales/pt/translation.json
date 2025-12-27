@@ -188,7 +188,24 @@
       "completionRate": "Taxa de Conclusão",
       "viewResults": "Ver Resultados",
       "sendReminders": "Enviar Lembretes",
-      "exportData": "Exportar Dados"
+      "exportData": "Exportar Dados",
+      "status": {
+        "active": "Ativa",
+        "complete": "Completa",
+        "draft": "Rascunho"
+      },
+      "completedLabel": "Completaram",
+      "pendingLabel": "Pendentes",
+      "evaluationsReceived": "avaliações recebidas",
+      "evaluationReceived": "avaliação recebida",
+      "tips": {
+        "title": "💡 Dicas para aumentar a participação",
+        "tip1": "Envie lembretes por email para os membros que ainda não completaram",
+        "tip2": "Reforce a importância da avaliação 360° para o desenvolvimento da equipe",
+        "tip3": "Lembre que as avaliações são anônimas e confidenciais",
+        "tip4": "Defina um prazo claro para conclusão das avaliações",
+        "tip5": "Disponibilize um canal para tirar dúvidas sobre o processo"
+      }
     },
     "results": {
       "title": "Resultados da Avaliação",
@@ -197,6 +214,44 @@
       "responses": "Respostas Recebidas",
       "viewDetails": "Ver Detalhes",
       "noResults": "Aguardando respostas",
+      "loading": "Carregando resultados...",
+      "sortBy": "Ordenar por",
+      "sortOverall": "Média Geral",
+      "sortName": "Nome",
+      "sortResponses": "Número de Respostas",
+      "showComments": "Ver Comentários",
+      "hideComments": "Ocultar Comentários",
+      "positivePoints": "Pontos Positivos",
+      "improvementPoints": "Pontos de Melhoria",
+      "performanceOverview": "Visão Geral de Performance",
+      "evaluationsReceived": "avaliações recebidas",
+      "evaluationReceived": "avaliação recebida",
+      "ratingLabels": {
+        "excellent": "Excelente",
+        "good": "Bom",
+        "adequate": "Adequado",
+        "belowAverage": "Abaixo da Média",
+        "unsatisfactory": "Insatisfatório"
+      },
+      "questions": {
+        "satisfaction": "Satisfação",
+        "proactivity": "Proatividade",
+        "quality": "Qualidade",
+        "teamwork": "Trabalho em Equipe"
+      },
+      "stats": {
+        "totalMembers": "Membros Avaliados",
+        "highestScore": "Maior Pontuação",
+        "lowestScore": "Menor Pontuação",
+        "averageScore": "Média Geral"
+      },
+      "export": {
+        "title": "Exportar Resultados",
+        "text": "Exportar TXT",
+        "excel": "Exportar Excel",
+        "csv": "Exportar CSV",
+        "all": "Exportar Todos os Formatos"
+      },
       "filters": {
         "all": "Todos",
         "completed": "Concluídos",
@@ -251,20 +306,43 @@
       "selfEvaluation": "Auto-avaliação",
       "question": "Como você avalia {{memberName}} em:",
       "ratingLabels": {
-        "1": "Muito Abaixo",
-        "2": "Abaixo",
+        "1": "Insatisfatório",
+        "2": "Abaixo da Média",
         "3": "Adequado",
-        "4": "Acima",
+        "4": "Bom",
         "5": "Excelente"
+      },
+      "ratingScale": {
+        "unsatisfactory": "Insatisfatório",
+        "belowAverage": "Abaixo da Média",
+        "adequate": "Adequado",
+        "good": "Bom",
+        "excellent": "Excelente"
+      },
+      "questions": {
+        "question1": "Você está satisfeito trabalhando com esta pessoa?",
+        "question2": "Esta pessoa demonstra proatividade e iniciativa?",
+        "question3": "A qualidade do trabalho desta pessoa é consistente?",
+        "question4": "Esta pessoa trabalha bem em equipe?"
+      },
+      "commentsSection": {
+        "title": "Comentários Adicionais",
+        "positive": "💚 Pontos Positivos",
+        "positivePlaceholder": "Descreva os pontos fortes, qualidades e contribuições positivas deste colaborador. Seja específico e use exemplos concretos quando possível...",
+        "improvement": "💡 Pontos de Melhoria",
+        "improvementPlaceholder": "Descreva sugestões construtivas para desenvolvimento profissional. Seja respeitoso e focado em comportamentos, não em personalidade...",
+        "optional": "(Opcional mas recomendado)"
       },
       "commentsLabel": "Comentários (opcional)",
       "commentsPlaceholder": "Compartilhe feedback construtivo...",
       "progress": "Progresso: {{current}} de {{total}}",
-      "previousMember": "Anterior",
+      "previousMember": "Voltar",
       "nextMember": "Próximo",
+      "cancel": "Cancelar",
       "submit": "Enviar Avaliação",
       "savingDraft": "Salvando rascunho...",
-      "draftSaved": "Rascunho salvo",
+      "draftSaved": "Salvo",
+      "lastSaved": "há",
       "submitting": "Enviando...",
       "success": "Avaliação enviada com sucesso!"
     },

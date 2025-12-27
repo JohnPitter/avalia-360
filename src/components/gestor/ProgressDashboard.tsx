@@ -1,4 +1,5 @@
 import { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Evaluation, TeamMember } from '@/types';
 
 /**
@@ -29,6 +30,8 @@ const ProgressDashboardComponent = ({
   onViewResults,
   onLogout,
 }: ProgressDashboardProps) => {
+  const { t } = useTranslation();
+
   // Memoize expensive calculations
   const overallProgress = useMemo(() => {
     // Protege contra divisão por zero
@@ -90,10 +93,10 @@ const ProgressDashboardComponent = ({
                         : 'bg-gray-500'
                     }`} />
                     {evaluation.status === 'active'
-                      ? 'Ativa'
+                      ? t('manager.dashboard.status.active')
                       : evaluation.status === 'completed'
-                      ? 'Completa'
-                      : 'Rascunho'}
+                      ? t('manager.dashboard.status.complete')
+                      : t('manager.dashboard.status.draft')}
                   </span>
                   <span className="text-sm text-gray-500">
                     {new Date(evaluation.created_at).toLocaleDateString('pt-BR')}
@@ -190,7 +193,7 @@ const ProgressDashboardComponent = ({
             <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">Completaram</div>
+                  <div className="text-sm text-gray-600 mb-1">{t('manager.dashboard.completedLabel')}</div>
                   <div className="text-3xl font-bold text-green-600">{completedMembers}</div>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
@@ -204,7 +207,7 @@ const ProgressDashboardComponent = ({
             <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">Pendentes</div>
+                  <div className="text-sm text-gray-600 mb-1">{t('manager.dashboard.pendingLabel')}</div>
                   <div className="text-3xl font-bold text-orange-600">{members.length - completedMembers}</div>
                 </div>
                 <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
@@ -340,14 +343,14 @@ const ProgressDashboardComponent = ({
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">💡 Dicas para aumentar a participação</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('manager.dashboard.tips.title')}</h3>
               <ul className="space-y-3">
                 {[
-                  'Envie lembretes por email para os membros que ainda não completaram',
-                  'Reforce a importância da avaliação 360° para o desenvolvimento da equipe',
-                  'Lembre que as avaliações são anônimas e confidenciais',
-                  'Defina um prazo claro para conclusão das avaliações',
-                  'Disponibilize um canal para tirar dúvidas sobre o processo'
+                  t('manager.dashboard.tips.tip1'),
+                  t('manager.dashboard.tips.tip2'),
+                  t('manager.dashboard.tips.tip3'),
+                  t('manager.dashboard.tips.tip4'),
+                  t('manager.dashboard.tips.tip5')
                 ].map((tip, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-amber-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
