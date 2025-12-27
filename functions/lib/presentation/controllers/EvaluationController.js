@@ -11,6 +11,7 @@ const GetResultsUseCase_1 = require("../../application/use-cases/GetResultsUseCa
 const FirestoreEvaluationRepository_1 = require("../../infrastructure/database/FirestoreEvaluationRepository");
 const FirestoreMemberRepository_1 = require("../../infrastructure/database/FirestoreMemberRepository");
 const FirestoreResponseRepository_1 = require("../../infrastructure/database/FirestoreResponseRepository");
+const encryption_service_1 = require("../../infrastructure/services/encryption.service");
 class EvaluationController {
     constructor() {
         this.evaluationRepo = new FirestoreEvaluationRepository_1.FirestoreEvaluationRepository();
@@ -50,11 +51,45 @@ class EvaluationController {
         return {
             results: results.map((r) => {
                 var _a;
-                return ({
+                // Descriptografa nome e email do membro
+                let memberName = r.member.name;
+                let memberEmail = r.member.email;
+                try {
+                    memberName = (0, encryption_service_1.decrypt)(r.member.name);
+                }
+                catch (error) {
+                    console.error(`Erro ao descriptografar nome do membro ${r.member.id}:`, error);
+                }
+                try {
+                    memberEmail = (0, encryption_service_1.decrypt)(r.member.email);
+                }
+                catch (error) {
+                    console.error(`Erro ao descriptografar email do membro ${r.member.id}:`, error);
+                }
+                // Descriptografa comentários
+                const decryptedPositive = r.comments.positive.map((comment) => {
+                    try {
+                        return (0, encryption_service_1.decrypt)(comment);
+                    }
+                    catch (error) {
+                        console.error('Erro ao descriptografar comentário positivo:', error);
+                        return comment; // Retorna criptografado se falhar
+                    }
+                });
+                const decryptedImprovement = r.comments.improvement.map((comment) => {
+                    try {
+                        return (0, encryption_service_1.decrypt)(comment);
+                    }
+                    catch (error) {
+                        console.error('Erro ao descriptografar comentário de melhoria:', error);
+                        return comment; // Retorna criptografado se falhar
+                    }
+                });
+                return {
                     member: {
                         id: r.member.id,
-                        name: r.member.name,
-                        email: r.member.email,
+                        name: memberName, // Descriptografado
+                        email: memberEmail, // Descriptografado
                         evaluation_id: r.member.evaluationId,
                         access_code: r.member.accessCode,
                         completed_evaluations: r.member.completedEvaluations,
@@ -62,9 +97,12 @@ class EvaluationController {
                         last_access_date: ((_a = r.member.lastAccessDate) === null || _a === void 0 ? void 0 : _a.getTime()) || null,
                     },
                     averages: r.averages,
-                    comments: r.comments,
+                    comments: {
+                        positive: decryptedPositive, // Descriptografado
+                        improvement: decryptedImprovement, // Descriptografado
+                    },
                     totalResponses: r.responseCount,
-                });
+                };
             }),
         };
     }
