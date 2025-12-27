@@ -90,6 +90,21 @@ export class FirestoreMemberRepository implements IMemberRepository {
   }
 
   private fromFirestore(id: string, data: any): Member {
+    // Converte last_access_date para Date de forma segura
+    let lastAccessDate: Date | undefined = undefined;
+    if (data.last_access_date) {
+      if (typeof data.last_access_date.toDate === 'function') {
+        // Firestore Timestamp
+        lastAccessDate = data.last_access_date.toDate();
+      } else if (typeof data.last_access_date === 'number') {
+        // Unix timestamp em milissegundos
+        lastAccessDate = new Date(data.last_access_date);
+      } else if (data.last_access_date instanceof Date) {
+        // Já é Date
+        lastAccessDate = data.last_access_date;
+      }
+    }
+
     return new Member(
       id,
       data.evaluation_id,
@@ -98,7 +113,7 @@ export class FirestoreMemberRepository implements IMemberRepository {
       '', // access_code hasheado não retorna
       data.completed_evaluations || 0,
       data.total_evaluations || 0,
-      data.last_access_date?.toDate()
+      lastAccessDate
     );
   }
 }

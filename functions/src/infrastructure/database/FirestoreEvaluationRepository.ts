@@ -40,12 +40,25 @@ export class FirestoreEvaluationRepository implements IEvaluationRepository {
     if (!doc.exists) return null;
 
     const data = doc.data()!;
+
+    // Converte created_at para Date de forma segura
+    let createdAt = new Date();
+    if (data.created_at) {
+      if (typeof data.created_at.toDate === 'function') {
+        createdAt = data.created_at.toDate();
+      } else if (typeof data.created_at === 'number') {
+        createdAt = new Date(data.created_at);
+      } else if (data.created_at instanceof Date) {
+        createdAt = data.created_at;
+      }
+    }
+
     return new Evaluation(
       doc.id,
       '', // Email criptografado
       '', // Título criptografado - precisa token para descriptografar
       '',
-      data.created_at?.toDate() || new Date(),
+      createdAt,
       data.status
     );
   }
@@ -57,12 +70,25 @@ export class FirestoreEvaluationRepository implements IEvaluationRepository {
 
     return snapshot.docs.map((doc) => {
       const data = doc.data();
+
+      // Converte created_at para Date de forma segura
+      let createdAt = new Date();
+      if (data.created_at) {
+        if (typeof data.created_at.toDate === 'function') {
+          createdAt = data.created_at.toDate();
+        } else if (typeof data.created_at === 'number') {
+          createdAt = new Date(data.created_at);
+        } else if (data.created_at instanceof Date) {
+          createdAt = data.created_at;
+        }
+      }
+
       return new Evaluation(
         doc.id,
         '',
         '',
         '',
-        data.created_at?.toDate() || new Date(),
+        createdAt,
         data.status
       );
     });

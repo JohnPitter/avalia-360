@@ -106,9 +106,24 @@ class FirestoreMemberRepository {
         };
     }
     fromFirestore(id, data) {
-        var _a;
+        // Converte last_access_date para Date de forma segura
+        let lastAccessDate = undefined;
+        if (data.last_access_date) {
+            if (typeof data.last_access_date.toDate === 'function') {
+                // Firestore Timestamp
+                lastAccessDate = data.last_access_date.toDate();
+            }
+            else if (typeof data.last_access_date === 'number') {
+                // Unix timestamp em milissegundos
+                lastAccessDate = new Date(data.last_access_date);
+            }
+            else if (data.last_access_date instanceof Date) {
+                // Já é Date
+                lastAccessDate = data.last_access_date;
+            }
+        }
         return new Member_1.Member(id, data.evaluation_id, data.name, data.email, '', // access_code hasheado não retorna
-        data.completed_evaluations || 0, data.total_evaluations || 0, (_a = data.last_access_date) === null || _a === void 0 ? void 0 : _a.toDate());
+        data.completed_evaluations || 0, data.total_evaluations || 0, lastAccessDate);
     }
 }
 exports.FirestoreMemberRepository = FirestoreMemberRepository;

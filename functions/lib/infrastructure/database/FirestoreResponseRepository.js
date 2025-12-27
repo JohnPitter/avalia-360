@@ -100,7 +100,22 @@ class FirestoreResponseRepository {
         return !snapshot.empty;
     }
     fromFirestore(id, data) {
-        var _a;
+        // Converte created_at para Date de forma segura
+        let createdAt = new Date();
+        if (data.created_at) {
+            if (typeof data.created_at.toDate === 'function') {
+                // Firestore Timestamp
+                createdAt = data.created_at.toDate();
+            }
+            else if (typeof data.created_at === 'number') {
+                // Unix timestamp em milissegundos
+                createdAt = new Date(data.created_at);
+            }
+            else if (data.created_at instanceof Date) {
+                // Já é Date
+                createdAt = data.created_at;
+            }
+        }
         return new Response_1.Response(id, data.evaluation_id, data.evaluator_id, data.evaluated_id, {
             question_1: data.question_1,
             question_2: data.question_2,
@@ -109,7 +124,7 @@ class FirestoreResponseRepository {
         }, {
             positive: data.positive_comments,
             improvement: data.improvement_comments,
-        }, ((_a = data.created_at) === null || _a === void 0 ? void 0 : _a.toDate()) || new Date());
+        }, createdAt);
     }
 }
 exports.FirestoreResponseRepository = FirestoreResponseRepository;

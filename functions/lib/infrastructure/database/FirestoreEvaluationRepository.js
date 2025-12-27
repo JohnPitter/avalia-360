@@ -60,23 +60,47 @@ class FirestoreEvaluationRepository {
         return new Evaluation_1.Evaluation(docRef.id, evaluation.creatorEmail, evaluation.title, evaluation.managerToken, evaluation.createdAt, evaluation.status);
     }
     async findById(id) {
-        var _a;
         const doc = await this.collection.doc(id).get();
         if (!doc.exists)
             return null;
         const data = doc.data();
+        // Converte created_at para Date de forma segura
+        let createdAt = new Date();
+        if (data.created_at) {
+            if (typeof data.created_at.toDate === 'function') {
+                createdAt = data.created_at.toDate();
+            }
+            else if (typeof data.created_at === 'number') {
+                createdAt = new Date(data.created_at);
+            }
+            else if (data.created_at instanceof Date) {
+                createdAt = data.created_at;
+            }
+        }
         return new Evaluation_1.Evaluation(doc.id, '', // Email criptografado
         '', // Título criptografado - precisa token para descriptografar
-        '', ((_a = data.created_at) === null || _a === void 0 ? void 0 : _a.toDate()) || new Date(), data.status);
+        '', createdAt, data.status);
     }
     async findByCreatorEmail(emailHash) {
         const snapshot = await this.collection
             .where('creator_email', '==', emailHash)
             .get();
         return snapshot.docs.map((doc) => {
-            var _a;
             const data = doc.data();
-            return new Evaluation_1.Evaluation(doc.id, '', '', '', ((_a = data.created_at) === null || _a === void 0 ? void 0 : _a.toDate()) || new Date(), data.status);
+            // Converte created_at para Date de forma segura
+            let createdAt = new Date();
+            if (data.created_at) {
+                if (typeof data.created_at.toDate === 'function') {
+                    createdAt = data.created_at.toDate();
+                }
+                else if (typeof data.created_at === 'number') {
+                    createdAt = new Date(data.created_at);
+                }
+                else if (data.created_at instanceof Date) {
+                    createdAt = data.created_at;
+                }
+            }
+            return new Evaluation_1.Evaluation(doc.id, '', '', '', createdAt, data.status);
         });
     }
     async updateStatus(id, status) {

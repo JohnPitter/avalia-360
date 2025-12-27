@@ -91,6 +91,21 @@ export class FirestoreResponseRepository implements IResponseRepository {
   }
 
   private fromFirestore(id: string, data: any): Response {
+    // Converte created_at para Date de forma segura
+    let createdAt = new Date();
+    if (data.created_at) {
+      if (typeof data.created_at.toDate === 'function') {
+        // Firestore Timestamp
+        createdAt = data.created_at.toDate();
+      } else if (typeof data.created_at === 'number') {
+        // Unix timestamp em milissegundos
+        createdAt = new Date(data.created_at);
+      } else if (data.created_at instanceof Date) {
+        // Já é Date
+        createdAt = data.created_at;
+      }
+    }
+
     return new Response(
       id,
       data.evaluation_id,
@@ -106,7 +121,7 @@ export class FirestoreResponseRepository implements IResponseRepository {
         positive: data.positive_comments,
         improvement: data.improvement_comments,
       },
-      data.created_at?.toDate() || new Date()
+      createdAt
     );
   }
 }
