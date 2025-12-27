@@ -110,7 +110,7 @@ export class FirestoreMemberRepository implements IMemberRepository {
       data.evaluation_id,
       data.name,
       data.email,
-      '', // access_code hasheado não retorna
+      data.access_code || '', // Hash SHA-256 do código de acesso
       data.completed_evaluations || 0,
       data.total_evaluations || 0,
       lastAccessDate

@@ -37,11 +37,9 @@ export class Member {
       throw new Error('Email is required');
     }
 
-    // Access code pode ser plaintext (6 dígitos) OU hash (quando vem do Firestore)
-    // Aceita ambos os formatos
-    if (!this.accessCode || this.accessCode.trim().length === 0) {
-      throw new Error('Access code is required');
-    }
+    // Access code é opcional (nem sempre necessário em alguns contextos)
+    // Se presente, pode ser plaintext (6 dígitos) OU hash
+    // Validação: apenas verifica se não está vazio quando presente
 
     if (this.completedEvaluations < 0) {
       throw new Error('Completed evaluations cannot be negative');

@@ -122,7 +122,7 @@ class FirestoreMemberRepository {
                 lastAccessDate = data.last_access_date;
             }
         }
-        return new Member_1.Member(id, data.evaluation_id, data.name, data.email, '', // access_code hasheado não retorna
+        return new Member_1.Member(id, data.evaluation_id, data.name, data.email, data.access_code || '', // Hash SHA-256 do código de acesso
         data.completed_evaluations || 0, data.total_evaluations || 0, lastAccessDate);
     }
 }
