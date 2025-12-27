@@ -10,7 +10,7 @@ import {
   incrementCompletedEvaluations,
   getMembersByAccessCode,
 } from '@/services/firebase';
-import { createResponse, getPendingEvaluations } from '@/services/firebase/response.service';
+import { submitResponseEncrypted, getPendingEvaluations } from '@/services/firebase/response.service';
 import { searchEvaluationByAccessCode } from '@/services/firebase/search.service';
 import {
   createMemberSession,
@@ -36,7 +36,6 @@ export function MemberPage() {
   const [evaluationId, setEvaluationId] = useState('');
   const [currentMember, setCurrentMember] = useState<TeamMember | null>(null);
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
-  const [managerToken] = useState(''); // TODO: Obter do Firebase
 
   // Dados da avaliação
   const [allMembers, setAllMembers] = useState<TeamMember[]>([]);
@@ -140,11 +139,21 @@ export function MemberPage() {
         throw new Error('Sessão inválida');
       }
 
-      debugLog.debug('Carregando membros da equipe', { component: 'MemberPage', data: { accessCode: '******' } });
+      debugLog.debug('Carregando membros da equipe (descriptografados via Cloud Function)', { component: 'MemberPage', data: { accessCode: '******' } });
       const membersList = await getMembersByAccessCode(session.accessCode);
-      debugLog.success(`${membersList.length} membros carregados`, { component: 'MemberPage', data: { count: membersList.length } });
+      debugLog.success(`${membersList.length} membros carregados e descriptografados`, { component: 'MemberPage', data: { count: membersList.length } });
 
       setAllMembers(membersList);
+
+      // Atualiza currentMember com dados descriptografados
+      const decryptedCurrentMember = membersList.find(m => m.id === memberId);
+      if (decryptedCurrentMember) {
+        debugLog.info('Atualizando currentMember com dados descriptografados', {
+          component: 'MemberPage',
+          data: { memberName: decryptedCurrentMember.name }
+        });
+        setCurrentMember(decryptedCurrentMember);
+      }
 
       debugLog.debug('Carregando avaliações pendentes', { component: 'MemberPage' });
       // Carrega avaliações já feitas
@@ -191,16 +200,13 @@ export function MemberPage() {
     setError(null);
 
     try {
-      // Cria resposta
-      await createResponse(
-        {
-          evaluationId,
-          evaluatorId: currentMember.id,
-          evaluatedId: selectedMemberId,
-          ...data,
-        },
-        managerToken // TODO: Obter manager token
-      );
+      // Envia resposta (criptografada no backend via Cloud Function)
+      await submitResponseEncrypted({
+        evaluationId,
+        evaluatorId: currentMember.id,
+        evaluatedId: selectedMemberId,
+        ...data,
+      });
 
       // Incrementa contador
       await incrementCompletedEvaluations(currentMember.id);

@@ -42,6 +42,7 @@ export type { MemberData, MemberWithAccessCode } from './member.service';
 // Response Service
 export {
   createResponse,
+  submitResponseEncrypted,
   getResponse,
   getResponsesForMember,
   getPendingEvaluations,

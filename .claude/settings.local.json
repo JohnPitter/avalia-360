@@ -37,7 +37,9 @@
       "Bash(do:*)",
       "Bash(git pull:*)",
       "Bash(node -e:*)",
-      "Bash(firebase functions:config:get:*)"
+      "Bash(firebase functions:config:get:*)",
+      "Bash(firebase functions:delete:*)",
+      "Bash(firebase functions:artifacts:setpolicy:*)"
     ],
     "deny": [],
     "ask": []

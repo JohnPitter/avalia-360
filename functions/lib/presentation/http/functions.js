@@ -41,11 +41,9 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateLastAccess = exports.submitResponse = exports.getMembersDecrypted = exports.getResults = exports.addMembers = exports.createEvaluation = void 0;
 const functions = __importStar(require("firebase-functions"));
-const admin = __importStar(require("firebase-admin"));
 const EvaluationController_1 = require("../controllers/EvaluationController");
 const MemberController_1 = require("../controllers/MemberController");
-// Inicializar Firebase Admin
-admin.initializeApp();
+// Firebase Admin já inicializado em index.ts
 const evaluationController = new EvaluationController_1.EvaluationController();
 const memberController = new MemberController_1.MemberController();
 // =================================================================

@@ -6,7 +6,8 @@ import {
   where,
   and,
 } from 'firebase/firestore';
-import { db } from './config';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from './config';
 import type { Response, EvaluationFormData, ConsolidatedResult, TeamMember } from '@/types';
 import {
   encrypt,
@@ -17,6 +18,7 @@ import {
 } from '@/utils/crypto';
 import { validateEvaluationForm } from '@/utils/validation';
 import { sanitizeText } from '@/utils/sanitization';
+import { debugLog } from '@/services/debug/debugLogger';
 
 /**
  * Serviço de Respostas de Avaliação
@@ -31,6 +33,89 @@ export interface CreateResponseData extends EvaluationFormData {
   evaluationId: string;
   evaluatorId: string;
   evaluatedId: string;
+}
+
+/**
+ * Envia resposta de avaliação via Cloud Function (COM CRIPTOGRAFIA)
+ * - Frontend envia dados plaintext
+ * - Cloud Function criptografa e salva no Firestore
+ * Complexidade: O(1)
+ *
+ * @param data - Dados da resposta
+ * @returns Sucesso
+ */
+export async function submitResponseEncrypted(
+  data: CreateResponseData
+): Promise<void> {
+  // Validação
+  const validation = validateEvaluationForm(data);
+  if (!validation.valid) {
+    throw new Error(`Validação falhou: ${validation.errors.join(', ')}`);
+  }
+
+  try {
+    debugLog.info('Enviando resposta via Cloud Function', {
+      component: 'response.service',
+      data: {
+        evaluationId: data.evaluationId,
+        evaluatorId: data.evaluatorId,
+        evaluatedId: data.evaluatedId,
+      }
+    });
+
+    // Sanitização dos dados antes de enviar
+    const sanitizedPositive = sanitizeText(data.positive_points, 500);
+    const sanitizedImprovement = sanitizeText(data.improvement_points, 500);
+
+    // Chama Cloud Function que criptografa e salva
+    const submitResponse = httpsCallable<
+      {
+        evaluationId: string;
+        evaluatorId: string;
+        evaluatedId: string;
+        ratings: {
+          question_1: number;
+          question_2: number;
+          question_3: number;
+          question_4: number;
+        };
+        comments: {
+          positive_points: string;
+          improvement_points: string;
+        };
+      },
+      { success: boolean }
+    >(functions, 'submitResponse');
+
+    const result = await submitResponse({
+      evaluationId: data.evaluationId,
+      evaluatorId: data.evaluatorId,
+      evaluatedId: data.evaluatedId,
+      ratings: {
+        question_1: data.question_1,
+        question_2: data.question_2,
+        question_3: data.question_3,
+        question_4: data.question_4,
+      },
+      comments: {
+        positive_points: sanitizedPositive,
+        improvement_points: sanitizedImprovement,
+      },
+    });
+
+    if (!result.data.success) {
+      throw new Error('Cloud Function retornou erro');
+    }
+
+    debugLog.success('Resposta enviada com sucesso', {
+      component: 'response.service'
+    });
+  } catch (error) {
+    debugLog.error('Erro ao enviar resposta via Cloud Function', error as Error, {
+      component: 'response.service'
+    });
+    throw new Error('Falha ao salvar resposta no banco de dados');
+  }
 }
 
 /**
