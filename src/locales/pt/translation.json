@@ -154,18 +154,55 @@
       }
     },
     "addMembers": {
-      "title": "Adicionar Membros da Equipe",
+      "title": "Adicionar Membros",
       "subtitle": "Adicione os colaboradores que participarão da avaliação",
+      "evaluationLabel": "Avaliação:",
+      "excelImport": {
+        "title": "📊 Importar de Excel (Recomendado)",
+        "description": "Adicione vários membros de uma vez usando uma planilha Excel",
+        "downloadTemplate": "Baixar Template",
+        "importExcel": "Importar Excel",
+        "processing": "Processando..."
+      },
+      "divider": "ou adicione manualmente",
       "manualAdd": "Adicionar Manualmente",
       "excelUpload": "Importar via Excel",
-      "nameLabel": "Nome do Colaborador",
+      "nameLabel": "Nome Completo *",
       "namePlaceholder": "João Silva",
-      "emailLabel": "Email",
-      "emailPlaceholder": "joao.silva@empresa.com",
+      "emailLabel": "Email Profissional *",
+      "emailPlaceholder": "joao@empresa.com",
       "buttonAdd": "Adicionar",
       "membersList": "Membros Adicionados",
       "noMembers": "Nenhum membro adicionado ainda",
-      "remove": "Remover"
+      "remove": "Remover",
+      "removeTooltip": "Remover membro",
+      "addMore": "Adicionar Mais Membros",
+      "counter": {
+        "member": "membro",
+        "members": "membros",
+        "minReached": "✅ Mínimo atingido",
+        "minRequired": "⚠️ Adicione pelo menos 2"
+      },
+      "errors": {
+        "title": "Erros encontrados:",
+        "noValidMembers": "Nenhum membro válido encontrado na planilha"
+      },
+      "warnings": {
+        "title": "⚠️ Avisos do arquivo Excel:"
+      },
+      "success": {
+        "imported": "✅ {{count}} membro(s) importado(s) com sucesso!",
+        "summary": "Total de linhas: {{total}} | Válidas: {{valid}}"
+      },
+      "howItWorks": {
+        "title": "📋 Como funciona?",
+        "step1": "Cada membro receberá um <strong>código de 6 dígitos</strong> por email",
+        "step2": "Cada membro avaliará <strong>todos os outros</strong> (N-1 avaliações)",
+        "step3": "Avaliações <strong>100% anônimas e criptografadas</strong>",
+        "step4": "Acompanhe tudo em tempo real no <strong>dashboard</strong>"
+      },
+      "back": "Voltar",
+      "submit": "Finalizar e Enviar Convites"
     },
     "excelUpload": {
       "title": "Importar Membros via Excel",
@@ -292,17 +329,37 @@
       }
     },
     "success": {
-      "title": "✨ Avaliação Criada com Sucesso!",
+      "title": "🎉 Avaliação Criada!",
       "subtitle": "Seus membros receberão os códigos de acesso por email",
-      "tokenTitle": "Guarde seu Token de Acesso",
-      "tokenSubtitle": "Use este token para acessar o dashboard desta avaliação",
+      "membersAdded": "{{count}} membro adicionado",
+      "membersAddedPlural": "{{count}} membros adicionados",
+      "tokenTitle": "🔑 Token do Gestor",
+      "tokenSubtitle": "Guarde este token com segurança - você precisará dele para acessar o dashboard",
       "copyToken": "Copiar Token",
-      "tokenCopied": "Token copiado!",
+      "tokenCopied": "✅ Copiado!",
       "important": "Importante: Salve este token em local seguro. Você precisará dele para acessar os resultados.",
-      "nextSteps": "Próximos Passos",
-      "step1": "Os membros receberão emails com códigos de acesso",
-      "step2": "Acompanhe o progresso no dashboard",
-      "step3": "Visualize os resultados em tempo real",
+      "importantNote": {
+        "title": "⚠️ Muito Importante",
+        "point1": "Este token é a <strong>única forma</strong> de acessar o dashboard desta avaliação",
+        "point2": "Copie e salve em um local seguro (gerenciador de senhas, email, etc.)",
+        "point3": "Você pode usar a função \"Baixar Códigos\" para ter um backup completo"
+      },
+      "accessCodes": {
+        "title": "📋 Códigos de Acesso dos Membros",
+        "description": "Cada membro receberá um email com seu código de 6 dígitos. Você também pode compartilhar manualmente:",
+        "copyCode": "Copiar",
+        "copied": "✅",
+        "downloadCodes": "📥 Baixar Todos os Códigos",
+        "showCodes": "Mostrar Códigos",
+        "hideCodes": "Ocultar Códigos"
+      },
+      "nextSteps": {
+        "title": "🚀 Próximos Passos",
+        "step1": "Os membros receberão <strong>emails automáticos</strong> com seus códigos de acesso",
+        "step2": "Cada membro avaliará todos os outros da equipe (avaliação 360°)",
+        "step3": "Acompanhe o progresso em <strong>tempo real</strong> no dashboard",
+        "step4": "Acesse os <strong>resultados consolidados</strong> quando a avaliação estiver completa"
+      },
       "goToDashboard": "Ir para Dashboard"
     }
   },

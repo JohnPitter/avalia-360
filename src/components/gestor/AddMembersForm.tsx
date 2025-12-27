@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { validateTeamMembers } from '@/utils/validation';
 import { sanitizeText, sanitizeEmail } from '@/utils/sanitization';
 import { downloadExcelTemplate } from '@/utils/excelTemplate';
@@ -26,6 +27,7 @@ export function AddMembersForm({
   onSubmit,
   onBack,
 }: AddMembersFormProps) {
+  const { t } = useTranslation();
   const [members, setMembers] = useState<MemberInput[]>([
     { name: '', email: '' },
     { name: '', email: '' },
@@ -110,7 +112,7 @@ export function AddMembersForm({
       }
 
       if (result.members.length === 0) {
-        setErrors(['Nenhum membro válido encontrado na planilha']);
+        setErrors([t('manager.addMembers.errors.noValidMembers')]);
         return;
       }
 
@@ -148,9 +150,9 @@ export function AddMembersForm({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Adicionar Membros</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('manager.addMembers.title')}</h3>
             <p className="text-gray-600">
-              Avaliação: <span className="font-semibold text-blue-600">{evaluationTitle}</span>
+              {t('manager.addMembers.evaluationLabel')} <span className="font-semibold text-blue-600">{evaluationTitle}</span>
             </p>
           </div>
 
@@ -163,9 +165,9 @@ export function AddMembersForm({
                 </svg>
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-gray-900 mb-2">📊 Importar de Excel (Recomendado)</h4>
+                <h4 className="font-bold text-gray-900 mb-2">{t('manager.addMembers.excelImport.title')}</h4>
                 <p className="text-sm text-gray-700 mb-4">
-                  Adicione vários membros de uma vez usando uma planilha Excel
+                  {t('manager.addMembers.excelImport.description')}
                 </p>
 
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -178,7 +180,7 @@ export function AddMembersForm({
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Baixar Template
+                    {t('manager.addMembers.excelImport.downloadTemplate')}
                   </button>
 
                   {/* Upload Excel */}
@@ -202,7 +204,7 @@ export function AddMembersForm({
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    {isUploading ? 'Processando...' : 'Importar Excel'}
+                    {isUploading ? t('manager.addMembers.excelImport.processing') : t('manager.addMembers.excelImport.importExcel')}
                   </button>
                 </div>
               </div>
@@ -216,7 +218,7 @@ export function AddMembersForm({
             </div>
             <div className="relative flex justify-center">
               <span className="px-4 text-sm font-medium text-gray-500 bg-white">
-                ou adicione manualmente
+                {t('manager.addMembers.divider')}
               </span>
             </div>
           </div>
@@ -239,7 +241,7 @@ export function AddMembersForm({
                     {/* Nome */}
                     <div>
                       <label htmlFor={`name-${index}`} className="block text-sm font-semibold text-gray-900 mb-2">
-                        Nome Completo *
+                        {t('manager.addMembers.nameLabel')}
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -253,7 +255,7 @@ export function AddMembersForm({
                           value={member.name}
                           onChange={(e) => updateMember(index, 'name', e.target.value)}
                           className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
-                          placeholder="João Silva"
+                          placeholder={t('manager.addMembers.namePlaceholder')}
                           required
                           maxLength={100}
                         />
@@ -263,7 +265,7 @@ export function AddMembersForm({
                     {/* Email */}
                     <div>
                       <label htmlFor={`email-${index}`} className="block text-sm font-semibold text-gray-900 mb-2">
-                        Email Profissional *
+                        {t('manager.addMembers.emailLabel')}
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -277,7 +279,7 @@ export function AddMembersForm({
                           value={member.email}
                           onChange={(e) => updateMember(index, 'email', e.target.value)}
                           className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
-                          placeholder="joao@empresa.com"
+                          placeholder={t('manager.addMembers.emailPlaceholder')}
                           required
                         />
                       </div>
@@ -290,7 +292,7 @@ export function AddMembersForm({
                       type="button"
                       onClick={() => removeMember(index)}
                       className="flex-shrink-0 w-10 h-10 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 hover:scale-110 transition-all flex items-center justify-center"
-                      title="Remover membro"
+                      title={t('manager.addMembers.removeTooltip')}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -311,7 +313,7 @@ export function AddMembersForm({
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Adicionar Mais Membros
+            {t('manager.addMembers.addMore')}
           </button>
 
           {/* Counter Badge */}
@@ -321,10 +323,10 @@ export function AddMembersForm({
                 ? 'bg-green-100 text-green-700'
                 : 'bg-orange-100 text-orange-700'
             }`}>
-              {members.length} {members.length === 1 ? 'membro' : 'membros'}
+              {members.length} {members.length === 1 ? t('manager.addMembers.counter.member') : t('manager.addMembers.counter.members')}
             </div>
             <div className="text-sm text-gray-600">
-              {members.length >= 2 ? '✅ Mínimo atingido' : '⚠️ Adicione pelo menos 2'}
+              {members.length >= 2 ? t('manager.addMembers.counter.minReached') : t('manager.addMembers.counter.minRequired')}
             </div>
           </div>
 
@@ -338,7 +340,7 @@ export function AddMembersForm({
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-red-900 mb-2">Erros encontrados:</p>
+                  <p className="font-semibold text-red-900 mb-2">{t('manager.addMembers.errors.title')}</p>
                   <ul className="space-y-1 text-sm text-red-700">
                     {errors.map((error, index) => (
                       <li key={index}>• {error}</li>
@@ -359,7 +361,7 @@ export function AddMembersForm({
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-yellow-900 mb-2">⚠️ Avisos do arquivo Excel:</p>
+                  <p className="font-semibold text-yellow-900 mb-2">{t('manager.addMembers.warnings.title')}</p>
                   <ul className="space-y-1 text-sm text-yellow-700">
                     {parseResult.warnings.map((warning, index) => (
                       <li key={index}>• {warning}</li>
@@ -381,10 +383,10 @@ export function AddMembersForm({
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-green-900">
-                    ✅ {parseResult.validRows} membro(s) importado(s) com sucesso!
+                    {t('manager.addMembers.success.imported', { count: parseResult.validRows })}
                   </p>
                   <p className="text-sm text-green-700 mt-1">
-                    Total de linhas: {parseResult.totalRows} | Válidas: {parseResult.validRows}
+                    {t('manager.addMembers.success.summary', { total: parseResult.totalRows, valid: parseResult.validRows })}
                   </p>
                 </div>
               </div>
@@ -400,31 +402,31 @@ export function AddMembersForm({
                 </svg>
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-gray-900 mb-3">📋 Como funciona?</h4>
+                <h4 className="font-bold text-gray-900 mb-3">{t('manager.addMembers.howItWorks.title')}</h4>
                 <ul className="space-y-2.5 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Cada membro receberá um <strong>código de 6 dígitos</strong> por email</span>
+                    <span dangerouslySetInnerHTML={{ __html: t('manager.addMembers.howItWorks.step1') }} />
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Cada membro avaliará <strong>todos os outros</strong> (N-1 avaliações)</span>
+                    <span dangerouslySetInnerHTML={{ __html: t('manager.addMembers.howItWorks.step2') }} />
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Avaliações <strong>100% anônimas e criptografadas</strong></span>
+                    <span dangerouslySetInnerHTML={{ __html: t('manager.addMembers.howItWorks.step3') }} />
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Acompanhe tudo em tempo real no <strong>dashboard</strong></span>
+                    <span dangerouslySetInnerHTML={{ __html: t('manager.addMembers.howItWorks.step4') }} />
                   </li>
                 </ul>
               </div>
@@ -442,7 +444,7 @@ export function AddMembersForm({
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                 </svg>
-                Voltar
+                {t('manager.addMembers.back')}
               </span>
             </button>
             <button
@@ -450,7 +452,7 @@ export function AddMembersForm({
               className="flex-1 py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               <span className="flex items-center justify-center gap-2">
-                Finalizar e Enviar Convites
+                {t('manager.addMembers.submit')}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>

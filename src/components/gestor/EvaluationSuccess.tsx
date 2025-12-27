@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { MemberWithAccessCode } from '@/services/firebase';
 
 /**
@@ -21,6 +22,7 @@ export function EvaluationSuccess({
   members,
   onContinue,
 }: EvaluationSuccessProps) {
+  const { t } = useTranslation();
   const [copiedToken, setCopiedToken] = useState(false);
   const [copiedCodes, setCopiedCodes] = useState<Set<string>>(new Set());
 
@@ -90,14 +92,17 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
             </div>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-3">
-            🎉 Avaliação Criada!
+            {t('manager.success.title')}
           </h2>
           <p className="text-xl text-gray-600 mb-2">{evaluationTitle}</p>
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            {members.length} {members.length === 1 ? 'membro adicionado' : 'membros adicionados'}
+            {members.length === 1
+              ? t('manager.success.membersAdded', { count: members.length })
+              : t('manager.success.membersAddedPlural', { count: members.length })
+            }
           </div>
         </div>
       </div>
@@ -112,10 +117,10 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
           </div>
           <div className="flex-1">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              🔑 Seu Token de Gestor
+              {t('manager.success.tokenTitle')}
             </h3>
             <p className="text-amber-800 font-medium">
-              ⚠️ IMPORTANTE: Guarde este token com segurança! Você precisará dele para acessar o dashboard e visualizar resultados.
+              {t('manager.success.tokenSubtitle')}
             </p>
           </div>
         </div>
@@ -139,14 +144,14 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-              Token Copiado!
+              {t('manager.success.tokenCopied')}
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              Copiar Token
+              {t('manager.success.copyToken')}
             </span>
           )}
         </button>
@@ -156,9 +161,9 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-2xl font-bold text-gray-900">📧 Códigos dos Membros</h3>
+            <h3 className="text-2xl font-bold text-gray-900">{t('manager.success.accessCodes.title')}</h3>
             <p className="text-gray-600 mt-1">
-              Envie estes códigos por email para cada membro
+              {t('manager.success.accessCodes.description')}
             </p>
           </div>
           <button
@@ -168,7 +173,7 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            Baixar Todos
+            {t('manager.success.accessCodes.downloadCodes')}
           </button>
         </div>
 
@@ -232,7 +237,7 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Baixar Todos os Códigos
+          {t('manager.success.accessCodes.downloadCodes')}
         </button>
       </div>
 
@@ -245,24 +250,44 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">📋 Próximos Passos</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('manager.success.nextSteps.title')}</h3>
             <ol className="space-y-3">
-              {[
-                { text: 'Salve seu token em local seguro (gerenciador de senhas recomendado)', icon: '🔐' },
-                { text: 'Envie os códigos de 6 dígitos para cada membro por email', icon: '📧' },
-                { text: 'Instrua os membros a acessarem o portal do colaborador', icon: '👥' },
-                { text: `Cada membro deve avaliar todos os outros (${members.length - 1} avaliações cada)`, icon: '⭐' },
-                { text: 'Acompanhe o progresso em tempo real no dashboard', icon: '📊' },
-              ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <span className="text-lg">{step.icon}</span>
-                  </div>
-                  <p className="text-gray-700 pt-1.5">
-                    <strong className="text-gray-900">{i + 1}.</strong> {step.text}
-                  </p>
-                </li>
-              ))}
+              <li className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <span className="text-lg">📧</span>
+                </div>
+                <p className="text-gray-700 pt-1.5">
+                  <strong className="text-gray-900">1.</strong>{' '}
+                  <span dangerouslySetInnerHTML={{ __html: t('manager.success.nextSteps.step1') }} />
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <span className="text-lg">⭐</span>
+                </div>
+                <p className="text-gray-700 pt-1.5">
+                  <strong className="text-gray-900">2.</strong>{' '}
+                  <span dangerouslySetInnerHTML={{ __html: t('manager.success.nextSteps.step2') }} />
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <span className="text-lg">📊</span>
+                </div>
+                <p className="text-gray-700 pt-1.5">
+                  <strong className="text-gray-900">3.</strong>{' '}
+                  <span dangerouslySetInnerHTML={{ __html: t('manager.success.nextSteps.step3') }} />
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <span className="text-lg">📈</span>
+                </div>
+                <p className="text-gray-700 pt-1.5">
+                  <strong className="text-gray-900">4.</strong>{' '}
+                  <span dangerouslySetInnerHTML={{ __html: t('manager.success.nextSteps.step4') }} />
+                </p>
+              </li>
             </ol>
           </div>
         </div>
@@ -275,7 +300,7 @@ Gerado em: ${new Date().toLocaleString('pt-BR')}
           className="w-full py-5 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         >
           <span className="flex items-center justify-center gap-3">
-            <span>Ir para Dashboard</span>
+            <span>{t('manager.success.goToDashboard')}</span>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
