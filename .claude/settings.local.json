@@ -39,7 +39,10 @@
       "Bash(node -e:*)",
       "Bash(firebase functions:config:get:*)",
       "Bash(firebase functions:delete:*)",
-      "Bash(firebase functions:artifacts:setpolicy:*)"
+      "Bash(firebase functions:artifacts:setpolicy:*)",
+      "Bash(for file in src/components/gestor/*.tsx src/components/colaborador/*.tsx)",
+      "Bash(then echo \"$file\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []

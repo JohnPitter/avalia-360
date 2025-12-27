@@ -214,15 +214,31 @@
       "responses": "Respostas Recebidas",
       "viewDetails": "Ver Detalhes",
       "noResults": "Aguardando respostas",
+      "noResultsAvailable": "Nenhum resultado disponível ainda",
       "loading": "Carregando resultados...",
+      "consolidating": "Consolidando resultados...",
+      "processingMembers": "Processando {{count}} membros",
+      "errorLoading": "Erro ao carregar resultados",
+      "consolidatedResults": "Resultados Consolidados",
+      "generatedAt": "Gerado em:",
+      "back": "Voltar",
+      "backToDashboard": "Voltar ao Dashboard",
+      "teamComparison": "Comparação da Equipe",
+      "exportResults": "Exportar Resultados",
       "sortBy": "Ordenar por",
+      "sortByLabel": "Ordenar por:",
       "sortOverall": "Média Geral",
       "sortName": "Nome",
       "sortResponses": "Número de Respostas",
+      "sortOptions": {
+        "overall": "Média Geral (Maior → Menor)",
+        "name": "Nome (A → Z)",
+        "responses": "Avaliações Recebidas"
+      },
       "showComments": "Ver Comentários",
       "hideComments": "Ocultar Comentários",
-      "positivePoints": "Pontos Positivos",
-      "improvementPoints": "Pontos de Melhoria",
+      "positivePoints": "💚 Pontos Positivos",
+      "improvementPoints": "💡 Pontos de Melhoria",
       "performanceOverview": "Visão Geral de Performance",
       "evaluationsReceived": "avaliações recebidas",
       "evaluationReceived": "avaliação recebida",
@@ -251,6 +267,23 @@
         "excel": "Exportar Excel",
         "csv": "Exportar CSV",
         "all": "Exportar Todos os Formatos"
+      },
+      "exportFormats": {
+        "text": "Texto (.txt)",
+        "textDescription": "Relatório formatado",
+        "excel": "Excel (.xlsx)",
+        "excelDescription": "Planilha com gráficos",
+        "csv": "CSV (.csv)",
+        "csvDescription": "Dados tabulares",
+        "all": "Todos os Formatos",
+        "allDescription": "TXT + Excel + CSV"
+      },
+      "confidentiality": {
+        "title": "⚠️ Confidencialidade dos Resultados",
+        "point1": "Estes resultados são confidenciais e devem ser compartilhados apenas em contexto de desenvolvimento profissional",
+        "point2": "As avaliações são 100% anônimas - não é possível identificar quem avaliou quem",
+        "point3": "Use os feedbacks de forma construtiva para apoiar o crescimento da equipe",
+        "point4": "Recomenda-se realizar sessões individuais de feedback com cada membro"
       },
       "filters": {
         "all": "Todos",
@@ -302,8 +335,10 @@
     },
     "evaluation": {
       "title": "Avaliação 360°",
+      "loading": "Carregando avaliação...",
       "evaluating": "Avaliando: {{memberName}}",
       "selfEvaluation": "Auto-avaliação",
+      "anonymousMessage": "Suas respostas são 100% anônimas e criptografadas",
       "question": "Como você avalia {{memberName}} em:",
       "ratingLabels": {
         "1": "Insatisfatório",
@@ -319,32 +354,80 @@
         "good": "Bom",
         "excellent": "Excelente"
       },
+      "questionDetails": {
+        "question1": {
+          "text": "Como você avalia a satisfação em trabalhar com este colaborador?",
+          "description": "Considere comunicação, colaboração e ambiente de trabalho"
+        },
+        "question2": {
+          "text": "Como você avalia a proatividade e iniciativa deste colaborador?",
+          "description": "Considere tomada de decisão, antecipação de problemas e busca por soluções"
+        },
+        "question3": {
+          "text": "Como você avalia a qualidade do trabalho entregue?",
+          "description": "Considere atenção aos detalhes, cumprimento de prazos e resultado final"
+        },
+        "question4": {
+          "text": "Como você avalia o trabalho em equipe deste colaborador?",
+          "description": "Considere colaboração, suporte aos colegas e contribuição para o time"
+        }
+      },
       "questions": {
         "question1": "Você está satisfeito trabalhando com esta pessoa?",
         "question2": "Esta pessoa demonstra proatividade e iniciativa?",
         "question3": "A qualidade do trabalho desta pessoa é consistente?",
         "question4": "Esta pessoa trabalha bem em equipe?"
       },
+      "progressSection": {
+        "title": "Progresso da Avaliação",
+        "questionsCount": "{{count}}/4 perguntas"
+      },
+      "draftStatus": {
+        "saving": "Salvando...",
+        "saved": "Salvo {{time}}",
+        "error": "Erro ao salvar",
+        "justNow": "agora há pouco",
+        "oneMinuteAgo": "há 1 minuto",
+        "minutesAgo": "há {{count}} minutos"
+      },
+      "errors": {
+        "title": "Corrija os seguintes erros:"
+      },
+      "selected": "Selecionado: {{rating}} - {{label}}",
       "commentsSection": {
-        "title": "Comentários Adicionais",
+        "title": "Comentários Qualitativos",
         "positive": "💚 Pontos Positivos",
+        "positiveRequired": "💚 Pontos Positivos *",
         "positivePlaceholder": "Descreva os pontos fortes, qualidades e contribuições positivas deste colaborador. Seja específico e use exemplos concretos quando possível...",
         "improvement": "💡 Pontos de Melhoria",
+        "improvementRequired": "💡 Pontos de Melhoria *",
         "improvementPlaceholder": "Descreva sugestões construtivas para desenvolvimento profissional. Seja respeitoso e focado em comportamentos, não em personalidade...",
-        "optional": "(Opcional mas recomendado)"
+        "optional": "(Opcional mas recomendado)",
+        "minRecommended": "Mínimo recomendado: 50 caracteres",
+        "characterCount": "{{current}}/{{max}}"
       },
       "commentsLabel": "Comentários (opcional)",
       "commentsPlaceholder": "Compartilhe feedback construtivo...",
       "progress": "Progresso: {{current}} de {{total}}",
       "previousMember": "Voltar",
       "nextMember": "Próximo",
+      "back": "Voltar",
       "cancel": "Cancelar",
       "submit": "Enviar Avaliação",
+      "warning": "⚠️ Selecione uma avaliação para todas as 4 perguntas",
       "savingDraft": "Salvando rascunho...",
       "draftSaved": "Salvo",
       "lastSaved": "há",
       "submitting": "Enviando...",
-      "success": "Avaliação enviada com sucesso!"
+      "success": "Avaliação enviada com sucesso!",
+      "tips": {
+        "title": "💡 Dicas para uma boa avaliação",
+        "tip1": "Seja honesto e construtivo nas suas respostas",
+        "tip2": "Use exemplos concretos quando possível",
+        "tip3": "Foque em comportamentos, não em personalidade",
+        "tip4": "Lembre-se: o objetivo é o desenvolvimento da equipe",
+        "tip5": "Suas respostas são 100% anônimas - seja sincero!"
+      }
     },
     "membersList": {
       "title": "Membros para Avaliar",

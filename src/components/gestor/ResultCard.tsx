@@ -1,4 +1,5 @@
 import { useState, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PerformanceRadarChart } from '@/components/shared';
 import type { ConsolidatedResult } from '@/types';
 
@@ -14,6 +15,7 @@ interface ResultCardProps {
 }
 
 const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
+  const { t } = useTranslation();
   const [showComments, setShowComments] = useState(false);
 
   const { member, averages, comments, totalResponses } = result;
@@ -41,11 +43,11 @@ const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
   };
 
   const getRatingLabel = (average: number) => {
-    if (average >= 4.5) return 'Excelente';
-    if (average >= 3.5) return 'Bom';
-    if (average >= 2.5) return 'Adequado';
-    if (average >= 1.5) return 'Abaixo da Média';
-    return 'Insatisfatório';
+    if (average >= 4.5) return t('manager.results.ratingLabels.excellent');
+    if (average >= 3.5) return t('manager.results.ratingLabels.good');
+    if (average >= 2.5) return t('manager.results.ratingLabels.adequate');
+    if (average >= 1.5) return t('manager.results.ratingLabels.belowAverage');
+    return t('manager.results.ratingLabels.unsatisfactory');
   };
 
   const getBarColor = (average: number) => {
@@ -97,10 +99,10 @@ const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
       {/* Question Averages */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Satisfação', key: 'question_1', icon: '💬' },
-          { label: 'Proatividade', key: 'question_2', icon: '🚀' },
-          { label: 'Qualidade', key: 'question_3', icon: '⭐' },
-          { label: 'Trabalho em Equipe', key: 'question_4', icon: '🤝' },
+          { label: t('manager.results.questions.satisfaction'), key: 'question_1', icon: '💬' },
+          { label: t('manager.results.questions.proactivity'), key: 'question_2', icon: '🚀' },
+          { label: t('manager.results.questions.quality'), key: 'question_3', icon: '⭐' },
+          { label: t('manager.results.questions.teamwork'), key: 'question_4', icon: '🤝' },
         ].map((q) => {
           const avg = averages[q.key as keyof typeof averages] as number;
           return (
@@ -129,7 +131,7 @@ const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
           <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
-          Visão Geral de Performance
+          {t('manager.results.performanceOverview')}
         </h4>
         <PerformanceRadarChart
           data={{
@@ -154,7 +156,7 @@ const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
         <svg className={`w-5 h-5 transition-transform duration-200 ${showComments ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
-        {showComments ? 'Ocultar Comentários' : 'Ver Comentários'}
+        {showComments ? t('manager.results.hideComments') : t('manager.results.showComments')}
         <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm">
           {comments.positive.length + comments.improvement.length}
         </span>
@@ -172,7 +174,7 @@ const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
                 </svg>
               </div>
               <h4 className="text-lg font-bold text-gray-900">
-                💚 Pontos Positivos
+                {t('manager.results.positivePoints')}
                 <span className="ml-2 text-sm text-gray-600">({comments.positive.length})</span>
               </h4>
             </div>
@@ -202,7 +204,7 @@ const ResultCardComponent = ({ result, rank }: ResultCardProps) => {
                 </svg>
               </div>
               <h4 className="text-lg font-bold text-gray-900">
-                💡 Pontos de Melhoria
+                {t('manager.results.improvementPoints')}
                 <span className="ml-2 text-sm text-gray-600">({comments.improvement.length})</span>
               </h4>
             </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResultCard } from './ResultCard';
 import { TeamComparisonChart } from '@/components/shared';
 import type { Evaluation, TeamMember, ConsolidatedResult } from '@/types';
@@ -32,6 +33,7 @@ export function ResultsPage({
   managerToken: _managerToken, // Não usado - descriptografia agora é no backend
   onBack,
 }: ResultsPageProps) {
+  const { t } = useTranslation();
   const [results, setResults] = useState<ConsolidatedResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function ResultsPage({
       setError(
         err instanceof Error
           ? err.message
-          : 'Erro ao carregar resultados'
+          : t('manager.results.errorLoading')
       );
     } finally {
       setLoading(false);
@@ -102,8 +104,8 @@ export function ResultsPage({
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mb-4"></div>
-          <p className="text-lg text-gray-600">Consolidando resultados...</p>
-          <p className="text-sm text-gray-500 mt-2">Processando {members.length} membros</p>
+          <p className="text-lg text-gray-600">{t('manager.results.consolidating')}</p>
+          <p className="text-sm text-gray-500 mt-2">{t('manager.results.processingMembers', { count: members.length })}</p>
         </div>
       </div>
     );
@@ -120,13 +122,13 @@ export function ResultsPage({
               </svg>
             </div>
             <div className="flex-1">
-              <p className="font-bold text-red-900 text-lg mb-2">Erro ao carregar resultados</p>
+              <p className="font-bold text-red-900 text-lg mb-2">{t('manager.results.errorLoading')}</p>
               <p className="text-red-700">{error}</p>
               <button
                 onClick={onBack}
                 className="mt-6 px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all"
               >
-                ← Voltar ao Dashboard
+                ← {t('manager.results.backToDashboard')}
               </button>
             </div>
           </div>
@@ -148,7 +150,7 @@ export function ResultsPage({
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Resultados Consolidados</h1>
+                <h1 className="text-3xl font-bold text-gray-900">{t('manager.results.consolidatedResults')}</h1>
                 <p className="text-gray-600 mt-1">{evaluation.title}</p>
               </div>
             </div>
@@ -156,7 +158,7 @@ export function ResultsPage({
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
               </svg>
-              Gerado em: {new Date().toLocaleString('pt-BR')}
+              {t('manager.results.generatedAt')} {new Date().toLocaleString('pt-BR')}
             </p>
           </div>
           <button
@@ -167,7 +169,7 @@ export function ResultsPage({
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
               </svg>
-              Voltar
+              {t('manager.results.back')}
             </span>
           </button>
         </div>
@@ -175,10 +177,10 @@ export function ResultsPage({
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Membros Avaliados', value: totalMembers, icon: '👥', color: 'from-blue-600 to-indigo-600' },
-            { label: 'Média Geral', value: overallAverage.toFixed(2), icon: '📊', color: 'from-purple-600 to-pink-600' },
-            { label: 'Maior Pontuação', value: highestScore.toFixed(2), icon: '🏆', color: 'from-green-600 to-emerald-600' },
-            { label: 'Menor Pontuação', value: lowestScore.toFixed(2), icon: '📈', color: 'from-orange-600 to-red-600' },
+            { label: t('manager.results.stats.totalMembers'), value: totalMembers, icon: '👥', color: 'from-blue-600 to-indigo-600' },
+            { label: t('manager.results.stats.averageScore'), value: overallAverage.toFixed(2), icon: '📊', color: 'from-purple-600 to-pink-600' },
+            { label: t('manager.results.stats.highestScore'), value: highestScore.toFixed(2), icon: '🏆', color: 'from-green-600 to-emerald-600' },
+            { label: t('manager.results.stats.lowestScore'), value: lowestScore.toFixed(2), icon: '📈', color: 'from-orange-600 to-red-600' },
           ].map((stat, i) => (
             <div key={i} className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-5 border border-gray-200">
               <div className="flex items-center justify-between mb-2">
@@ -199,7 +201,7 @@ export function ResultsPage({
               <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
               </svg>
-              Comparação da Equipe
+              {t('manager.results.teamComparison')}
             </h3>
             <TeamComparisonChart
               data={sortedResults.map((r) => ({
@@ -214,15 +216,15 @@ export function ResultsPage({
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-4 mt-6">
           <div className="flex-1">
-            <label className="block text-sm font-semibold text-gray-900 mb-2">Ordenar por:</label>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">{t('manager.results.sortByLabel')}</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
             >
-              <option value="overall">Média Geral (Maior → Menor)</option>
-              <option value="name">Nome (A → Z)</option>
-              <option value="responses">Avaliações Recebidas</option>
+              <option value="overall">{t('manager.results.sortOptions.overall')}</option>
+              <option value="name">{t('manager.results.sortOptions.name')}</option>
+              <option value="responses">{t('manager.results.sortOptions.responses')}</option>
             </select>
           </div>
           <div className="flex-1 flex flex-col justify-end relative">
@@ -234,7 +236,7 @@ export function ResultsPage({
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Exportar Resultados
+                {t('manager.results.exportResults')}
                 <svg className={`w-4 h-4 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -252,8 +254,8 @@ export function ResultsPage({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   <div>
-                    <div className="font-semibold text-gray-900">Texto (.txt)</div>
-                    <div className="text-xs text-gray-600">Relatório formatado</div>
+                    <div className="font-semibold text-gray-900">{t('manager.results.exportFormats.text')}</div>
+                    <div className="text-xs text-gray-600">{t('manager.results.exportFormats.textDescription')}</div>
                   </div>
                 </button>
 
@@ -265,8 +267,8 @@ export function ResultsPage({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   <div>
-                    <div className="font-semibold text-gray-900">Excel (.xlsx)</div>
-                    <div className="text-xs text-gray-600">Planilha com gráficos</div>
+                    <div className="font-semibold text-gray-900">{t('manager.results.exportFormats.excel')}</div>
+                    <div className="text-xs text-gray-600">{t('manager.results.exportFormats.excelDescription')}</div>
                   </div>
                 </button>
 
@@ -278,8 +280,8 @@ export function ResultsPage({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                   <div>
-                    <div className="font-semibold text-gray-900">CSV (.csv)</div>
-                    <div className="text-xs text-gray-600">Dados tabulares</div>
+                    <div className="font-semibold text-gray-900">{t('manager.results.exportFormats.csv')}</div>
+                    <div className="text-xs text-gray-600">{t('manager.results.exportFormats.csvDescription')}</div>
                   </div>
                 </button>
 
@@ -291,8 +293,8 @@ export function ResultsPage({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   <div>
-                    <div className="font-bold text-indigo-900">Todos os Formatos</div>
-                    <div className="text-xs text-indigo-700">TXT + Excel + CSV</div>
+                    <div className="font-bold text-indigo-900">{t('manager.results.exportFormats.all')}</div>
+                    <div className="text-xs text-indigo-700">{t('manager.results.exportFormats.allDescription')}</div>
                   </div>
                 </button>
               </div>
@@ -307,7 +309,7 @@ export function ResultsPage({
           <svg className="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <p className="text-lg text-gray-600">Nenhum resultado disponível ainda</p>
+          <p className="text-lg text-gray-600">{t('manager.results.noResultsAvailable')}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -330,13 +332,13 @@ export function ResultsPage({
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">⚠️ Confidencialidade dos Resultados</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">{t('manager.results.confidentiality.title')}</h3>
             <ul className="space-y-2.5">
               {[
-                'Estes resultados são confidenciais e devem ser compartilhados apenas em contexto de desenvolvimento profissional',
-                'As avaliações são 100% anônimas - não é possível identificar quem avaliou quem',
-                'Use os feedbacks de forma construtiva para apoiar o crescimento da equipe',
-                'Recomenda-se realizar sessões individuais de feedback com cada membro'
+                t('manager.results.confidentiality.point1'),
+                t('manager.results.confidentiality.point2'),
+                t('manager.results.confidentiality.point3'),
+                t('manager.results.confidentiality.point4')
               ].map((tip, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-amber-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { validateEvaluationForm } from '@/utils/validation';
 import { sanitizeText } from '@/utils/sanitization';
 import { saveDraft, loadDraft, deleteDraft } from '@/services/draft';
@@ -17,41 +18,6 @@ interface EvaluationFormComponentProps {
   onCancel: () => void;
 }
 
-const QUESTIONS = [
-  {
-    id: 'question_1',
-    text: 'Como você avalia a satisfação em trabalhar com este colaborador?',
-    description: 'Considere comunicação, colaboração e ambiente de trabalho',
-    icon: '💬',
-  },
-  {
-    id: 'question_2',
-    text: 'Como você avalia a proatividade e iniciativa deste colaborador?',
-    description: 'Considere tomada de decisão, antecipação de problemas e busca por soluções',
-    icon: '🚀',
-  },
-  {
-    id: 'question_3',
-    text: 'Como você avalia a qualidade do trabalho entregue?',
-    description: 'Considere atenção aos detalhes, cumprimento de prazos e resultado final',
-    icon: '⭐',
-  },
-  {
-    id: 'question_4',
-    text: 'Como você avalia o trabalho em equipe deste colaborador?',
-    description: 'Considere colaboração, suporte aos colegas e contribuição para o time',
-    icon: '🤝',
-  },
-];
-
-const RATING_LABELS = [
-  { label: 'Insatisfatório', color: 'from-red-500 to-orange-500' },
-  { label: 'Abaixo da Média', color: 'from-orange-500 to-yellow-500' },
-  { label: 'Adequado', color: 'from-yellow-500 to-green-500' },
-  { label: 'Bom', color: 'from-green-500 to-emerald-500' },
-  { label: 'Excelente', color: 'from-emerald-500 to-teal-500' },
-];
-
 export function EvaluationFormComponent({
   evaluationId,
   evaluatorId,
@@ -59,6 +25,42 @@ export function EvaluationFormComponent({
   onSubmit,
   onCancel,
 }: EvaluationFormComponentProps) {
+  const { t } = useTranslation();
+
+  const QUESTIONS = [
+    {
+      id: 'question_1',
+      text: t('member.evaluation.questionDetails.question1.text'),
+      description: t('member.evaluation.questionDetails.question1.description'),
+      icon: '💬',
+    },
+    {
+      id: 'question_2',
+      text: t('member.evaluation.questionDetails.question2.text'),
+      description: t('member.evaluation.questionDetails.question2.description'),
+      icon: '🚀',
+    },
+    {
+      id: 'question_3',
+      text: t('member.evaluation.questionDetails.question3.text'),
+      description: t('member.evaluation.questionDetails.question3.description'),
+      icon: '⭐',
+    },
+    {
+      id: 'question_4',
+      text: t('member.evaluation.questionDetails.question4.text'),
+      description: t('member.evaluation.questionDetails.question4.description'),
+      icon: '🤝',
+    },
+  ];
+
+  const RATING_LABELS = [
+    { label: t('member.evaluation.ratingScale.unsatisfactory'), color: 'from-red-500 to-orange-500' },
+    { label: t('member.evaluation.ratingScale.belowAverage'), color: 'from-orange-500 to-yellow-500' },
+    { label: t('member.evaluation.ratingScale.adequate'), color: 'from-yellow-500 to-green-500' },
+    { label: t('member.evaluation.ratingScale.good'), color: 'from-green-500 to-emerald-500' },
+    { label: t('member.evaluation.ratingScale.excellent'), color: 'from-emerald-500 to-teal-500' },
+  ];
   const [ratings, setRatings] = useState<Record<string, number>>({
     question_1: 0,
     question_2: 0,
@@ -189,9 +191,9 @@ export function EvaluationFormComponent({
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
 
-    if (seconds < 60) return 'agora há pouco';
-    if (minutes === 1) return 'há 1 minuto';
-    if (minutes < 60) return `há ${minutes} minutos`;
+    if (seconds < 60) return t('member.evaluation.draftStatus.justNow');
+    if (minutes === 1) return t('member.evaluation.draftStatus.oneMinuteAgo');
+    if (minutes < 60) return t('member.evaluation.draftStatus.minutesAgo', { count: minutes });
 
     return lastSaved.toLocaleTimeString('pt-BR', {
       hour: '2-digit',
@@ -204,7 +206,7 @@ export function EvaluationFormComponent({
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-emerald-600 border-t-transparent mb-4"></div>
-          <p className="text-lg text-gray-600">Carregando avaliação...</p>
+          <p className="text-lg text-gray-600">{t('member.evaluation.loading')}</p>
         </div>
       </div>
     );
@@ -224,13 +226,13 @@ export function EvaluationFormComponent({
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
-                  Avaliando: {evaluatedMember.name}
+                  {t('member.evaluation.evaluating', { memberName: evaluatedMember.name })}
                 </h1>
                 <p className="text-gray-600 flex items-center gap-2 mt-1">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                   </svg>
-                  Suas respostas são 100% anônimas e criptografadas
+                  {t('member.evaluation.anonymousMessage')}
                 </p>
               </div>
             </div>
@@ -238,8 +240,8 @@ export function EvaluationFormComponent({
             {/* Progress Indicator */}
             <div className="mt-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Progresso da Avaliação</span>
-                <span className="text-sm font-bold text-emerald-600">{completedQuestions}/4 perguntas</span>
+                <span className="text-sm font-semibold text-gray-700">{t('member.evaluation.progressSection.title')}</span>
+                <span className="text-sm font-bold text-emerald-600">{t('member.evaluation.progressSection.questionsCount', { count: completedQuestions })}</span>
               </div>
               <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
@@ -255,7 +257,7 @@ export function EvaluationFormComponent({
             {draftStatus === 'saving' && (
               <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-600 border-t-transparent"></div>
-                <span className="text-sm text-gray-700">Salvando...</span>
+                <span className="text-sm text-gray-700">{t('member.evaluation.draftStatus.saving')}</span>
               </div>
             )}
             {draftStatus === 'saved' && (
@@ -263,7 +265,7 @@ export function EvaluationFormComponent({
                 <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-sm text-green-700">Salvo {formatLastSaved()}</span>
+                <span className="text-sm text-green-700">{t('member.evaluation.draftStatus.saved', { time: formatLastSaved() })}</span>
               </div>
             )}
             {draftStatus === 'error' && (
@@ -271,7 +273,7 @@ export function EvaluationFormComponent({
                 <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
-                <span className="text-sm text-red-700">Erro ao salvar</span>
+                <span className="text-sm text-red-700">{t('member.evaluation.draftStatus.error')}</span>
               </div>
             )}
           </div>
@@ -288,7 +290,7 @@ export function EvaluationFormComponent({
               </svg>
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-red-900 mb-2">Corrija os seguintes erros:</p>
+              <p className="font-semibold text-red-900 mb-2">{t('member.evaluation.errors.title')}</p>
               <ul className="space-y-1 text-sm text-red-700">
                 {errors.map((error, index) => (
                   <li key={index}>• {error}</li>
@@ -368,7 +370,7 @@ export function EvaluationFormComponent({
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                       <span className="font-semibold text-emerald-700">
-                        Selecionado: {currentRating} - {RATING_LABELS[currentRating - 1].label}
+                        {t('member.evaluation.selected', { rating: currentRating, label: RATING_LABELS[currentRating - 1].label })}
                       </span>
                     </div>
                   </div>
@@ -386,14 +388,14 @@ export function EvaluationFormComponent({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900">Comentários Qualitativos</h3>
+            <h3 className="text-2xl font-bold text-gray-900">{t('member.evaluation.commentsSection.title')}</h3>
           </div>
 
           <div className="space-y-6">
             {/* Positive Points */}
             <div>
               <label htmlFor="positivePoints" className="block text-sm font-bold text-gray-900 mb-3">
-                💚 Pontos Positivos *
+                {t('member.evaluation.commentsSection.positiveRequired')}
               </label>
               <textarea
                 id="positivePoints"
@@ -402,12 +404,12 @@ export function EvaluationFormComponent({
                 className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none resize-none"
                 rows={5}
                 maxLength={500}
-                placeholder="Descreva os pontos fortes, qualidades e contribuições positivas deste colaborador. Seja específico e use exemplos concretos quando possível..."
+                placeholder={t('member.evaluation.commentsSection.positivePlaceholder')}
                 required
               />
               <div className="flex items-center justify-between mt-2">
                 <p className="text-sm text-gray-600">
-                  Mínimo recomendado: 50 caracteres
+                  {t('member.evaluation.commentsSection.minRecommended')}
                 </p>
                 <p className={`text-sm font-semibold ${
                   positivePoints.length > 450 ? 'text-orange-600' : 'text-gray-600'
@@ -420,7 +422,7 @@ export function EvaluationFormComponent({
             {/* Improvement Points */}
             <div>
               <label htmlFor="improvementPoints" className="block text-sm font-bold text-gray-900 mb-3">
-                💡 Pontos de Melhoria *
+                {t('member.evaluation.commentsSection.improvementRequired')}
               </label>
               <textarea
                 id="improvementPoints"
@@ -429,12 +431,12 @@ export function EvaluationFormComponent({
                 className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none resize-none"
                 rows={5}
                 maxLength={500}
-                placeholder="Descreva sugestões construtivas para desenvolvimento profissional. Seja respeitoso e focado em comportamentos, não em personalidade..."
+                placeholder={t('member.evaluation.commentsSection.improvementPlaceholder')}
                 required
               />
               <div className="flex items-center justify-between mt-2">
                 <p className="text-sm text-gray-600">
-                  Mínimo recomendado: 50 caracteres
+                  {t('member.evaluation.commentsSection.minRecommended')}
                 </p>
                 <p className={`text-sm font-semibold ${
                   improvementPoints.length > 450 ? 'text-orange-600' : 'text-gray-600'
@@ -458,7 +460,7 @@ export function EvaluationFormComponent({
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                 </svg>
-                Voltar
+                {t('member.evaluation.back')}
               </span>
             </button>
             <button
@@ -467,7 +469,7 @@ export function EvaluationFormComponent({
               className="flex-1 py-4 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <span className="flex items-center justify-center gap-2">
-                Enviar Avaliação
+                {t('member.evaluation.submit')}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
@@ -478,7 +480,7 @@ export function EvaluationFormComponent({
           {!allRatingsSelected && (
             <div className="mt-4 bg-orange-50 border border-orange-200 rounded-xl p-3">
               <p className="text-sm text-orange-700 text-center font-semibold">
-                ⚠️ Selecione uma avaliação para todas as 4 perguntas
+                {t('member.evaluation.warning')}
               </p>
             </div>
           )}
@@ -493,14 +495,14 @@ export function EvaluationFormComponent({
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">💡 Dicas para uma boa avaliação</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('member.evaluation.tips.title')}</h3>
               <ul className="space-y-2.5">
                 {[
-                  'Seja honesto e construtivo nas suas respostas',
-                  'Use exemplos concretos quando possível',
-                  'Foque em comportamentos, não em personalidade',
-                  'Lembre-se: o objetivo é o desenvolvimento da equipe',
-                  'Suas respostas são 100% anônimas - seja sincero!'
+                  t('member.evaluation.tips.tip1'),
+                  t('member.evaluation.tips.tip2'),
+                  t('member.evaluation.tips.tip3'),
+                  t('member.evaluation.tips.tip4'),
+                  t('member.evaluation.tips.tip5')
                 ].map((tip, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-blue-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
