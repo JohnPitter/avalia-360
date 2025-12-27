@@ -52,7 +52,6 @@ class FirestoreResponseRepository {
             question_2: response.ratings.question_2,
             question_3: response.ratings.question_3,
             question_4: response.ratings.question_4,
-            question_5: response.ratings.question_5,
             positive_comments: response.comments.positive || '',
             improvement_comments: response.comments.improvement || '',
             created_at: admin.firestore.FieldValue.serverTimestamp(),
@@ -107,7 +106,6 @@ class FirestoreResponseRepository {
             question_2: data.question_2,
             question_3: data.question_3,
             question_4: data.question_4,
-            question_5: data.question_5,
         }, {
             positive: data.positive_comments,
             improvement: data.improvement_comments,

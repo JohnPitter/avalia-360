@@ -18,8 +18,10 @@ class Response {
         this.validate();
     }
     validate() {
-        if (!this.id || this.id.trim().length === 0) {
-            throw new Error('Response ID is required');
+        // ID pode ser vazio antes de salvar no banco (será gerado pelo repository)
+        // Apenas valida que não é null/undefined
+        if (this.id === null || this.id === undefined) {
+            throw new Error('Response ID cannot be null or undefined');
         }
         if (!this.evaluationId || this.evaluationId.trim().length === 0) {
             throw new Error('Evaluation ID is required');
@@ -36,8 +38,8 @@ class Response {
         this.validateRatings();
     }
     validateRatings() {
-        const { question_1, question_2, question_3, question_4, question_5 } = this.ratings;
-        const allRatings = [question_1, question_2, question_3, question_4, question_5];
+        const { question_1, question_2, question_3, question_4 } = this.ratings;
+        const allRatings = [question_1, question_2, question_3, question_4];
         for (const rating of allRatings) {
             if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
                 throw new Error('All ratings must be integers between 1 and 5');
@@ -45,8 +47,8 @@ class Response {
         }
     }
     getAverageRating() {
-        const { question_1, question_2, question_3, question_4, question_5 } = this.ratings;
-        return (question_1 + question_2 + question_3 + question_4 + question_5) / 5;
+        const { question_1, question_2, question_3, question_4 } = this.ratings;
+        return (question_1 + question_2 + question_3 + question_4) / 4;
     }
     hasPositiveComment() {
         return !!this.comments.positive && this.comments.positive.trim().length > 0;

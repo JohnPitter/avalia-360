@@ -9,7 +9,6 @@ export interface Ratings {
   question_2: number;
   question_3: number;
   question_4: number;
-  question_5: number;
 }
 
 export interface Comments {
@@ -31,8 +30,10 @@ export class Response {
   }
 
   private validate(): void {
-    if (!this.id || this.id.trim().length === 0) {
-      throw new Error('Response ID is required');
+    // ID pode ser vazio antes de salvar no banco (será gerado pelo repository)
+    // Apenas valida que não é null/undefined
+    if (this.id === null || this.id === undefined) {
+      throw new Error('Response ID cannot be null or undefined');
     }
 
     if (!this.evaluationId || this.evaluationId.trim().length === 0) {
@@ -55,9 +56,9 @@ export class Response {
   }
 
   private validateRatings(): void {
-    const { question_1, question_2, question_3, question_4, question_5 } = this.ratings;
+    const { question_1, question_2, question_3, question_4 } = this.ratings;
 
-    const allRatings = [question_1, question_2, question_3, question_4, question_5];
+    const allRatings = [question_1, question_2, question_3, question_4];
 
     for (const rating of allRatings) {
       if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
@@ -67,8 +68,8 @@ export class Response {
   }
 
   public getAverageRating(): number {
-    const { question_1, question_2, question_3, question_4, question_5 } = this.ratings;
-    return (question_1 + question_2 + question_3 + question_4 + question_5) / 5;
+    const { question_1, question_2, question_3, question_4 } = this.ratings;
+    return (question_1 + question_2 + question_3 + question_4) / 4;
   }
 
   public hasPositiveComment(): boolean {

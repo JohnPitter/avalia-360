@@ -13,7 +13,6 @@ export interface MemberResult {
     question_2: number;
     question_3: number;
     question_4: number;
-    question_5: number;
     overall: number;
   };
   responseCount: number;
@@ -54,7 +53,6 @@ export class GetResultsUseCase {
         question_2: 0,
         question_3: 0,
         question_4: 0,
-        question_5: 0,
         overall: 0,
       };
     }
@@ -66,15 +64,13 @@ export class GetResultsUseCase {
     const q2 = sum('question_2');
     const q3 = sum('question_3');
     const q4 = sum('question_4');
-    const q5 = sum('question_5');
 
     return {
       question_1: q1,
       question_2: q2,
       question_3: q3,
       question_4: q4,
-      question_5: q5,
-      overall: (q1 + q2 + q3 + q4 + q5) / 5,
+      overall: (q1 + q2 + q3 + q4) / 4,
     };
   }
 }
