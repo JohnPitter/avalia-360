@@ -1,31 +1,18 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  deleteDoc,
-  query,
-  where,
-  getDocs,
-} from 'firebase/firestore';
-import { db } from './firebase';
 import { EvaluationFormData } from '@/types';
-import { encrypt, decrypt } from '@/utils/crypto';
 
-// Chave para criptografia de rascunhos (deve ser a mesma que a evaluation)
-const DRAFT_ENCRYPTION_KEY = import.meta.env.VITE_ENCRYPTION_KEY || 'default-draft-key-change-in-production';
+// Storage key prefix para rascunhos no localStorage
+const DRAFT_STORAGE_PREFIX = 'avalia360_draft_';
 
 /**
- * Rascunho de avaliação salvo no Firestore
+ * Rascunho de avaliação salvo no localStorage
  */
 export interface Draft {
-  id: string; // evaluator_id + evaluated_id
   evaluation_id: string;
   evaluator_id: string;
   evaluated_id: string;
-  form_data: string; // Encrypted EvaluationFormData JSON
+  form_data: EvaluationFormData; // Dados plaintext no localStorage
   saved_at: number; // Timestamp
-  expires_at: number; // Timestamp (30 dias)
+  expires_at: number; // Timestamp (7 dias)
 }
 
 /**
@@ -36,29 +23,28 @@ export interface DraftData {
   savedAt: number;
 }
 
-const DRAFTS_COLLECTION = 'drafts';
-const DRAFT_EXPIRATION_DAYS = 30; // Rascunhos expiram em 30 dias
+const DRAFT_EXPIRATION_DAYS = 7; // Rascunhos expiram em 7 dias
 
 /**
- * Gera ID único para o rascunho
- * Formato: {evaluator_id}_{evaluated_id}
+ * Gera chave única para o rascunho no localStorage
+ * Formato: avalia360_draft_{evaluator_id}_{evaluated_id}
  *
  * Complexidade: O(1)
  */
-function generateDraftId(evaluatorId: string, evaluatedId: string): string {
-  return `${evaluatorId}_${evaluatedId}`;
+function generateDraftKey(evaluatorId: string, evaluatedId: string): string {
+  return `${DRAFT_STORAGE_PREFIX}${evaluatorId}_${evaluatedId}`;
 }
 
 /**
- * Salva rascunho da avaliação no Firestore
+ * Salva rascunho da avaliação no localStorage
  *
  * @param evaluationId ID da avaliação
  * @param evaluatorId ID de quem está avaliando
  * @param evaluatedId ID de quem está sendo avaliado
  * @param formData Dados do formulário
  *
- * Complexidade: O(1) - Operação Firestore de escrita
- * Performance: ~100-200ms (latência de rede)
+ * Complexidade: O(1) - Operação de escrita no localStorage
+ * Performance: ~1-5ms (síncrono, sem latência de rede)
  */
 export async function saveDraft(
   evaluationId: string,
@@ -67,25 +53,20 @@ export async function saveDraft(
   formData: EvaluationFormData
 ): Promise<void> {
   try {
-    const draftId = generateDraftId(evaluatorId, evaluatedId);
+    const draftKey = generateDraftKey(evaluatorId, evaluatedId);
     const now = Date.now();
     const expiresAt = now + DRAFT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
 
-    // Criptografar dados do formulário
-    const encryptedData = encrypt(JSON.stringify(formData), DRAFT_ENCRYPTION_KEY);
-
     const draft: Draft = {
-      id: draftId,
       evaluation_id: evaluationId,
       evaluator_id: evaluatorId,
       evaluated_id: evaluatedId,
-      form_data: encryptedData,
+      form_data: formData,
       saved_at: now,
       expires_at: expiresAt,
     };
 
-    const draftRef = doc(db, DRAFTS_COLLECTION, draftId);
-    await setDoc(draftRef, draft);
+    localStorage.setItem(draftKey, JSON.stringify(draft));
   } catch (error) {
     console.error('Erro ao salvar rascunho:', error);
     throw new Error('Falha ao salvar rascunho');
@@ -93,44 +74,39 @@ export async function saveDraft(
 }
 
 /**
- * Carrega rascunho salvo do Firestore
+ * Carrega rascunho salvo do localStorage
  *
  * @param evaluatorId ID de quem está avaliando
  * @param evaluatedId ID de quem está sendo avaliado
  * @returns Dados do rascunho ou null se não existir
  *
- * Complexidade: O(1) - Operação Firestore de leitura por ID
- * Performance: ~50-100ms (latência de rede)
+ * Complexidade: O(1) - Operação de leitura do localStorage
+ * Performance: ~1-5ms (síncrono)
  */
 export async function loadDraft(
   evaluatorId: string,
   evaluatedId: string
 ): Promise<DraftData | null> {
   try {
-    const draftId = generateDraftId(evaluatorId, evaluatedId);
-    const draftRef = doc(db, DRAFTS_COLLECTION, draftId);
-    const draftSnap = await getDoc(draftRef);
+    const draftKey = generateDraftKey(evaluatorId, evaluatedId);
+    const draftJson = localStorage.getItem(draftKey);
 
-    if (!draftSnap.exists()) {
+    if (!draftJson) {
       return null;
     }
 
-    const draft = draftSnap.data() as Draft;
+    const draft = JSON.parse(draftJson) as Draft;
 
     // Verificar expiração
     const now = Date.now();
     if (draft.expires_at < now) {
       // Rascunho expirado, deletar
-      await deleteDoc(draftRef);
+      localStorage.removeItem(draftKey);
       return null;
     }
 
-    // Descriptografar dados
-    const decryptedData = decrypt(draft.form_data, DRAFT_ENCRYPTION_KEY);
-    const formData = JSON.parse(decryptedData) as EvaluationFormData;
-
     return {
-      formData,
+      formData: draft.form_data,
       savedAt: draft.saved_at,
     };
   } catch (error) {
@@ -145,17 +121,16 @@ export async function loadDraft(
  * @param evaluatorId ID de quem está avaliando
  * @param evaluatedId ID de quem está sendo avaliado
  *
- * Complexidade: O(1) - Operação Firestore de deleção
- * Performance: ~50-100ms (latência de rede)
+ * Complexidade: O(1) - Operação de deleção do localStorage
+ * Performance: ~1-5ms (síncrono)
  */
 export async function deleteDraft(
   evaluatorId: string,
   evaluatedId: string
 ): Promise<void> {
   try {
-    const draftId = generateDraftId(evaluatorId, evaluatedId);
-    const draftRef = doc(db, DRAFTS_COLLECTION, draftId);
-    await deleteDoc(draftRef);
+    const draftKey = generateDraftKey(evaluatorId, evaluatedId);
+    localStorage.removeItem(draftKey);
   } catch (error) {
     console.error('Erro ao deletar rascunho:', error);
     // Não lançar erro - deleção de rascunho não é crítica
@@ -163,31 +138,40 @@ export async function deleteDraft(
 }
 
 /**
- * Limpa rascunhos expirados de uma avaliação
- * Deve ser chamado periodicamente (ex: daily job)
+ * Limpa rascunhos expirados do localStorage
+ * Varre todos os drafts e remove os expirados
  *
- * @param evaluationId ID da avaliação
- *
- * Complexidade: O(N) onde N = número de rascunhos da avaliação
- * Performance: ~100ms + (50ms * N) para N rascunhos
+ * Complexidade: O(N) onde N = número de itens no localStorage
+ * Performance: ~10-50ms dependendo do tamanho do localStorage
  */
-export async function cleanExpiredDrafts(evaluationId: string): Promise<number> {
+export async function cleanExpiredDrafts(): Promise<number> {
   try {
     const now = Date.now();
-    const draftsRef = collection(db, DRAFTS_COLLECTION);
-    const q = query(
-      draftsRef,
-      where('evaluation_id', '==', evaluationId),
-      where('expires_at', '<', now)
-    );
-
-    const querySnapshot = await getDocs(q);
     let deletedCount = 0;
 
-    // Deletar todos os rascunhos expirados
-    const deletePromises = querySnapshot.docs.map((doc) => deleteDoc(doc.ref));
-    await Promise.all(deletePromises);
-    deletedCount = querySnapshot.docs.length;
+    // Varrer todas as chaves do localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+
+      if (key && key.startsWith(DRAFT_STORAGE_PREFIX)) {
+        const draftJson = localStorage.getItem(key);
+
+        if (draftJson) {
+          try {
+            const draft = JSON.parse(draftJson) as Draft;
+
+            if (draft.expires_at < now) {
+              localStorage.removeItem(key);
+              deletedCount++;
+            }
+          } catch {
+            // JSON inválido, remover
+            localStorage.removeItem(key);
+            deletedCount++;
+          }
+        }
+      }
+    }
 
     return deletedCount;
   } catch (error) {
@@ -203,23 +187,22 @@ export async function cleanExpiredDrafts(evaluationId: string): Promise<number> 
  * @param evaluatedId ID de quem está sendo avaliado
  * @returns true se existe rascunho válido
  *
- * Complexidade: O(1) - Operação Firestore de leitura
- * Performance: ~50-100ms (latência de rede)
+ * Complexidade: O(1) - Operação de leitura do localStorage
+ * Performance: ~1-5ms (síncrono)
  */
 export async function hasDraft(
   evaluatorId: string,
   evaluatedId: string
 ): Promise<boolean> {
   try {
-    const draftId = generateDraftId(evaluatorId, evaluatedId);
-    const draftRef = doc(db, DRAFTS_COLLECTION, draftId);
-    const draftSnap = await getDoc(draftRef);
+    const draftKey = generateDraftKey(evaluatorId, evaluatedId);
+    const draftJson = localStorage.getItem(draftKey);
 
-    if (!draftSnap.exists()) {
+    if (!draftJson) {
       return false;
     }
 
-    const draft = draftSnap.data() as Draft;
+    const draft = JSON.parse(draftJson) as Draft;
     const now = Date.now();
 
     // Verificar se não expirou

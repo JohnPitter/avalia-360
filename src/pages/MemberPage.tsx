@@ -7,7 +7,6 @@ import {
 } from '@/components/colaborador';
 import {
   updateLastAccess,
-  incrementCompletedEvaluations,
   getMembersByAccessCode,
 } from '@/services/firebase';
 import { submitResponseEncrypted, getPendingEvaluations } from '@/services/firebase/response.service';
@@ -201,15 +200,13 @@ export function MemberPage() {
 
     try {
       // Envia resposta (criptografada no backend via Cloud Function)
+      // Cloud Function já incrementa o contador automaticamente
       await submitResponseEncrypted({
         evaluationId,
         evaluatorId: currentMember.id,
         evaluatedId: selectedMemberId,
         ...data,
       });
-
-      // Incrementa contador
-      await incrementCompletedEvaluations(currentMember.id);
 
       // Atualiza lista de avaliados
       setEvaluatedMemberIds((prev) => [...prev, selectedMemberId]);
