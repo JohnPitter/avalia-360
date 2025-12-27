@@ -174,7 +174,7 @@ export async function getMember(
 
     return {
       id: docSnap.id,
-      avaliation_id: data.avaliation_id,
+      evaluation_id: data.evaluation_id,
       name: data.name, // Já em plaintext
       email: data.email, // Já em plaintext
       access_code: data.access_code,
@@ -211,7 +211,7 @@ export async function validateAccessCode(
 
     const q = query(
       collection(db, 'team_members'),
-      where('avaliation_id', '==', evaluationId),
+      where('evaluation_id', '==', evaluationId),
       where('access_code', '==', codeHash)
     );
 
@@ -227,7 +227,7 @@ export async function validateAccessCode(
 
     return {
       id: docSnap.id,
-      avaliation_id: data.avaliation_id,
+      evaluation_id: data.evaluation_id,
       name: data.name, // Plaintext
       email: data.email, // Plaintext
       access_code: data.access_code,
@@ -296,7 +296,7 @@ export async function getEvaluationProgress(evaluationId: string): Promise<numbe
   try {
     const q = query(
       collection(db, 'team_members'),
-      where('avaliation_id', '==', evaluationId)
+      where('evaluation_id', '==', evaluationId)
     );
 
     const querySnapshot = await getDocs(q);

@@ -232,7 +232,7 @@ export async function searchEvaluationByAccessCode(
 
     const member: TeamMember = {
       id: docSnap.id,
-      avaliation_id: data.avaliation_id,
+      evaluation_id: data.evaluation_id,
       name: data.name, // Ainda criptografado
       email: data.email,
       access_code: data.access_code,
@@ -244,11 +244,11 @@ export async function searchEvaluationByAccessCode(
     logger.info('Member found by access code search', {
       component: 'SearchService',
       memberId: docSnap.id,
-      evaluationId: data.avaliation_id,
+      evaluationId: data.evaluation_id,
     });
 
     return {
-      evaluationId: data.avaliation_id,
+      evaluationId: data.evaluation_id,
       member,
       memberName: data.name, // Ainda criptografado (será descriptografado depois)
     };

@@ -24,7 +24,7 @@ export interface Evaluation {
  */
 export interface TeamMember {
   id: string;
-  avaliation_id: string; // FK para Evaluation
+  evaluation_id: string; // FK para Evaluation
   name: string; // Encrypted AES-256
   email: string; // Hash SHA-256
   access_code: string; // Hash SHA-256 do código de 6 dígitos
@@ -38,7 +38,7 @@ export interface TeamMember {
  */
 export interface Response {
   id: string;
-  avaliation_id: string; // FK para Evaluation
+  evaluation_id: string; // FK para Evaluation
   evaluator_id: string; // FK para TeamMember (quem está avaliando)
   evaluated_id: string; // FK para TeamMember (quem está sendo avaliado)
   question_1: number; // 1-5 (Satisfação) - Encrypted

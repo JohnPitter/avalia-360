@@ -155,7 +155,7 @@ export async function createResponse(
   const encryptionKey = generateEncryptionKey(managerToken);
 
   const responseData = {
-    avaliation_id: data.evaluationId,
+    evaluation_id: data.evaluationId,
     evaluator_id: data.evaluatorId,
     evaluated_id: data.evaluatedId,
     question_1: parseInt(encryptNumber(data.question_1, encryptionKey)),
@@ -172,7 +172,7 @@ export async function createResponse(
 
     const response: Response = {
       id: docRef.id,
-      avaliation_id: responseData.avaliation_id,
+      evaluation_id: responseData.evaluation_id,
       evaluator_id: responseData.evaluator_id,
       evaluated_id: responseData.evaluated_id,
       question_1: data.question_1, // Retorna valores descriptografados
@@ -209,7 +209,7 @@ export async function getResponse(
     const q = query(
       collection(db, 'responses'),
       and(
-        where('avaliation_id', '==', evaluationId),
+        where('evaluation_id', '==', evaluationId),
         where('evaluator_id', '==', evaluatorId),
         where('evaluated_id', '==', evaluatedId)
       )
@@ -226,7 +226,7 @@ export async function getResponse(
 
     return {
       id: docSnap.id,
-      avaliation_id: data.avaliation_id,
+      evaluation_id: data.evaluation_id,
       evaluator_id: data.evaluator_id,
       evaluated_id: data.evaluated_id,
       question_1: data.question_1,
@@ -262,7 +262,7 @@ export async function getResponsesForMember(
     const q = query(
       collection(db, 'responses'),
       and(
-        where('avaliation_id', '==', evaluationId),
+        where('evaluation_id', '==', evaluationId),
         where('evaluated_id', '==', evaluatedId)
       )
     );
@@ -278,7 +278,7 @@ export async function getResponsesForMember(
       try {
         responses.push({
           id: doc.id,
-          avaliation_id: data.avaliation_id,
+          evaluation_id: data.evaluation_id,
           evaluator_id: data.evaluator_id,
           evaluated_id: data.evaluated_id,
           question_1: decryptNumber(data.question_1.toString(), encryptionKey),
@@ -320,7 +320,7 @@ export async function getPendingEvaluations(
     const q = query(
       collection(db, 'responses'),
       and(
-        where('avaliation_id', '==', evaluationId),
+        where('evaluation_id', '==', evaluationId),
         where('evaluator_id', '==', evaluatorId)
       )
     );
@@ -468,7 +468,7 @@ export async function countResponses(evaluationId: string): Promise<number> {
   try {
     const q = query(
       collection(db, 'responses'),
-      where('avaliation_id', '==', evaluationId)
+      where('evaluation_id', '==', evaluationId)
     );
 
     const querySnapshot = await getDocs(q);
