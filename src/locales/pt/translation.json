@@ -431,8 +431,26 @@
     },
     "membersList": {
       "title": "Membros para Avaliar",
+      "greeting": "Olá, {{name}}",
+      "yourProgress": "Seu Progresso",
+      "evaluationsCompleted": "{{completed}} de {{total}} avaliações completadas",
       "completed": "Concluído",
       "pending": "Pendente",
+      "completionMessage": {
+        "title": "🎉 Parabéns! Você completou todas as avaliações!",
+        "description": "Suas respostas foram salvas com sucesso e estão 100% anônimas e criptografadas. Obrigado pela sua participação sincera!"
+      },
+      "selectMember": "Selecione quem avaliar",
+      "evaluationCompleted": "Avaliação concluída",
+      "clickToEvaluate": "Clique para avaliar",
+      "howItWorks": {
+        "title": "💡 Como funciona",
+        "step1": "Você precisa avaliar todos os membros da lista",
+        "step2": "Cada avaliação tem 4 perguntas e espaço para comentários",
+        "step3": "Suas respostas são 100% anônimas e criptografadas",
+        "step4": "Seja sincero e construtivo nos feedbacks",
+        "step5": "Você pode pausar e voltar depois usando o mesmo código"
+      },
       "inProgress": "Em andamento",
       "evaluate": "Avaliar",
       "continue": "Continuar"

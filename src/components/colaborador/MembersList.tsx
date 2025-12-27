@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { TeamMember } from '@/types';
 
 /**
@@ -20,6 +21,7 @@ export function MembersList({
   evaluatedMemberIds,
   onSelectMember,
 }: MembersListProps) {
+  const { t } = useTranslation();
   // Filtra para não avaliar a si mesmo
   const membersToEvaluate = allMembers.filter(
     (m) => m.id !== currentMember.id
@@ -49,7 +51,7 @@ export function MembersList({
               {evaluationTitle}
             </h1>
             <p className="text-gray-600 mt-1">
-              Olá, <span className="font-semibold text-emerald-600">{currentMember.name}</span>
+              {t('member.membersList.greeting', { name: '' })} <span className="font-semibold text-emerald-600">{currentMember.name}</span>
             </p>
           </div>
         </div>
@@ -61,7 +63,7 @@ export function MembersList({
               <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              <span className="text-sm font-semibold text-gray-700">Seu Progresso</span>
+              <span className="text-sm font-semibold text-gray-700">{t('member.membersList.yourProgress')}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
@@ -76,8 +78,7 @@ export function MembersList({
             />
           </div>
           <p className="text-sm text-gray-600">
-            <span className="font-semibold text-emerald-700">{evaluatedMemberIds.length}</span> de{' '}
-            <span className="font-semibold text-gray-700">{membersToEvaluate.length}</span> avaliações completadas
+            {t('member.membersList.evaluationsCompleted', { completed: evaluatedMemberIds.length, total: membersToEvaluate.length })}
           </p>
         </div>
 
@@ -95,10 +96,10 @@ export function MembersList({
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  🎉 Parabéns! Você completou todas as avaliações!
+                  {t('member.membersList.completionMessage.title')}
                 </h3>
                 <p className="text-gray-700">
-                  Suas respostas foram salvas com sucesso e estão 100% anônimas e criptografadas. Obrigado pela sua participação sincera!
+                  {t('member.membersList.completionMessage.description')}
                 </p>
               </div>
             </div>
@@ -115,7 +116,7 @@ export function MembersList({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Selecione quem avaliar</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{t('member.membersList.selectMember')}</h2>
           </div>
 
           <div className="space-y-4">
@@ -168,11 +169,11 @@ export function MembersList({
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          Avaliação concluída
+                          {t('member.membersList.evaluationCompleted')}
                         </p>
                       ) : (
                         <p className="text-sm text-gray-600 mt-1">
-                          Clique para avaliar
+                          {t('member.membersList.clickToEvaluate')}
                         </p>
                       )}
                     </div>
@@ -201,14 +202,14 @@ export function MembersList({
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">💡 Como funciona</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('member.membersList.howItWorks.title')}</h3>
               <ul className="space-y-3">
                 {[
-                  { text: 'Você precisa avaliar todos os membros da lista', icon: '👥' },
-                  { text: 'Cada avaliação tem 4 perguntas e espaço para comentários', icon: '📝' },
-                  { text: 'Suas respostas são 100% anônimas e criptografadas', icon: '🔒' },
-                  { text: 'Seja sincero e construtivo nos feedbacks', icon: '💬' },
-                  { text: 'Você pode pausar e voltar depois usando o mesmo código', icon: '⏸️' }
+                  { text: t('member.membersList.howItWorks.step1'), icon: '👥' },
+                  { text: t('member.membersList.howItWorks.step2'), icon: '📝' },
+                  { text: t('member.membersList.howItWorks.step3'), icon: '🔒' },
+                  { text: t('member.membersList.howItWorks.step4'), icon: '💬' },
+                  { text: t('member.membersList.howItWorks.step5'), icon: '⏸️' }
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
