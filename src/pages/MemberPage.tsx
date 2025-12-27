@@ -52,28 +52,31 @@ export function MemberPage() {
     }
   }, []);
 
-  const loadMemberData = async (evalId: string, _memberId: string) => {
+  const loadMemberData = async (evalId: string, memberId: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      // Busca dados da avaliação (precisamos do token para descriptografar)
-      // TODO: Armazenar manager token na sessão ou buscar de outra forma
-      // Por enquanto, vamos assumir que conseguimos os dados básicos
+      debugLog.info('Restaurando sessão existente', {
+        component: 'MemberPage',
+        data: { evaluationId: evalId, memberId }
+      });
 
       setEvaluationId(evalId);
 
-      // Busca todos os membros
-      // Note: Precisamos do manager token para descriptografar os nomes
-      // Isso é um desafio de arquitetura que precisamos resolver
+      // Carrega todos os dados usando a sessão existente
+      await loadEvaluationData(evalId, memberId);
 
       setStep('member-list');
+      debugLog.success('Sessão restaurada com sucesso', { component: 'MemberPage' });
     } catch (err) {
+      debugLog.error('Erro ao restaurar sessão', err as Error, { component: 'MemberPage' });
       setError(
         err instanceof Error
           ? err.message
-          : 'Erro ao carregar dados'
+          : 'Erro ao carregar dados. Por favor, faça login novamente.'
       );
+      // Limpa a sessão e volta para login
       handleLogout();
     } finally {
       setLoading(false);
