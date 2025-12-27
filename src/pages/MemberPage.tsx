@@ -169,7 +169,12 @@ export function MemberPage() {
       const evaluated = allMemberIds.filter((id) => !pending.includes(id));
       debugLog.info(`Progresso: ${evaluated.length}/${allMemberIds.length} avaliações completadas`, {
         component: 'MemberPage',
-        data: { completed: evaluated.length, total: allMemberIds.length }
+        data: {
+          completed: evaluated.length,
+          total: allMemberIds.length,
+          evaluatedIds: evaluated,
+          pendingIds: pending
+        }
       });
 
       setEvaluatedMemberIds(evaluated);
@@ -199,6 +204,14 @@ export function MemberPage() {
     setError(null);
 
     try {
+      // Verifica se já avaliou esta pessoa (previne duplicatas)
+      if (evaluatedMemberIds.includes(selectedMemberId)) {
+        setError('Você já avaliou este colega. Selecione outro membro da equipe.');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setLoading(false);
+        return;
+      }
+
       // Envia resposta (criptografada no backend via Cloud Function)
       // Cloud Function já incrementa o contador automaticamente
       await submitResponseEncrypted({
@@ -208,19 +221,39 @@ export function MemberPage() {
         ...data,
       });
 
-      // Atualiza lista de avaliados
-      setEvaluatedMemberIds((prev) => [...prev, selectedMemberId]);
+      // Atualiza lista de avaliados ANTES de recarregar
+      setEvaluatedMemberIds((prev) => {
+        const updated = [...prev, selectedMemberId];
+        console.log('✅ Membro avaliado adicionado:', selectedMemberId);
+        console.log('📊 Total avaliados:', updated.length);
+        return updated;
+      });
 
       // Volta para lista
       setSelectedMemberId(null);
       setStep('member-list');
 
-      // Recarrega dados
-      await loadEvaluationData(evaluationId, currentMember.id);
+      // Recarrega dados para atualizar progresso e completed_evaluations
+      try {
+        await loadEvaluationData(evaluationId, currentMember.id);
+        console.log('✅ Dados recarregados com sucesso');
+      } catch (reloadError) {
+        console.error('⚠️ Erro ao recarregar dados (avaliação foi salva):', reloadError);
+        // Não lançar erro - avaliação já foi salva com sucesso
+      }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Erro ao enviar avaliação'
-      );
+      // Melhora mensagem de erro para duplicatas
+      let errorMessage = 'Erro ao enviar avaliação';
+
+      if (err instanceof Error) {
+        if (err.message.includes('already submitted')) {
+          errorMessage = 'Você já avaliou este colega anteriormente. Recarregue a página e selecione outro membro.';
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      setError(errorMessage);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
