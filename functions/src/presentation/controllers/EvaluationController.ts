@@ -52,11 +52,19 @@ export class EvaluationController {
 
     return {
       results: results.map((r) => ({
-        id: r.member.id,
-        name: r.member.name,
-        email: r.member.email,
+        member: {
+          id: r.member.id,
+          name: r.member.name,
+          email: r.member.email,
+          evaluation_id: r.member.evaluationId,
+          access_code: r.member.accessCode,
+          completed_evaluations: r.member.completedEvaluations,
+          total_evaluations: r.member.totalEvaluations,
+          last_access_date: r.member.lastAccessDate?.getTime() || null,
+        },
         averages: r.averages,
-        responseCount: r.responseCount,
+        comments: r.comments,
+        totalResponses: r.responseCount,
       })),
     };
   }

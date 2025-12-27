@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ResultCard } from './ResultCard';
 import { TeamComparisonChart } from '@/components/shared';
 import type { Evaluation, TeamMember, ConsolidatedResult } from '@/types';
-import { consolidateAllResults } from '@/services/firebase/response.service';
+import { getConsolidatedResultsEncrypted } from '@/services/firebase/response.service';
 import {
   exportToText,
   exportToExcel,
@@ -11,14 +11,16 @@ import {
 } from '@/utils/resultExport';
 
 /**
- * Página de Resultados Consolidados
- * Exibe todas as avaliações consolidadas com médias e comentários
+ * Página de Resultados Consolidados (v2 - COM CLOUD FUNCTION)
+ * - Busca resultados via Cloud Function
+ * - Dados descriptografados no backend
+ * - Exibe médias e comentários consolidados
  */
 
 interface ResultsPageProps {
   evaluation: Evaluation;
   members: TeamMember[];
-  managerToken: string;
+  managerToken: string; // Não usado - descriptografia agora é no backend
   onBack: () => void;
 }
 
@@ -27,7 +29,7 @@ type SortOption = 'overall' | 'name' | 'responses';
 export function ResultsPage({
   evaluation,
   members,
-  managerToken,
+  managerToken: _managerToken, // Não usado - descriptografia agora é no backend
   onBack,
 }: ResultsPageProps) {
   const [results, setResults] = useState<ConsolidatedResult[]>([]);
@@ -45,11 +47,8 @@ export function ResultsPage({
       setLoading(true);
       setError(null);
 
-      const consolidated = await consolidateAllResults(
-        evaluation.id,
-        members,
-        managerToken
-      );
+      // Usa Cloud Function que descriptografa dados no backend
+      const consolidated = await getConsolidatedResultsEncrypted(evaluation.id);
 
       setResults(consolidated);
     } catch (err) {

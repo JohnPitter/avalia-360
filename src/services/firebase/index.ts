@@ -48,6 +48,7 @@ export {
   getPendingEvaluations,
   consolidateMemberResults,
   consolidateAllResults,
+  getConsolidatedResultsEncrypted, // v2 - COM CLOUD FUNCTION
   countResponses,
   isEvaluationComplete,
 } from './response.service';

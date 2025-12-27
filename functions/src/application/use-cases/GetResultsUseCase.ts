@@ -1,8 +1,10 @@
 /**
  * Use Case: Get Results
+ * Retorna resultados consolidados COM COMENTÁRIOS
  */
 
 import {Member} from '../../domain/entities/Member';
+import {Response} from '../../domain/entities/Response';
 import {IMemberRepository} from '../../domain/repositories/IMemberRepository';
 import {IResponseRepository} from '../../domain/repositories/IResponseRepository';
 
@@ -14,6 +16,10 @@ export interface MemberResult {
     question_3: number;
     question_4: number;
     overall: number;
+  };
+  comments: {
+    positive: string[];
+    improvement: string[];
   };
   responseCount: number;
 }
@@ -35,10 +41,12 @@ export class GetResultsUseCase {
       );
 
       const averages = this.calculateAverages(responses);
+      const comments = this.aggregateComments(responses);
 
       results.push({
         member,
         averages,
+        comments,
         responseCount: responses.length,
       });
     }
@@ -46,7 +54,7 @@ export class GetResultsUseCase {
     return results;
   }
 
-  private calculateAverages(responses: any[]): any {
+  private calculateAverages(responses: Response[]): any {
     if (responses.length === 0) {
       return {
         question_1: 0,
@@ -57,20 +65,42 @@ export class GetResultsUseCase {
       };
     }
 
-    const sum = (q: string) =>
-      responses.reduce((acc, r) => acc + r.ratings[q], 0) / responses.length;
+    const count = responses.length;
 
-    const q1 = sum('question_1');
-    const q2 = sum('question_2');
-    const q3 = sum('question_3');
-    const q4 = sum('question_4');
+    const q1 = responses.reduce((acc, r) => acc + r.ratings.question_1, 0) / count;
+    const q2 = responses.reduce((acc, r) => acc + r.ratings.question_2, 0) / count;
+    const q3 = responses.reduce((acc, r) => acc + r.ratings.question_3, 0) / count;
+    const q4 = responses.reduce((acc, r) => acc + r.ratings.question_4, 0) / count;
 
     return {
-      question_1: q1,
-      question_2: q2,
-      question_3: q3,
-      question_4: q4,
-      overall: (q1 + q2 + q3 + q4) / 4,
+      question_1: parseFloat(q1.toFixed(2)),
+      question_2: parseFloat(q2.toFixed(2)),
+      question_3: parseFloat(q3.toFixed(2)),
+      question_4: parseFloat(q4.toFixed(2)),
+      overall: parseFloat(((q1 + q2 + q3 + q4) / 4).toFixed(2)),
     };
+  }
+
+  /**
+   * Agrega comentários de todas as respostas
+   * Filtra comentários vazios
+   */
+  private aggregateComments(responses: Response[]): {positive: string[]; improvement: string[]} {
+    const positive: string[] = [];
+    const improvement: string[] = [];
+
+    for (const response of responses) {
+      // Adiciona comentários positivos (se não vazios)
+      if (response.comments.positive && response.comments.positive.trim().length > 0) {
+        positive.push(response.comments.positive.trim());
+      }
+
+      // Adiciona comentários de melhoria (se não vazios)
+      if (response.comments.improvement && response.comments.improvement.trim().length > 0) {
+        improvement.push(response.comments.improvement.trim());
+      }
+    }
+
+    return {positive, improvement};
   }
 }

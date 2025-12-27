@@ -244,7 +244,55 @@ export async function getResponse(
 }
 
 /**
- * Busca todas as respostas de um avaliado
+ * Busca resultados consolidados via Cloud Function (v2 - COM DESCRIPTOGRAFIA BACKEND)
+ * - Cloud Function busca dados criptografados do Firestore
+ * - Descriptografa nomes, emails e comentários
+ * - Calcula médias e agrega comentários
+ * - Retorna dados plaintext para o frontend
+ * Complexidade: O(N*M) onde N é membros e M é respostas por membro
+ *
+ * @param evaluationId - ID da avaliação
+ * @returns Lista de resultados consolidados
+ */
+export async function getConsolidatedResultsEncrypted(
+  evaluationId: string
+): Promise<ConsolidatedResult[]> {
+  try {
+    debugLog.info('Chamando Cloud Function getResults', {
+      component: 'response.service',
+      data: { evaluationId }
+    });
+
+    // Chama Cloud Function que descriptografa e consolida
+    const getResults = httpsCallable<
+      { evaluationId: string },
+      { results: ConsolidatedResult[] }
+    >(functions, 'getResults');
+
+    const result = await getResults({ evaluationId });
+
+    debugLog.success(`${result.data.results.length} resultados consolidados carregados`, {
+      component: 'response.service',
+      data: { count: result.data.results.length }
+    });
+
+    return result.data.results;
+  } catch (error) {
+    debugLog.error('Erro ao buscar resultados consolidados via Cloud Function', error as Error, {
+      component: 'response.service'
+    });
+    throw new Error('Falha ao carregar resultados consolidados');
+  }
+}
+
+/**
+ * Busca todas as respostas de um avaliado (LEGADO - NÃO RECOMENDADO)
+ *
+ * @deprecated Use getConsolidatedResultsEncrypted() que usa Cloud Function com criptografia
+ *
+ * Esta função faz acesso direto ao Firestore e tenta descriptografar dados no frontend.
+ * Prefira usar getConsolidatedResultsEncrypted() que chama a Cloud Function.
+ *
  * Usado para consolidar resultados
  * Complexidade: O(N) onde N é o número de respostas para o avaliado
  *
@@ -427,7 +475,13 @@ export function consolidateMemberResults(
 }
 
 /**
- * Consolida resultados de toda a avaliação
+ * Consolida resultados de toda a avaliação (LEGADO - NÃO RECOMENDADO)
+ *
+ * @deprecated Use getConsolidatedResultsEncrypted() que usa Cloud Function com criptografia
+ *
+ * Esta função faz acesso direto ao Firestore e tenta descriptografar dados no frontend.
+ * Prefira usar getConsolidatedResultsEncrypted() que chama a Cloud Function.
+ *
  * Complexidade: O(N*M) onde N é membros e M é respostas por membro
  *
  * @param evaluationId - ID da avaliação

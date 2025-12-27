@@ -48,13 +48,24 @@ class EvaluationController {
         const useCase = new GetResultsUseCase_1.GetResultsUseCase(this.memberRepo, this.responseRepo);
         const results = await useCase.execute(data.evaluationId);
         return {
-            results: results.map((r) => ({
-                id: r.member.id,
-                name: r.member.name,
-                email: r.member.email,
-                averages: r.averages,
-                responseCount: r.responseCount,
-            })),
+            results: results.map((r) => {
+                var _a;
+                return ({
+                    member: {
+                        id: r.member.id,
+                        name: r.member.name,
+                        email: r.member.email,
+                        evaluation_id: r.member.evaluationId,
+                        access_code: r.member.accessCode,
+                        completed_evaluations: r.member.completedEvaluations,
+                        total_evaluations: r.member.totalEvaluations,
+                        last_access_date: ((_a = r.member.lastAccessDate) === null || _a === void 0 ? void 0 : _a.getTime()) || null,
+                    },
+                    averages: r.averages,
+                    comments: r.comments,
+                    totalResponses: r.responseCount,
+                });
+            }),
         };
     }
 }
