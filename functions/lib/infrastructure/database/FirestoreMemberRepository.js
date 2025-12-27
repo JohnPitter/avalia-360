@@ -73,7 +73,7 @@ class FirestoreMemberRepository {
     }
     async findByEvaluationId(evaluationId) {
         const snapshot = await this.collection
-            .where('avaliation_id', '==', evaluationId)
+            .where('evaluation_id', '==', evaluationId)
             .get();
         return snapshot.docs.map((doc) => this.fromFirestore(doc.id, doc.data()));
     }
@@ -92,7 +92,7 @@ class FirestoreMemberRepository {
     }
     toFirestore(member) {
         return {
-            avaliation_id: member.evaluationId,
+            evaluation_id: member.evaluationId,
             name: member.name,
             email: member.email,
             email_hash: HashService_1.HashService.hashEmail(member.email),
@@ -107,7 +107,7 @@ class FirestoreMemberRepository {
     }
     fromFirestore(id, data) {
         var _a;
-        return new Member_1.Member(id, data.avaliation_id, data.name, data.email, '', // access_code hasheado não retorna
+        return new Member_1.Member(id, data.evaluation_id, data.name, data.email, '', // access_code hasheado não retorna
         data.completed_evaluations || 0, data.total_evaluations || 0, (_a = data.last_access_date) === null || _a === void 0 ? void 0 : _a.toDate());
     }
 }

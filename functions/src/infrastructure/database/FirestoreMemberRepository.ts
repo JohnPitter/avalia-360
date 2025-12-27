@@ -51,7 +51,7 @@ export class FirestoreMemberRepository implements IMemberRepository {
 
   async findByEvaluationId(evaluationId: string): Promise<Member[]> {
     const snapshot = await this.collection
-      .where('avaliation_id', '==', evaluationId)
+      .where('evaluation_id', '==', evaluationId)
       .get();
 
     return snapshot.docs.map((doc) => this.fromFirestore(doc.id, doc.data()));
@@ -75,7 +75,7 @@ export class FirestoreMemberRepository implements IMemberRepository {
 
   private toFirestore(member: Member): any {
     return {
-      avaliation_id: member.evaluationId,
+      evaluation_id: member.evaluationId,
       name: member.name,
       email: member.email,
       email_hash: HashService.hashEmail(member.email),
@@ -92,7 +92,7 @@ export class FirestoreMemberRepository implements IMemberRepository {
   private fromFirestore(id: string, data: any): Member {
     return new Member(
       id,
-      data.avaliation_id,
+      data.evaluation_id,
       data.name,
       data.email,
       '', // access_code hasheado não retorna

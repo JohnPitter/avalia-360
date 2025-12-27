@@ -76,7 +76,7 @@ exports.addMembersEncrypted = functions
             const codeHash = (0, encryption_service_1.hashAccessCode)(accessCode);
             return {
                 memberData: {
-                    avaliation_id: evaluationId,
+                    evaluation_id: evaluationId,
                     name: encryptedName, // CRIPTOGRAFADO
                     email: encryptedEmail, // CRIPTOGRAFADO
                     access_code: codeHash, // HASH
@@ -99,7 +99,7 @@ exports.addMembersEncrypted = functions
             batch.set(docRef, memberData);
             savedMembers.push({
                 id: docRef.id,
-                avaliation_id: evaluationId,
+                evaluation_id: evaluationId,
                 name: plainData.name, // Plaintext para retornar ao frontend
                 email: plainData.email, // Plaintext para retornar ao frontend
                 accessCode: plainData.accessCode, // Código para exibir ao gestor
@@ -134,7 +134,7 @@ exports.getMembersEncrypted = functions
         }
         const membersSnapshot = await db
             .collection('team_members')
-            .where('avaliation_id', '==', evaluationId)
+            .where('evaluation_id', '==', evaluationId)
             .get();
         const members = membersSnapshot.docs.map((doc) => {
             const data = doc.data();
@@ -143,7 +143,7 @@ exports.getMembersEncrypted = functions
             const email = (0, encryption_service_1.decrypt)(data.email);
             return {
                 id: doc.id,
-                evaluationId: data.avaliation_id,
+                evaluationId: data.evaluation_id,
                 name, // Plaintext (descriptografado)
                 email, // Plaintext (descriptografado)
                 completedEvaluations: data.completed_evaluations || 0,
@@ -188,11 +188,11 @@ exports.getMembersByAccessCodeEncrypted = functions
         }
         const memberDoc = memberSnapshot.docs[0];
         const memberData = memberDoc.data();
-        const evaluationId = memberData.avaliation_id;
+        const evaluationId = memberData.evaluation_id;
         // Busca todos os membros da mesma avaliação
         const allMembersSnapshot = await db
             .collection('team_members')
-            .where('avaliation_id', '==', evaluationId)
+            .where('evaluation_id', '==', evaluationId)
             .get();
         const members = allMembersSnapshot.docs.map((doc) => {
             const data = doc.data();
@@ -201,7 +201,7 @@ exports.getMembersByAccessCodeEncrypted = functions
             const email = (0, encryption_service_1.decrypt)(data.email);
             return {
                 id: doc.id,
-                evaluationId: data.avaliation_id,
+                evaluationId: data.evaluation_id,
                 name,
                 email,
                 completedEvaluations: data.completed_evaluations || 0,
