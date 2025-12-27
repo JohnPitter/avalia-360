@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 /**
  * Badge Component
  * Pequenos labels para status, categorias, contadores, etc.
@@ -60,21 +62,23 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
+  const { t } = useTranslation();
+
   const statusConfig = {
     pending: {
-      label: 'Pendente',
+      label: t('shared.badge.status.pending'),
       variant: 'warning' as BadgeVariant,
     },
     in_progress: {
-      label: 'Em Andamento',
+      label: t('shared.badge.status.inProgress'),
       variant: 'info' as BadgeVariant,
     },
     completed: {
-      label: 'Concluído',
+      label: t('shared.badge.status.completed'),
       variant: 'success' as BadgeVariant,
     },
     failed: {
-      label: 'Falhou',
+      label: t('shared.badge.status.failed'),
       variant: 'error' as BadgeVariant,
     },
   };
@@ -110,15 +114,17 @@ interface RatingBadgeProps {
 }
 
 export function RatingBadge({ rating, size = 'md' }: RatingBadgeProps) {
+  const { t } = useTranslation();
+
   const getRatingConfig = (value: number) => {
     if (value >= 4.5)
-      return { label: 'Excelente', variant: 'success' as BadgeVariant };
-    if (value >= 4.0) return { label: 'Bom', variant: 'info' as BadgeVariant };
+      return { label: t('shared.badge.rating.excellent'), variant: 'success' as BadgeVariant };
+    if (value >= 4.0) return { label: t('shared.badge.rating.good'), variant: 'info' as BadgeVariant };
     if (value >= 3.5)
-      return { label: 'Adequado', variant: 'primary' as BadgeVariant };
+      return { label: t('shared.badge.rating.adequate'), variant: 'primary' as BadgeVariant };
     if (value >= 3.0)
-      return { label: 'Abaixo da Média', variant: 'warning' as BadgeVariant };
-    return { label: 'Insatisfatório', variant: 'error' as BadgeVariant };
+      return { label: t('shared.badge.rating.belowAverage'), variant: 'warning' as BadgeVariant };
+    return { label: t('shared.badge.rating.unsatisfactory'), variant: 'error' as BadgeVariant };
   };
 
   const config = getRatingConfig(rating);

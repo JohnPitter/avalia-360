@@ -117,7 +117,7 @@ const ProgressDashboardComponent = ({
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              Sair
+              {t('manager.dashboard.logout')}
             </span>
           </button>
         </div>
@@ -131,7 +131,7 @@ const ProgressDashboardComponent = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Progresso Geral</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('manager.dashboard.overallProgress')}</h2>
         </div>
 
         {/* Progress Ring */}
@@ -169,7 +169,7 @@ const ProgressDashboardComponent = ({
                 <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   {overallProgress}%
                 </div>
-                <div className="text-sm text-gray-600 mt-1">Completo</div>
+                <div className="text-sm text-gray-600 mt-1">{t('manager.dashboard.complete')}</div>
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@ const ProgressDashboardComponent = ({
             <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">Total de Membros</div>
+                  <div className="text-sm text-gray-600 mb-1">{t('manager.dashboard.totalMembers')}</div>
                   <div className="text-3xl font-bold text-gray-900">{members.length}</div>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
@@ -223,7 +223,7 @@ const ProgressDashboardComponent = ({
         {/* Detailed Stats */}
         <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-gray-700">Avaliações Recebidas</span>
+            <span className="text-sm font-semibold text-gray-700">{t('manager.dashboard.evaluationsReceived')}</span>
             <span className="text-sm font-bold text-blue-600">{totalResponses} / {expectedResponses}</span>
           </div>
           <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
@@ -245,7 +245,7 @@ const ProgressDashboardComponent = ({
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Ver Resultados Consolidados
+                {t('manager.dashboard.viewConsolidatedResults')}
               </span>
             </button>
           </div>
@@ -260,7 +260,7 @@ const ProgressDashboardComponent = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Progresso Individual</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('manager.dashboard.individualProgress')}</h2>
         </div>
 
         <div className="space-y-4">
@@ -285,11 +285,11 @@ const ProgressDashboardComponent = ({
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold text-gray-900 truncate">{member.name}</h3>
                   <p className="text-sm text-gray-600">
-                    {member.completed_evaluations} de {member.total_evaluations} avaliações completadas
+                    {member.completed_evaluations} de {member.total_evaluations} {t('manager.dashboard.evaluationsCompleted')}
                   </p>
                   {member.last_access_date && (
                     <p className="text-xs text-gray-500 mt-1">
-                      Último acesso: {new Date(member.last_access_date).toLocaleString('pt-BR')}
+                      {t('manager.dashboard.lastAccess')} {new Date(member.last_access_date).toLocaleString('pt-BR')}
                     </p>
                   )}
                 </div>

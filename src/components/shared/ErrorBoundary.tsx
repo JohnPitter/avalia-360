@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { logger } from '@/services/observability/logger';
 
 /**
@@ -13,12 +14,14 @@ import { logger } from '@/services/observability/logger';
  * - Previne crash total da aplicação
  */
 
-interface ErrorBoundaryProps {
+interface ErrorBoundaryPropsBase {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   resetKeys?: Array<string | number>;
 }
+
+type ErrorBoundaryProps = ErrorBoundaryPropsBase & WithTranslation;
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -26,7 +29,7 @@ interface ErrorBoundaryState {
   errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundaryClass extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -125,25 +128,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
             {/* Title */}
             <h1 className="text-3xl font-bold text-center text-gray-900 mb-4">
-              Ops! Algo deu errado
+              {this.props.t('errors.boundary.title')}
             </h1>
 
             {/* Message */}
             <p className="text-center text-gray-700 mb-6">
-              Encontramos um erro inesperado. Não se preocupe, seus dados estão seguros.
+              {this.props.t('errors.boundary.subtitle')}
             </p>
 
             {/* Error Details (Dev mode) */}
             {import.meta.env.DEV && this.state.error && (
               <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
-                <h3 className="font-bold text-red-900 mb-2">Detalhes do Erro (Dev):</h3>
+                <h3 className="font-bold text-red-900 mb-2">{this.props.t('errors.boundary.detailsTitle')}</h3>
                 <p className="text-sm text-red-800 font-mono mb-2">
                   {this.state.error.name}: {this.state.error.message}
                 </p>
                 {this.state.error.stack && (
                   <details className="text-xs text-red-700">
                     <summary className="cursor-pointer font-semibold mb-1">
-                      Stack Trace
+                      {this.props.t('errors.boundary.stackTrace')}
                     </summary>
                     <pre className="whitespace-pre-wrap bg-red-100 p-2 rounded overflow-auto max-h-40">
                       {this.state.error.stack}
@@ -168,7 +171,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                     />
                   </svg>
-                  Tentar Novamente
+                  {this.props.t('errors.boundary.tryAgain')}
                 </span>
               </button>
 
@@ -188,7 +191,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                     />
                   </svg>
-                  Voltar ao Início
+                  {this.props.t('errors.boundary.backToHome')}
                 </span>
               </button>
             </div>
@@ -196,8 +199,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             {/* Help Text */}
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
               <p className="text-sm text-blue-900 text-center">
-                💡 <strong>Dica:</strong> Se o problema persistir, tente limpar o cache do navegador
-                ou entre em contato com o suporte.
+                {this.props.t('errors.boundary.tip')}
               </p>
             </div>
           </div>
@@ -208,6 +210,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     return this.props.children;
   }
 }
+
+// Export with translation HOC
+export const ErrorBoundary = withTranslation()(ErrorBoundaryClass);
 
 /**
  * Hook-based wrapper para facilitar uso com função componente

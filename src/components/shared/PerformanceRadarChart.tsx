@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Radar,
   RadarChart,
@@ -25,25 +26,27 @@ interface PerformanceRadarChartProps {
 }
 
 export function PerformanceRadarChart({ data, memberName }: PerformanceRadarChartProps) {
+  const { t } = useTranslation();
+
   // Transformar dados para formato do Recharts
   const chartData = [
     {
-      dimension: 'Satisfação',
+      dimension: t('shared.performanceRadarChart.axes.satisfaction'),
       value: data.question_1,
       fullMark: 5,
     },
     {
-      dimension: 'Proatividade',
+      dimension: t('shared.performanceRadarChart.axes.proactivity'),
       value: data.question_2,
       fullMark: 5,
     },
     {
-      dimension: 'Qualidade',
+      dimension: t('shared.performanceRadarChart.axes.quality'),
       value: data.question_3,
       fullMark: 5,
     },
     {
-      dimension: 'Trabalho em Equipe',
+      dimension: t('shared.performanceRadarChart.axes.teamwork'),
       value: data.question_4,
       fullMark: 5,
     },
@@ -52,7 +55,7 @@ export function PerformanceRadarChart({ data, memberName }: PerformanceRadarChar
   return (
     <div className="w-full">
       <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
-        Perfil de Desempenho - {memberName}
+        {t('shared.performanceRadarChart.title', { memberName })}
       </h3>
       <ResponsiveContainer width="100%" height={400}>
         <RadarChart data={chartData}>
@@ -83,7 +86,7 @@ export function PerformanceRadarChart({ data, memberName }: PerformanceRadarChar
               borderRadius: '0.5rem',
               padding: '0.5rem',
             }}
-            formatter={(value: number) => [value.toFixed(2), 'Média']}
+            formatter={(value: number) => [value.toFixed(2), t('shared.performanceRadarChart.average')]}
           />
           <Legend
             wrapperStyle={{
@@ -93,7 +96,7 @@ export function PerformanceRadarChart({ data, memberName }: PerformanceRadarChar
         </RadarChart>
       </ResponsiveContainer>
       <div className="mt-4 text-center text-sm text-gray-600">
-        <p>Escala: 1 (Insatisfatório) a 5 (Excelente)</p>
+        <p>{t('shared.performanceRadarChart.scale')}</p>
       </div>
     </div>
   );

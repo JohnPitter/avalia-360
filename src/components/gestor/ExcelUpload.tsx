@@ -10,6 +10,7 @@
  */
 
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { parseExcelFile, type ExcelParseResult } from '@/utils/excelParser';
 import {
   downloadExcelTemplate,
@@ -28,6 +29,7 @@ export function ExcelUpload({
   maxMembers = 100,
   disabled = false,
 }: ExcelUploadProps) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [parseResult, setParseResult] = useState<ExcelParseResult | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -58,7 +60,7 @@ export function ExcelUpload({
         errors: [
           error instanceof Error
             ? error.message
-            : 'Erro ao processar arquivo',
+            : t('manager.excelUpload.errors.processing'),
         ],
         warnings: [],
         totalRows: 0,
@@ -120,7 +122,7 @@ export function ExcelUpload({
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Baixar Template (com exemplos)
+          {t('manager.excelUpload.downloadTemplate')}
         </button>
 
         <button
@@ -132,7 +134,7 @@ export function ExcelUpload({
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Baixar Template Vazio
+          {t('manager.excelUpload.downloadEmpty')}
         </button>
       </div>
 
@@ -169,7 +171,7 @@ export function ExcelUpload({
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
               <p className="text-sm font-medium text-gray-700">
-                Processando arquivo...
+                {t('manager.excelUpload.processing')}
               </p>
             </>
           ) : (
@@ -180,11 +182,11 @@ export function ExcelUpload({
               <div>
                 <p className="text-base font-medium text-gray-900">
                   {dragActive
-                    ? 'Solte o arquivo aqui'
-                    : 'Clique ou arraste o arquivo Excel'}
+                    ? t('manager.excelUpload.dropHere')
+                    : t('manager.excelUpload.clickOrDrag')}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Formatos suportados: .xlsx, .xls (máx 5MB)
+                  {t('manager.excelUpload.supportedFormats')}
                 </p>
               </div>
             </>
@@ -217,16 +219,16 @@ export function ExcelUpload({
                     parseResult.success ? 'text-green-900' : 'text-red-900'
                   }`}>
                     {parseResult.success
-                      ? `✅ ${parseResult.validRows} membro(s) importado(s) com sucesso!`
-                      : `❌ Erro ao importar membros`
+                      ? t('manager.excelUpload.successImported', { count: parseResult.validRows })
+                      : t('manager.excelUpload.errorImporting')
                     }
                   </p>
                   <p className={`text-sm mt-1 ${
                     parseResult.success ? 'text-green-700' : 'text-red-700'
                   }`}>
-                    Total de linhas: {parseResult.totalRows} |
-                    Válidas: {parseResult.validRows} |
-                    Erros: {parseResult.errors.length}
+                    {t('manager.excelUpload.stats.totalRows')} {parseResult.totalRows} |
+                    {t('manager.excelUpload.stats.validMembers')} {parseResult.validRows} |
+                    {t('manager.excelUpload.stats.errors')} {parseResult.errors.length}
                   </p>
                 </div>
               </div>
@@ -236,7 +238,7 @@ export function ExcelUpload({
           {/* Erros */}
           {parseResult.errors.length > 0 && (
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-              <p className="font-semibold text-red-900 mb-2">❌ Erros encontrados:</p>
+              <p className="font-semibold text-red-900 mb-2">{t('manager.excelUpload.errors.title')}</p>
               <ul className="space-y-1 text-sm text-red-700">
                 {parseResult.errors.map((error, index) => (
                   <li key={index}>• {error}</li>
@@ -248,7 +250,7 @@ export function ExcelUpload({
           {/* Avisos */}
           {parseResult.warnings.length > 0 && (
             <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
-              <p className="font-semibold text-yellow-900 mb-2">⚠️ Avisos:</p>
+              <p className="font-semibold text-yellow-900 mb-2">{t('manager.excelUpload.warnings.title')}</p>
               <ul className="space-y-1 text-sm text-yellow-700">
                 {parseResult.warnings.map((warning, index) => (
                   <li key={index}>• {warning}</li>
@@ -261,7 +263,7 @@ export function ExcelUpload({
           {parseResult.success && parseResult.members.length > 0 && (
             <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
               <p className="font-semibold text-blue-900 mb-3">
-                📋 Preview dos membros importados:
+                {t('manager.excelUpload.preview.title')}
               </p>
               <div className="max-h-60 overflow-y-auto space-y-2">
                 {parseResult.members.map((member, index) => (

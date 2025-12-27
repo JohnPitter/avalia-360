@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   BarChart,
   Bar,
@@ -26,6 +27,8 @@ interface TeamComparisonChartProps {
 }
 
 export function TeamComparisonChart({ data }: TeamComparisonChartProps) {
+  const { t } = useTranslation();
+
   // Ordenar por média decrescente
   const sortedData = [...data].sort((a, b) => b.average - a.average);
 
@@ -41,7 +44,7 @@ export function TeamComparisonChart({ data }: TeamComparisonChartProps) {
   return (
     <div className="w-full">
       <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
-        Comparativo da Equipe - Média Geral
+        {t('shared.teamComparisonChart.title')}
       </h3>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
@@ -61,7 +64,7 @@ export function TeamComparisonChart({ data }: TeamComparisonChartProps) {
             domain={[0, 5]}
             tick={{ fill: '#6b7280', fontSize: 11 }}
             label={{
-              value: 'Média',
+              value: t('shared.teamComparisonChart.averageLabel'),
               angle: -90,
               position: 'insideLeft',
               style: { fill: '#374151', fontSize: 12 },
@@ -76,9 +79,9 @@ export function TeamComparisonChart({ data }: TeamComparisonChartProps) {
             }}
             formatter={(value: number, _name: string, props: any) => [
               <>
-                <div>Média: {value.toFixed(2)}</div>
+                <div>{t('shared.teamComparisonChart.tooltipAverage', { value: (value as number).toFixed(2) })}</div>
                 <div className="text-sm text-gray-600 mt-1">
-                  Respostas: {props.payload.responses}
+                  {t('shared.teamComparisonChart.tooltipResponses', { responses: props.payload.responses })}
                 </div>
               </>,
               '',
@@ -87,7 +90,7 @@ export function TeamComparisonChart({ data }: TeamComparisonChartProps) {
           />
           <Legend
             wrapperStyle={{ paddingTop: '1rem' }}
-            formatter={() => 'Média Geral'}
+            formatter={() => t('shared.teamComparisonChart.legend')}
           />
           <Bar dataKey="average" radius={[8, 8, 0, 0]}>
             {sortedData.map((entry, index) => (
@@ -99,23 +102,23 @@ export function TeamComparisonChart({ data }: TeamComparisonChartProps) {
       <div className="mt-6 flex flex-wrap gap-4 justify-center text-xs">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-green-500"></div>
-          <span className="text-gray-700">≥ 4.5 Excelente</span>
+          <span className="text-gray-700">≥ 4.5 {t('shared.teamComparisonChart.ratings.excellent')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-blue-500"></div>
-          <span className="text-gray-700">≥ 4.0 Bom</span>
+          <span className="text-gray-700">≥ 4.0 {t('shared.teamComparisonChart.ratings.good')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-purple-500"></div>
-          <span className="text-gray-700">≥ 3.5 Adequado</span>
+          <span className="text-gray-700">≥ 3.5 {t('shared.teamComparisonChart.ratings.adequate')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-amber-500"></div>
-          <span className="text-gray-700">≥ 3.0 Abaixo da Média</span>
+          <span className="text-gray-700">≥ 3.0 {t('shared.teamComparisonChart.ratings.belowAverage')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-red-500"></div>
-          <span className="text-gray-700">&lt; 3.0 Insatisfatório</span>
+          <span className="text-gray-700">&lt; 3.0 {t('shared.teamComparisonChart.ratings.unsatisfactory')}</span>
         </div>
       </div>
     </div>

@@ -207,25 +207,54 @@
     "excelUpload": {
       "title": "Importar Membros via Excel",
       "dropzone": "Arraste um arquivo Excel aqui ou clique para selecionar",
-      "downloadTemplate": "Baixar Template Excel",
+      "dropHere": "Solte o arquivo aqui",
+      "clickOrDrag": "Clique ou arraste o arquivo Excel",
+      "supportedFormats": "Formatos suportados: .xlsx, .xls (máx 5MB)",
+      "downloadTemplate": "Baixar Template (com exemplos)",
+      "downloadEmpty": "Baixar Template Vazio",
       "uploading": "Processando arquivo...",
-      "success": "{{count}} membros importados com sucesso",
+      "processing": "Processando arquivo...",
+      "success": "✅ {{count}} membro(s) importado(s) com sucesso!",
+      "successImported": "✅ {{count}} membro(s) importado(s) com sucesso!",
+      "errorImporting": "❌ Erro ao importar membros",
+      "stats": {
+        "totalRows": "Total de linhas:",
+        "validMembers": "Membros válidos:",
+        "duplicates": "Duplicados removidos:",
+        "errors": "Erros:"
+      },
       "errors": {
+        "title": "❌ Erros encontrados:",
         "invalidFile": "Arquivo inválido. Use o formato .xlsx ou .xls",
         "emptyFile": "Arquivo vazio",
-        "invalidData": "Dados inválidos na linha {{row}}"
+        "invalidData": "Dados inválidos na linha {{row}}",
+        "processing": "Erro ao processar arquivo"
+      },
+      "warnings": {
+        "title": "⚠️ Avisos:"
+      },
+      "preview": {
+        "title": "📋 Preview dos membros importados:"
       }
     },
     "dashboard": {
       "title": "Dashboard - {{evaluationTitle}}",
+      "logout": "Sair",
       "progress": "Progresso da Avaliação",
+      "overallProgress": "Progresso Geral",
+      "complete": "Completo",
       "totalMembers": "Total de Membros",
       "completed": "Concluídas",
       "pending": "Pendentes",
       "completionRate": "Taxa de Conclusão",
       "viewResults": "Ver Resultados",
+      "viewConsolidatedResults": "Ver Resultados Consolidados",
       "sendReminders": "Enviar Lembretes",
       "exportData": "Exportar Dados",
+      "evaluationsReceived": "Avaliações Recebidas",
+      "individualProgress": "Progresso Individual",
+      "evaluationsCompleted": "avaliações completadas",
+      "lastAccess": "Último acesso:",
       "status": {
         "active": "Ativa",
         "complete": "Completa",
@@ -233,7 +262,6 @@
       },
       "completedLabel": "Completaram",
       "pendingLabel": "Pendentes",
-      "evaluationsReceived": "avaliações recebidas",
       "evaluationReceived": "avaliação recebida",
       "tips": {
         "title": "💡 Dicas para aumentar a participação",
@@ -535,7 +563,12 @@
   "errors": {
     "boundary": {
       "title": "Ops! Algo deu errado",
-      "subtitle": "Encontramos um erro inesperado",
+      "subtitle": "Encontramos um erro inesperado. Não se preocupe, seus dados estão seguros.",
+      "detailsTitle": "Detalhes do Erro (Dev):",
+      "stackTrace": "Stack Trace",
+      "tryAgain": "Tentar Novamente",
+      "backToHome": "Voltar ao Início",
+      "tip": "💡 Dica: Se o problema persistir, tente limpar o cache do navegador ou entre em contato com o suporte.",
       "reload": "Recarregar Página",
       "contact": "Se o problema persistir, entre em contato com o suporte"
     },
@@ -548,6 +581,48 @@
       "title": "Página Não Encontrada",
       "subtitle": "A página que você procura não existe",
       "home": "Voltar para Início"
+    }
+  },
+  "shared": {
+    "badge": {
+      "status": {
+        "pending": "Pendente",
+        "inProgress": "Em Andamento",
+        "completed": "Concluído",
+        "failed": "Falhou"
+      },
+      "rating": {
+        "excellent": "Excelente",
+        "good": "Bom",
+        "adequate": "Adequado",
+        "belowAverage": "Abaixo da Média",
+        "unsatisfactory": "Insatisfatório"
+      }
+    },
+    "performanceRadarChart": {
+      "title": "Perfil de Desempenho - {{memberName}}",
+      "average": "Média",
+      "scale": "Escala: 1 (Insatisfatório) a 5 (Excelente)",
+      "axes": {
+        "satisfaction": "Satisfação",
+        "proactivity": "Proatividade",
+        "quality": "Qualidade",
+        "teamwork": "Trabalho em Equipe"
+      }
+    },
+    "teamComparisonChart": {
+      "title": "Comparativo da Equipe - Média Geral",
+      "averageLabel": "Média",
+      "tooltipAverage": "Média: {{value}}",
+      "tooltipResponses": "Respostas: {{responses}}",
+      "legend": "Média Geral",
+      "ratings": {
+        "excellent": "Excelente",
+        "good": "Bom",
+        "adequate": "Adequado",
+        "belowAverage": "Abaixo da Média",
+        "unsatisfactory": "Insatisfatório"
+      }
     }
   },
   "language": {
