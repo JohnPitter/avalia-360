@@ -5,11 +5,21 @@
 import * as admin from 'firebase-admin';
 import {Response} from '../../domain/entities/Response';
 import {IResponseRepository} from '../../domain/repositories/IResponseRepository';
+import {encrypt, decrypt} from '../services/encryption.service';
 
 export class FirestoreResponseRepository implements IResponseRepository {
   private collection = admin.firestore().collection('responses');
 
   async save(response: Response): Promise<Response> {
+    // Criptografa comentários antes de salvar (se não vazios)
+    const positiveEncrypted = response.comments.positive && response.comments.positive.trim().length > 0
+      ? encrypt(response.comments.positive)
+      : '';
+
+    const improvementEncrypted = response.comments.improvement && response.comments.improvement.trim().length > 0
+      ? encrypt(response.comments.improvement)
+      : '';
+
     const docRef = await this.collection.add({
       evaluation_id: response.evaluationId,
       evaluator_id: response.evaluatorId,
@@ -18,8 +28,8 @@ export class FirestoreResponseRepository implements IResponseRepository {
       question_2: response.ratings.question_2,
       question_3: response.ratings.question_3,
       question_4: response.ratings.question_4,
-      positive_comments: response.comments.positive || '',
-      improvement_comments: response.comments.improvement || '',
+      positive_comments: positiveEncrypted, // Criptografado
+      improvement_comments: improvementEncrypted, // Criptografado
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -106,6 +116,26 @@ export class FirestoreResponseRepository implements IResponseRepository {
       }
     }
 
+    // Descriptografa comentários (se não vazios)
+    let positiveDecrypted = '';
+    let improvementDecrypted = '';
+
+    try {
+      if (data.positive_comments && data.positive_comments.trim().length > 0) {
+        positiveDecrypted = decrypt(data.positive_comments);
+      }
+    } catch (error) {
+      console.error(`Erro ao descriptografar positive_comments (response ${id}):`, error);
+    }
+
+    try {
+      if (data.improvement_comments && data.improvement_comments.trim().length > 0) {
+        improvementDecrypted = decrypt(data.improvement_comments);
+      }
+    } catch (error) {
+      console.error(`Erro ao descriptografar improvement_comments (response ${id}):`, error);
+    }
+
     return new Response(
       id,
       data.evaluation_id,
@@ -118,8 +148,8 @@ export class FirestoreResponseRepository implements IResponseRepository {
         question_4: data.question_4,
       },
       {
-        positive: data.positive_comments,
-        improvement: data.improvement_comments,
+        positive: positiveDecrypted, // Descriptografado
+        improvement: improvementDecrypted, // Descriptografado
       },
       createdAt
     );

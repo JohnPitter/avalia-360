@@ -39,11 +39,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirestoreResponseRepository = void 0;
 const admin = __importStar(require("firebase-admin"));
 const Response_1 = require("../../domain/entities/Response");
+const encryption_service_1 = require("../services/encryption.service");
 class FirestoreResponseRepository {
     constructor() {
         this.collection = admin.firestore().collection('responses');
     }
     async save(response) {
+        // Criptografa comentários antes de salvar (se não vazios)
+        const positiveEncrypted = response.comments.positive && response.comments.positive.trim().length > 0
+            ? (0, encryption_service_1.encrypt)(response.comments.positive)
+            : '';
+        const improvementEncrypted = response.comments.improvement && response.comments.improvement.trim().length > 0
+            ? (0, encryption_service_1.encrypt)(response.comments.improvement)
+            : '';
         const docRef = await this.collection.add({
             evaluation_id: response.evaluationId,
             evaluator_id: response.evaluatorId,
@@ -52,8 +60,8 @@ class FirestoreResponseRepository {
             question_2: response.ratings.question_2,
             question_3: response.ratings.question_3,
             question_4: response.ratings.question_4,
-            positive_comments: response.comments.positive || '',
-            improvement_comments: response.comments.improvement || '',
+            positive_comments: positiveEncrypted, // Criptografado
+            improvement_comments: improvementEncrypted, // Criptografado
             created_at: admin.firestore.FieldValue.serverTimestamp(),
         });
         return new Response_1.Response(docRef.id, response.evaluationId, response.evaluatorId, response.evaluatedId, response.ratings, response.comments, response.createdAt);
@@ -116,14 +124,33 @@ class FirestoreResponseRepository {
                 createdAt = data.created_at;
             }
         }
+        // Descriptografa comentários (se não vazios)
+        let positiveDecrypted = '';
+        let improvementDecrypted = '';
+        try {
+            if (data.positive_comments && data.positive_comments.trim().length > 0) {
+                positiveDecrypted = (0, encryption_service_1.decrypt)(data.positive_comments);
+            }
+        }
+        catch (error) {
+            console.error(`Erro ao descriptografar positive_comments (response ${id}):`, error);
+        }
+        try {
+            if (data.improvement_comments && data.improvement_comments.trim().length > 0) {
+                improvementDecrypted = (0, encryption_service_1.decrypt)(data.improvement_comments);
+            }
+        }
+        catch (error) {
+            console.error(`Erro ao descriptografar improvement_comments (response ${id}):`, error);
+        }
         return new Response_1.Response(id, data.evaluation_id, data.evaluator_id, data.evaluated_id, {
             question_1: data.question_1,
             question_2: data.question_2,
             question_3: data.question_3,
             question_4: data.question_4,
         }, {
-            positive: data.positive_comments,
-            improvement: data.improvement_comments,
+            positive: positiveDecrypted, // Descriptografado
+            improvement: improvementDecrypted, // Descriptografado
         }, createdAt);
     }
 }

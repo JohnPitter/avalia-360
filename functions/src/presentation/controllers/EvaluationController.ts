@@ -51,8 +51,13 @@ export class EvaluationController {
     const useCase = new GetResultsUseCase(this.memberRepo, this.responseRepo);
     const results = await useCase.execute(data.evaluationId);
 
+    console.log(`[getResults] Total de resultados: ${results.length}`);
+
     return {
       results: results.map((r) => {
+        console.log(`[getResults] Processando membro ${r.member.id}:`);
+        console.log(`  - Comentários positivos (cript): ${r.comments.positive.length}`);
+        console.log(`  - Comentários melhoria (cript): ${r.comments.improvement.length}`);
         // Descriptografa nome e email do membro
         let memberName = r.member.name;
         let memberEmail = r.member.email;
@@ -69,25 +74,7 @@ export class EvaluationController {
           console.error(`Erro ao descriptografar email do membro ${r.member.id}:`, error);
         }
 
-        // Descriptografa comentários
-        const decryptedPositive = r.comments.positive.map((comment) => {
-          try {
-            return decrypt(comment);
-          } catch (error) {
-            console.error('Erro ao descriptografar comentário positivo:', error);
-            return comment; // Retorna criptografado se falhar
-          }
-        });
-
-        const decryptedImprovement = r.comments.improvement.map((comment) => {
-          try {
-            return decrypt(comment);
-          } catch (error) {
-            console.error('Erro ao descriptografar comentário de melhoria:', error);
-            return comment; // Retorna criptografado se falhar
-          }
-        });
-
+        // Comentários já vêm descriptografados do repository
         return {
           member: {
             id: r.member.id,
@@ -100,10 +87,7 @@ export class EvaluationController {
             last_access_date: r.member.lastAccessDate?.getTime() || null,
           },
           averages: r.averages,
-          comments: {
-            positive: decryptedPositive, // Descriptografado
-            improvement: decryptedImprovement, // Descriptografado
-          },
+          comments: r.comments, // Já descriptografados pelo repository
           totalResponses: r.responseCount,
         };
       }),

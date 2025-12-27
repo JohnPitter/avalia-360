@@ -48,9 +48,13 @@ class EvaluationController {
     async getResults(data) {
         const useCase = new GetResultsUseCase_1.GetResultsUseCase(this.memberRepo, this.responseRepo);
         const results = await useCase.execute(data.evaluationId);
+        console.log(`[getResults] Total de resultados: ${results.length}`);
         return {
             results: results.map((r) => {
                 var _a;
+                console.log(`[getResults] Processando membro ${r.member.id}:`);
+                console.log(`  - Comentários positivos (cript): ${r.comments.positive.length}`);
+                console.log(`  - Comentários melhoria (cript): ${r.comments.improvement.length}`);
                 // Descriptografa nome e email do membro
                 let memberName = r.member.name;
                 let memberEmail = r.member.email;
@@ -66,25 +70,7 @@ class EvaluationController {
                 catch (error) {
                     console.error(`Erro ao descriptografar email do membro ${r.member.id}:`, error);
                 }
-                // Descriptografa comentários
-                const decryptedPositive = r.comments.positive.map((comment) => {
-                    try {
-                        return (0, encryption_service_1.decrypt)(comment);
-                    }
-                    catch (error) {
-                        console.error('Erro ao descriptografar comentário positivo:', error);
-                        return comment; // Retorna criptografado se falhar
-                    }
-                });
-                const decryptedImprovement = r.comments.improvement.map((comment) => {
-                    try {
-                        return (0, encryption_service_1.decrypt)(comment);
-                    }
-                    catch (error) {
-                        console.error('Erro ao descriptografar comentário de melhoria:', error);
-                        return comment; // Retorna criptografado se falhar
-                    }
-                });
+                // Comentários já vêm descriptografados do repository
                 return {
                     member: {
                         id: r.member.id,
@@ -97,10 +83,7 @@ class EvaluationController {
                         last_access_date: ((_a = r.member.lastAccessDate) === null || _a === void 0 ? void 0 : _a.getTime()) || null,
                     },
                     averages: r.averages,
-                    comments: {
-                        positive: decryptedPositive, // Descriptografado
-                        improvement: decryptedImprovement, // Descriptografado
-                    },
+                    comments: r.comments, // Já descriptografados pelo repository
                     totalResponses: r.responseCount,
                 };
             }),
