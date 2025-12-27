@@ -143,12 +143,13 @@ exports.getMembersEncrypted = functions
             const email = (0, encryption_service_1.decrypt)(data.email);
             return {
                 id: doc.id,
-                evaluationId: data.evaluation_id,
+                evaluation_id: data.evaluation_id,
                 name, // Plaintext (descriptografado)
                 email, // Plaintext (descriptografado)
-                completedEvaluations: data.completed_evaluations || 0,
-                totalEvaluations: data.total_evaluations || 0,
-                lastAccessDate: data.last_access_date,
+                access_code: data.access_code,
+                completed_evaluations: data.completed_evaluations || 0,
+                total_evaluations: data.total_evaluations || 0,
+                last_access_date: data.last_access_date,
             };
         });
         return {
@@ -201,12 +202,13 @@ exports.getMembersByAccessCodeEncrypted = functions
             const email = (0, encryption_service_1.decrypt)(data.email);
             return {
                 id: doc.id,
-                evaluationId: data.evaluation_id,
+                evaluation_id: data.evaluation_id,
                 name,
                 email,
-                completedEvaluations: data.completed_evaluations || 0,
-                totalEvaluations: data.total_evaluations || 0,
-                lastAccessDate: data.last_access_date,
+                access_code: data.access_code,
+                completed_evaluations: data.completed_evaluations || 0,
+                total_evaluations: data.total_evaluations || 0,
+                last_access_date: data.last_access_date,
             };
         });
         return {

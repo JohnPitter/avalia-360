@@ -27,15 +27,17 @@ interface MemberInput {
 
 /**
  * Interface para membro retornado (plaintext - descriptografado)
+ * IMPORTANTE: Usa snake_case para compatibilidade com tipo TeamMember do frontend
  */
 interface MemberOutput {
   id: string;
-  evaluationId: string;
+  evaluation_id: string;
   name: string;
   email: string;
-  completedEvaluations: number;
-  totalEvaluations: number;
-  lastAccessDate: number | null;
+  access_code: string;
+  completed_evaluations: number;
+  total_evaluations: number;
+  last_access_date: number | null;
 }
 
 /**
@@ -158,12 +160,13 @@ export const getMembersEncrypted = functions
 
         return {
           id: doc.id,
-          evaluationId: data.evaluation_id,
+          evaluation_id: data.evaluation_id,
           name, // Plaintext (descriptografado)
           email, // Plaintext (descriptografado)
-          completedEvaluations: data.completed_evaluations || 0,
-          totalEvaluations: data.total_evaluations || 0,
-          lastAccessDate: data.last_access_date,
+          access_code: data.access_code,
+          completed_evaluations: data.completed_evaluations || 0,
+          total_evaluations: data.total_evaluations || 0,
+          last_access_date: data.last_access_date,
         };
       });
 
@@ -235,12 +238,13 @@ export const getMembersByAccessCodeEncrypted = functions
 
         return {
           id: doc.id,
-          evaluationId: data.evaluation_id,
+          evaluation_id: data.evaluation_id,
           name,
           email,
-          completedEvaluations: data.completed_evaluations || 0,
-          totalEvaluations: data.total_evaluations || 0,
-          lastAccessDate: data.last_access_date,
+          access_code: data.access_code,
+          completed_evaluations: data.completed_evaluations || 0,
+          total_evaluations: data.total_evaluations || 0,
+          last_access_date: data.last_access_date,
         };
       });
 
