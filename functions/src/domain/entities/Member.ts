@@ -31,12 +31,16 @@ export class Member {
       throw new Error('Member name is required');
     }
 
-    if (!this.email || !this.isValidEmail(this.email)) {
-      throw new Error('Valid email is required');
+    // Email pode ser plaintext OU hash SHA-256 (64 caracteres hex)
+    // Aceita ambos os formatos
+    if (!this.email || this.email.trim().length === 0) {
+      throw new Error('Email is required');
     }
 
-    if (!this.accessCode || !this.isValidAccessCode(this.accessCode)) {
-      throw new Error('Valid 6-digit access code is required');
+    // Access code pode ser plaintext (6 dígitos) OU hash (quando vem do Firestore)
+    // Aceita ambos os formatos
+    if (!this.accessCode || this.accessCode.trim().length === 0) {
+      throw new Error('Access code is required');
     }
 
     if (this.completedEvaluations < 0) {
@@ -50,15 +54,6 @@ export class Member {
     if (this.completedEvaluations > this.totalEvaluations) {
       throw new Error('Completed evaluations cannot exceed total evaluations');
     }
-  }
-
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  private isValidAccessCode(code: string): boolean {
-    return /^\d{6}$/.test(code);
   }
 
   public incrementCompletedEvaluations(): void {
