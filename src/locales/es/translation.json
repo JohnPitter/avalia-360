@@ -181,14 +181,38 @@
     },
     "dashboard": {
       "title": "Tablero - {{evaluationTitle}}",
+      "logout": "Cerrar sesión",
       "progress": "Progreso de la Evaluación",
+      "overallProgress": "Progreso General",
+      "complete": "Completo",
       "totalMembers": "Total de Miembros",
       "completed": "Completadas",
       "pending": "Pendientes",
       "completionRate": "Tasa de Completitud",
       "viewResults": "Ver Resultados",
+      "viewConsolidatedResults": "Ver Resultados Consolidados",
       "sendReminders": "Enviar Recordatorios",
-      "exportData": "Exportar Datos"
+      "exportData": "Exportar Datos",
+      "evaluationsReceived": "Evaluaciones Recibidas",
+      "individualProgress": "Progreso Individual",
+      "evaluationsCompleted": "evaluaciones completadas",
+      "lastAccess": "Último acceso:",
+      "status": {
+        "active": "Activa",
+        "complete": "Completa",
+        "draft": "Borrador"
+      },
+      "completedLabel": "Completaron",
+      "pendingLabel": "Pendientes",
+      "evaluationReceived": "evaluación recibida",
+      "tips": {
+        "title": "💡 Consejos para aumentar la participación",
+        "tip1": "Envíe recordatorios por correo a los miembros que aún no han completado",
+        "tip2": "Refuerce la importancia de la evaluación 360° para el desarrollo del equipo",
+        "tip3": "Recuerde que las evaluaciones son anónimas y confidenciales",
+        "tip4": "Establezca un plazo claro para completar las evaluaciones",
+        "tip5": "Proporcione un canal para resolver dudas sobre el proceso"
+      }
     },
     "results": {
       "title": "Resultados de la Evaluación",
@@ -197,6 +221,77 @@
       "responses": "Respuestas Recibidas",
       "viewDetails": "Ver Detalles",
       "noResults": "Esperando respuestas",
+      "noResultsAvailable": "No hay resultados disponibles todavía",
+      "loading": "Cargando resultados...",
+      "consolidating": "Consolidando resultados...",
+      "processingMembers": "Procesando {{count}} miembros",
+      "errorLoading": "Error al cargar resultados",
+      "consolidatedResults": "Resultados Consolidados",
+      "generatedAt": "Generado el:",
+      "back": "Volver",
+      "backToDashboard": "Volver al Tablero",
+      "teamComparison": "Comparación del Equipo",
+      "exportResults": "Exportar Resultados",
+      "sortBy": "Ordenar por",
+      "sortByLabel": "Ordenar por:",
+      "sortOverall": "Promedio General",
+      "sortName": "Nombre",
+      "sortResponses": "Número de Respuestas",
+      "sortOptions": {
+        "overall": "Promedio General (Mayor → Menor)",
+        "name": "Nombre (A → Z)",
+        "responses": "Evaluaciones Recibidas"
+      },
+      "showComments": "Ver Comentarios",
+      "hideComments": "Ocultar Comentarios",
+      "positivePoints": "💚 Puntos Positivos",
+      "improvementPoints": "💡 Puntos de Mejora",
+      "performanceOverview": "Visión General del Desempeño",
+      "evaluationsReceived": "evaluaciones recibidas",
+      "evaluationReceived": "evaluación recibida",
+      "ratingLabels": {
+        "excellent": "Excelente",
+        "good": "Bueno",
+        "adequate": "Adecuado",
+        "belowAverage": "Por Debajo del Promedio",
+        "unsatisfactory": "Insatisfactorio"
+      },
+      "questions": {
+        "satisfaction": "Satisfacción",
+        "proactivity": "Proactividad",
+        "quality": "Calidad",
+        "teamwork": "Trabajo en Equipo"
+      },
+      "stats": {
+        "totalMembers": "Miembros Evaluados",
+        "highestScore": "Puntuación Más Alta",
+        "lowestScore": "Puntuación Más Baja",
+        "averageScore": "Promedio General"
+      },
+      "export": {
+        "title": "Exportar Resultados",
+        "text": "Exportar TXT",
+        "excel": "Exportar Excel",
+        "csv": "Exportar CSV",
+        "all": "Exportar Todos los Formatos"
+      },
+      "exportFormats": {
+        "text": "Texto (.txt)",
+        "textDescription": "Informe formateado",
+        "excel": "Excel (.xlsx)",
+        "excelDescription": "Hoja de cálculo con gráficos",
+        "csv": "CSV (.csv)",
+        "csvDescription": "Datos tabulares",
+        "all": "Todos los Formatos",
+        "allDescription": "TXT + Excel + CSV"
+      },
+      "confidentiality": {
+        "title": "⚠️ Confidencialidad de los Resultados",
+        "point1": "Estos resultados son confidenciales y deben compartirse solo en el contexto del desarrollo profesional",
+        "point2": "Las evaluaciones son 100% anónimas - no es posible identificar quién evaluó a quién",
+        "point3": "Use los comentarios de manera constructiva para apoyar el crecimiento del equipo",
+        "point4": "Se recomienda realizar sesiones individuales de retroalimentación con cada miembro"
+      },
       "filters": {
         "all": "Todos",
         "completed": "Completados",

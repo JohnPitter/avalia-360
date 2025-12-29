@@ -181,14 +181,38 @@
     },
     "dashboard": {
       "title": "Dashboard - {{evaluationTitle}}",
+      "logout": "Logout",
       "progress": "Evaluation Progress",
+      "overallProgress": "Overall Progress",
+      "complete": "Complete",
       "totalMembers": "Total Members",
       "completed": "Completed",
       "pending": "Pending",
       "completionRate": "Completion Rate",
       "viewResults": "View Results",
+      "viewConsolidatedResults": "View Consolidated Results",
       "sendReminders": "Send Reminders",
-      "exportData": "Export Data"
+      "exportData": "Export Data",
+      "evaluationsReceived": "Evaluations Received",
+      "individualProgress": "Individual Progress",
+      "evaluationsCompleted": "evaluations completed",
+      "lastAccess": "Last access:",
+      "status": {
+        "active": "Active",
+        "complete": "Complete",
+        "draft": "Draft"
+      },
+      "completedLabel": "Completed",
+      "pendingLabel": "Pending",
+      "evaluationReceived": "evaluation received",
+      "tips": {
+        "title": "💡 Tips to increase participation",
+        "tip1": "Send email reminders to members who haven't completed yet",
+        "tip2": "Reinforce the importance of 360° evaluation for team development",
+        "tip3": "Remind that evaluations are anonymous and confidential",
+        "tip4": "Set a clear deadline for completing evaluations",
+        "tip5": "Provide a channel to answer questions about the process"
+      }
     },
     "results": {
       "title": "Evaluation Results",
@@ -197,6 +221,77 @@
       "responses": "Responses Received",
       "viewDetails": "View Details",
       "noResults": "Waiting for responses",
+      "noResultsAvailable": "No results available yet",
+      "loading": "Loading results...",
+      "consolidating": "Consolidating results...",
+      "processingMembers": "Processing {{count}} members",
+      "errorLoading": "Error loading results",
+      "consolidatedResults": "Consolidated Results",
+      "generatedAt": "Generated at:",
+      "back": "Back",
+      "backToDashboard": "Back to Dashboard",
+      "teamComparison": "Team Comparison",
+      "exportResults": "Export Results",
+      "sortBy": "Sort by",
+      "sortByLabel": "Sort by:",
+      "sortOverall": "Overall Average",
+      "sortName": "Name",
+      "sortResponses": "Number of Responses",
+      "sortOptions": {
+        "overall": "Overall Average (Highest → Lowest)",
+        "name": "Name (A → Z)",
+        "responses": "Evaluations Received"
+      },
+      "showComments": "Show Comments",
+      "hideComments": "Hide Comments",
+      "positivePoints": "💚 Positive Points",
+      "improvementPoints": "💡 Improvement Points",
+      "performanceOverview": "Performance Overview",
+      "evaluationsReceived": "evaluations received",
+      "evaluationReceived": "evaluation received",
+      "ratingLabels": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "adequate": "Adequate",
+        "belowAverage": "Below Average",
+        "unsatisfactory": "Unsatisfactory"
+      },
+      "questions": {
+        "satisfaction": "Satisfaction",
+        "proactivity": "Proactivity",
+        "quality": "Quality",
+        "teamwork": "Teamwork"
+      },
+      "stats": {
+        "totalMembers": "Members Evaluated",
+        "highestScore": "Highest Score",
+        "lowestScore": "Lowest Score",
+        "averageScore": "Overall Average"
+      },
+      "export": {
+        "title": "Export Results",
+        "text": "Export TXT",
+        "excel": "Export Excel",
+        "csv": "Export CSV",
+        "all": "Export All Formats"
+      },
+      "exportFormats": {
+        "text": "Text (.txt)",
+        "textDescription": "Formatted report",
+        "excel": "Excel (.xlsx)",
+        "excelDescription": "Spreadsheet with charts",
+        "csv": "CSV (.csv)",
+        "csvDescription": "Tabular data",
+        "all": "All Formats",
+        "allDescription": "TXT + Excel + CSV"
+      },
+      "confidentiality": {
+        "title": "⚠️ Results Confidentiality",
+        "point1": "These results are confidential and should only be shared in the context of professional development",
+        "point2": "Evaluations are 100% anonymous - it is not possible to identify who evaluated whom",
+        "point3": "Use feedback constructively to support team growth",
+        "point4": "Individual feedback sessions with each member are recommended"
+      },
       "filters": {
         "all": "All",
         "completed": "Completed",
