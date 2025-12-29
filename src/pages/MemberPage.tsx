@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout';
 import {
   MemberLogin,
@@ -27,6 +28,7 @@ import { debugLog } from '@/services/debug/debugLogger';
 type Step = 'login' | 'member-list' | 'evaluation';
 
 export function MemberPage() {
+  const { t } = useTranslation();
   const [step, setStep] = useState<Step>('login');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -294,8 +296,8 @@ export function MemberPage() {
                 <div className="absolute inset-0 animate-spin border-4 border-emerald-600 border-t-transparent rounded-full" />
                 <div className="absolute inset-3 animate-spin border-4 border-emerald-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Carregando</h3>
-              <p className="text-gray-600">Preparando suas avaliações...</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('member.page.loading.title')}</h3>
+              <p className="text-gray-600">{t('member.page.loading.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -306,9 +308,9 @@ export function MemberPage() {
   const selectedMember = allMembers.find((m) => m.id === selectedMemberId);
 
   const getStepTitle = () => {
-    if (step === 'member-list') return 'Minhas Avaliações';
-    if (step === 'evaluation' && selectedMember) return `Avaliar ${selectedMember.name}`;
-    return 'Portal do Colaborador';
+    if (step === 'member-list') return t('member.page.titles.myEvaluations');
+    if (step === 'evaluation' && selectedMember) return t('member.page.titles.evaluating', { name: selectedMember.name });
+    return t('member.page.titles.memberPortal');
   };
 
   return (
@@ -321,8 +323,8 @@ export function MemberPage() {
               <div>
                 <h2 className="text-3xl font-bold text-gray-900">{getStepTitle()}</h2>
                 <p className="text-gray-600 mt-1">
-                  {step === 'member-list' && 'Selecione um colega para avaliar'}
-                  {step === 'evaluation' && 'Preencha a avaliação com honestidade e construtividade'}
+                  {step === 'member-list' && t('member.page.subtitles.selectColleague')}
+                  {step === 'evaluation' && t('member.page.subtitles.fillEvaluation')}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -334,7 +336,7 @@ export function MemberPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Colaborador</p>
+                      <p className="text-xs text-gray-500">{t('member.page.userType')}</p>
                       <p className="text-sm font-semibold text-gray-900">{currentMember.name}</p>
                     </div>
                   </div>
@@ -421,8 +423,8 @@ export function MemberPage() {
                   <div className="absolute inset-0 animate-spin border-4 border-emerald-600 border-t-transparent rounded-full" />
                   <div className="absolute inset-3 animate-spin border-4 border-emerald-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Carregando membros da equipe</h3>
-                <p className="text-gray-600">Aguarde enquanto buscamos os dados...</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('member.page.loading.loadingMembers')}</h3>
+                <p className="text-gray-600">{t('member.page.loading.fetchingData')}</p>
               </div>
             </div>
           )}

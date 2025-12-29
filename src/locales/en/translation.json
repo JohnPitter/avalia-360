@@ -128,12 +128,20 @@
       }
     },
     "page": {
+      "titles": {
+        "managerPortal": "Manager Portal"
+      },
       "subtitles": {
         "createEvaluation": "Configure your new 360° evaluation",
         "addMembers": "Add your team members",
         "success": "Your evaluation was successfully created",
         "dashboard": "Track evaluation progress",
         "results": "View consolidated results"
+      },
+      "userType": "Manager",
+      "loading": {
+        "title": "Loading",
+        "subtitle": "Preparing your environment..."
       }
     },
     "createEvaluation": {
@@ -323,6 +331,24 @@
     }
   },
   "member": {
+    "page": {
+      "titles": {
+        "myEvaluations": "My Evaluations",
+        "evaluating": "Evaluate {{name}}",
+        "memberPortal": "Team Member Portal"
+      },
+      "subtitles": {
+        "selectColleague": "Select a colleague to evaluate",
+        "fillEvaluation": "Complete the evaluation with honesty and constructiveness"
+      },
+      "userType": "Team Member",
+      "loading": {
+        "title": "Loading",
+        "subtitle": "Preparing your evaluations...",
+        "loadingMembers": "Loading team members",
+        "fetchingData": "Please wait while we fetch the data..."
+      }
+    },
     "login": {
       "welcome": "Welcome, Team Member!",
       "subtitle": "Enter your access code to participate in the evaluation",

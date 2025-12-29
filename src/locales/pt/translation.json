@@ -128,12 +128,20 @@
       }
     },
     "page": {
+      "titles": {
+        "managerPortal": "Portal do Gestor"
+      },
       "subtitles": {
         "createEvaluation": "Configure sua nova avaliação 360°",
         "addMembers": "Adicione os membros da sua equipe",
         "success": "Sua avaliação foi criada com sucesso",
         "dashboard": "Acompanhe o progresso das avaliações",
         "results": "Visualize os resultados consolidados"
+      },
+      "userType": "Gestor",
+      "loading": {
+        "title": "Carregando",
+        "subtitle": "Preparando seu ambiente..."
       }
     },
     "createEvaluation": {
@@ -401,6 +409,24 @@
     }
   },
   "member": {
+    "page": {
+      "titles": {
+        "myEvaluations": "Minhas Avaliações",
+        "evaluating": "Avaliar {{name}}",
+        "memberPortal": "Portal do Colaborador"
+      },
+      "subtitles": {
+        "selectColleague": "Selecione um colega para avaliar",
+        "fillEvaluation": "Preencha a avaliação com honestidade e construtividade"
+      },
+      "userType": "Colaborador",
+      "loading": {
+        "title": "Carregando",
+        "subtitle": "Preparando suas avaliações...",
+        "loadingMembers": "Carregando membros da equipe",
+        "fetchingData": "Aguarde enquanto buscamos os dados..."
+      }
+    },
     "login": {
       "welcome": "Bem-vindo, Colaborador!",
       "subtitle": "Digite seu código de acesso para participar da avaliação",

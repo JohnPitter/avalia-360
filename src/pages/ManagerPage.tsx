@@ -269,8 +269,8 @@ export function ManagerPage() {
                 <div className="absolute inset-0 animate-spin border-4 border-blue-600 border-t-transparent rounded-full" />
                 <div className="absolute inset-3 animate-spin border-4 border-blue-300 border-t-transparent rounded-full" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Carregando</h3>
-              <p className="text-gray-600">Preparando seu ambiente...</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('manager.page.loading.title')}</h3>
+              <p className="text-gray-600">{t('manager.page.loading.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -285,7 +285,7 @@ export function ManagerPage() {
       case 'success': return 'Avaliação Criada';
       case 'dashboard': return 'Dashboard';
       case 'results': return 'Resultados';
-      default: return 'Portal do Gestor';
+      default: return t('manager.page.titles.managerPortal');
     }
   };
 
@@ -314,7 +314,7 @@ export function ManagerPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Gestor</p>
+                    <p className="text-xs text-gray-500">{t('manager.page.userType')}</p>
                     <p className="text-sm font-semibold text-gray-900">{managerEmail}</p>
                   </div>
                 </div>
