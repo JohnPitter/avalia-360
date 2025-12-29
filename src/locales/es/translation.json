@@ -127,6 +127,15 @@
         "tip4": "Si no lo encuentra, cree una nueva evaluación"
       }
     },
+    "page": {
+      "subtitles": {
+        "createEvaluation": "Configure su nueva evaluación 360°",
+        "addMembers": "Agregue los miembros de su equipo",
+        "success": "Su evaluación fue creada con éxito",
+        "dashboard": "Siga el progreso de las evaluaciones",
+        "results": "Visualice los resultados consolidados"
+      }
+    },
     "createEvaluation": {
       "title": "Crear Nueva Evaluación",
       "evaluationTitle": "Título de la Evaluación",
@@ -342,31 +351,101 @@
     },
     "evaluation": {
       "title": "Evaluación 360°",
+      "loading": "Cargando evaluación...",
       "evaluating": "Evaluando: {{memberName}}",
       "selfEvaluation": "Autoevaluación",
+      "anonymousMessage": "Sus respuestas son 100% anónimas y encriptadas",
       "question": "¿Cómo evalúa a {{memberName}} en:",
       "ratingLabels": {
-        "1": "Muy Por Debajo",
-        "2": "Por Debajo",
+        "1": "Insatisfactorio",
+        "2": "Por Debajo del Promedio",
         "3": "Adecuado",
-        "4": "Por Encima",
+        "4": "Bueno",
         "5": "Excelente"
+      },
+      "ratingScale": {
+        "unsatisfactory": "Insatisfactorio",
+        "belowAverage": "Por Debajo del Promedio",
+        "adequate": "Adecuado",
+        "good": "Bueno",
+        "excellent": "Excelente"
+      },
+      "questionDetails": {
+        "question1": {
+          "text": "¿Cuán satisfecho está trabajando con este colaborador?",
+          "description": "Considere comunicación, colaboración y ambiente de trabajo"
+        },
+        "question2": {
+          "text": "¿Cómo evalúa la proactividad e iniciativa de este colaborador?",
+          "description": "Considere toma de decisiones, anticipación de problemas y búsqueda de soluciones"
+        },
+        "question3": {
+          "text": "¿Cómo evalúa la calidad de las entregas de este colaborador?",
+          "description": "Considere atención al detalle, cumplimiento de estándares y excelencia"
+        },
+        "question4": {
+          "text": "¿Cómo evalúa las habilidades de trabajo en equipo de este colaborador?",
+          "description": "Considere colaboración, intercambio de conocimientos y apoyo a los colegas"
+        }
+      },
+      "selected": "Seleccionado: {{rating}} - {{label}}",
+      "commentsSection": {
+        "title": "Comentarios Cualitativos",
+        "positive": "💚 Puntos Positivos",
+        "positiveRequired": "💚 Puntos Positivos *",
+        "positivePlaceholder": "Describa las fortalezas, cualidades y contribuciones positivas de este colaborador. Sea específico y use ejemplos concretos cuando sea posible...",
+        "improvement": "💡 Puntos de Mejora",
+        "improvementRequired": "💡 Puntos de Mejora *",
+        "improvementPlaceholder": "Describa sugerencias constructivas para el desarrollo profesional. Sea respetuoso y enfóquese en comportamientos, no en personalidad...",
+        "optional": "(Opcional pero recomendado)",
+        "minRecommended": "Mínimo recomendado: 50 caracteres",
+        "characterCount": "{{current}}/{{max}}"
       },
       "commentsLabel": "Comentarios (opcional)",
       "commentsPlaceholder": "Comparta feedback constructivo...",
       "progress": "Progreso: {{current}} de {{total}}",
-      "previousMember": "Anterior",
+      "previousMember": "Volver",
       "nextMember": "Siguiente",
+      "back": "Volver",
+      "cancel": "Cancelar",
       "submit": "Enviar Evaluación",
+      "warning": "⚠️ Seleccione una evaluación para las 4 preguntas",
       "savingDraft": "Guardando borrador...",
-      "draftSaved": "Borrador guardado",
+      "draftSaved": "Guardado",
+      "lastSaved": "hace",
       "submitting": "Enviando...",
-      "success": "¡Evaluación enviada con éxito!"
+      "success": "¡Evaluación enviada con éxito!",
+      "tips": {
+        "title": "💡 Consejos para una buena evaluación",
+        "tip1": "Sea honesto y constructivo en sus respuestas",
+        "tip2": "Use ejemplos concretos cuando sea posible",
+        "tip3": "Enfóquese en comportamientos, no en personalidad",
+        "tip4": "Recuerde: el objetivo es el desarrollo del equipo",
+        "tip5": "¡Sus respuestas son 100% anónimas - sea sincero!"
+      }
     },
     "membersList": {
       "title": "Miembros para Evaluar",
+      "greeting": "Hola, {{name}}",
+      "yourProgress": "Su Progreso",
+      "evaluationsCompleted": "{{completed}} de {{total}} evaluaciones completadas",
       "completed": "Completado",
       "pending": "Pendiente",
+      "completionMessage": {
+        "title": "🎉 ¡Felicitaciones! ¡Ha completado todas las evaluaciones!",
+        "description": "Sus respuestas se han guardado con éxito y son 100% anónimas y encriptadas. ¡Gracias por su participación sincera!"
+      },
+      "selectMember": "Seleccione a quién evaluar",
+      "evaluationCompleted": "Evaluación completada",
+      "clickToEvaluate": "Haga clic para evaluar",
+      "howItWorks": {
+        "title": "💡 Cómo funciona",
+        "step1": "Debe evaluar a todos los miembros de la lista",
+        "step2": "Cada evaluación tiene 4 preguntas y espacio para comentarios",
+        "step3": "Sus respuestas son 100% anónimas y encriptadas",
+        "step4": "Sea sincero y constructivo en sus comentarios",
+        "step5": "Puede pausar y volver más tarde usando el mismo código"
+      },
       "inProgress": "En progreso",
       "evaluate": "Evaluar",
       "continue": "Continuar"

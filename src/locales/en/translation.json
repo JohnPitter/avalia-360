@@ -127,6 +127,15 @@
         "tip4": "If you can't find it, create a new evaluation"
       }
     },
+    "page": {
+      "subtitles": {
+        "createEvaluation": "Configure your new 360° evaluation",
+        "addMembers": "Add your team members",
+        "success": "Your evaluation was successfully created",
+        "dashboard": "Track evaluation progress",
+        "results": "View consolidated results"
+      }
+    },
     "createEvaluation": {
       "title": "Create New Evaluation",
       "evaluationTitle": "Evaluation Title",
@@ -342,31 +351,101 @@
     },
     "evaluation": {
       "title": "360° Evaluation",
+      "loading": "Loading evaluation...",
       "evaluating": "Evaluating: {{memberName}}",
       "selfEvaluation": "Self-evaluation",
+      "anonymousMessage": "Your responses are 100% anonymous and encrypted",
       "question": "How do you rate {{memberName}} on:",
       "ratingLabels": {
-        "1": "Very Below",
-        "2": "Below",
+        "1": "Unsatisfactory",
+        "2": "Below Average",
         "3": "Adequate",
-        "4": "Above",
+        "4": "Good",
         "5": "Excellent"
+      },
+      "ratingScale": {
+        "unsatisfactory": "Unsatisfactory",
+        "belowAverage": "Below Average",
+        "adequate": "Adequate",
+        "good": "Good",
+        "excellent": "Excellent"
+      },
+      "questionDetails": {
+        "question1": {
+          "text": "How satisfied are you working with this team member?",
+          "description": "Consider communication, collaboration, and work environment"
+        },
+        "question2": {
+          "text": "How do you rate this team member's proactivity and initiative?",
+          "description": "Consider decision-making, problem anticipation, and solution-seeking"
+        },
+        "question3": {
+          "text": "How do you rate the quality of this team member's deliverables?",
+          "description": "Consider attention to detail, standards compliance, and excellence"
+        },
+        "question4": {
+          "text": "How do you rate this team member's teamwork skills?",
+          "description": "Consider collaboration, knowledge sharing, and support for colleagues"
+        }
+      },
+      "selected": "Selected: {{rating}} - {{label}}",
+      "commentsSection": {
+        "title": "Qualitative Comments",
+        "positive": "💚 Positive Points",
+        "positiveRequired": "💚 Positive Points *",
+        "positivePlaceholder": "Describe strengths, qualities, and positive contributions of this team member. Be specific and use concrete examples when possible...",
+        "improvement": "💡 Improvement Points",
+        "improvementRequired": "💡 Improvement Points *",
+        "improvementPlaceholder": "Describe constructive suggestions for professional development. Be respectful and focus on behaviors, not personality...",
+        "optional": "(Optional but recommended)",
+        "minRecommended": "Minimum recommended: 50 characters",
+        "characterCount": "{{current}}/{{max}}"
       },
       "commentsLabel": "Comments (optional)",
       "commentsPlaceholder": "Share constructive feedback...",
       "progress": "Progress: {{current}} of {{total}}",
-      "previousMember": "Previous",
+      "previousMember": "Back",
       "nextMember": "Next",
+      "back": "Back",
+      "cancel": "Cancel",
       "submit": "Submit Evaluation",
+      "warning": "⚠️ Select a rating for all 4 questions",
       "savingDraft": "Saving draft...",
-      "draftSaved": "Draft saved",
+      "draftSaved": "Saved",
+      "lastSaved": "ago",
       "submitting": "Submitting...",
-      "success": "Evaluation submitted successfully!"
+      "success": "Evaluation submitted successfully!",
+      "tips": {
+        "title": "💡 Tips for a good evaluation",
+        "tip1": "Be honest and constructive in your responses",
+        "tip2": "Use concrete examples when possible",
+        "tip3": "Focus on behaviors, not personality",
+        "tip4": "Remember: the goal is team development",
+        "tip5": "Your responses are 100% anonymous - be sincere!"
+      }
     },
     "membersList": {
       "title": "Members to Evaluate",
+      "greeting": "Hello, {{name}}",
+      "yourProgress": "Your Progress",
+      "evaluationsCompleted": "{{completed}} of {{total}} evaluations completed",
       "completed": "Completed",
       "pending": "Pending",
+      "completionMessage": {
+        "title": "🎉 Congratulations! You've completed all evaluations!",
+        "description": "Your responses have been saved successfully and are 100% anonymous and encrypted. Thank you for your sincere participation!"
+      },
+      "selectMember": "Select who to evaluate",
+      "evaluationCompleted": "Evaluation completed",
+      "clickToEvaluate": "Click to evaluate",
+      "howItWorks": {
+        "title": "💡 How it works",
+        "step1": "You need to evaluate all members on the list",
+        "step2": "Each evaluation has 4 questions and space for comments",
+        "step3": "Your responses are 100% anonymous and encrypted",
+        "step4": "Be sincere and constructive in your feedback",
+        "step5": "You can pause and return later using the same code"
+      },
       "inProgress": "In progress",
       "evaluate": "Evaluate",
       "continue": "Continue"

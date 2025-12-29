@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout';
 import {
   ManagerLogin,
@@ -42,6 +43,7 @@ type Step =
   | 'results';
 
 export function ManagerPage() {
+  const { t } = useTranslation();
   const [step, setStep] = useState<Step>('login');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -297,11 +299,11 @@ export function ManagerPage() {
               <div>
                 <h2 className="text-3xl font-bold text-gray-900">{getStepTitle()}</h2>
                 <p className="text-gray-600 mt-1">
-                  {step === 'create-evaluation' && 'Configure sua nova avaliação 360°'}
-                  {step === 'add-members' && 'Adicione os membros da sua equipe'}
-                  {step === 'success' && 'Sua avaliação foi criada com sucesso'}
-                  {step === 'dashboard' && 'Acompanhe o progresso das avaliações'}
-                  {step === 'results' && 'Visualize os resultados consolidados'}
+                  {step === 'create-evaluation' && t('manager.page.subtitles.createEvaluation')}
+                  {step === 'add-members' && t('manager.page.subtitles.addMembers')}
+                  {step === 'success' && t('manager.page.subtitles.success')}
+                  {step === 'dashboard' && t('manager.page.subtitles.dashboard')}
+                  {step === 'results' && t('manager.page.subtitles.results')}
                 </p>
               </div>
               {managerEmail && (

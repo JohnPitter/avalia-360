@@ -127,6 +127,15 @@
         "tip4": "Caso não encontre, crie uma nova avaliação"
       }
     },
+    "page": {
+      "subtitles": {
+        "createEvaluation": "Configure sua nova avaliação 360°",
+        "addMembers": "Adicione os membros da sua equipe",
+        "success": "Sua avaliação foi criada com sucesso",
+        "dashboard": "Acompanhe o progresso das avaliações",
+        "results": "Visualize os resultados consolidados"
+      }
+    },
     "createEvaluation": {
       "title": "Criar Nova Avaliação",
       "evaluationTitle": "Título da Avaliação",
