@@ -12,13 +12,18 @@ import { useTranslation } from 'react-i18next';
 interface Language {
   code: 'pt' | 'en' | 'es';
   name: string;
-  flag: string;
+  flag: React.ReactNode;
 }
 
+// Flag components usando emojis com fallback
+const BrazilFlag = () => <span className="text-xl leading-none">🇧🇷</span>;
+const USAFlag = () => <span className="text-xl leading-none">🇺🇸</span>;
+const SpainFlag = () => <span className="text-xl leading-none">🇪🇸</span>;
+
 const LANGUAGES: Language[] = [
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'pt', name: 'Português', flag: <BrazilFlag /> },
+  { code: 'en', name: 'English', flag: <USAFlag /> },
+  { code: 'es', name: 'Español', flag: <SpainFlag /> },
 ];
 
 export function LanguageSwitcher() {
@@ -64,7 +69,7 @@ export function LanguageSwitcher() {
         aria-label={t('language.changeLanguage')}
         aria-expanded={isOpen}
       >
-        <span className="text-lg">{currentLanguage.flag}</span>
+        {currentLanguage.flag}
         <span className="hidden sm:inline">{currentLanguage.name}</span>
         <svg
           className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -92,7 +97,7 @@ export function LanguageSwitcher() {
                   : 'text-gray-700'
               }`}
             >
-              <span className="text-lg">{language.flag}</span>
+              {language.flag}
               <span className="flex-1 text-left">{language.name}</span>
               {currentLanguage.code === language.code && (
                 <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
